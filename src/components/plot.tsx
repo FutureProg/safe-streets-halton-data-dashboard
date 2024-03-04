@@ -1,7 +1,10 @@
+'use client'
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { PlotData, Data as PlotlyData } from 'plotly.js';
+import * as Api from '../api';
+import { jsonArrayToPlotDataArr } from '@/util';
 const Plot = dynamic(() => import('react-plotly.js'), { ssr: false });
 
 interface AnnualDataArr {
@@ -18,30 +21,23 @@ interface AnnualData {
     number_of_entries: number
 };
 
-export default () => {    
-    const defaultData = [] as Array<AnnualData>;
-    const [data, setData] = useState(defaultData)
-    var renderData = [] as Partial<PlotData>[];
-    Object.values(preRenderData).forEach((value) => {
-        renderData.push({
-            type: 'bar',
-            x: value.,
-            y: 
-        });
-    });
+export default (/*{data}: {data: Partial<PlotData>[]}*/) => {    
+    // const defaultData = [] as Partial<PlotData>[];
+    // const [data, setData] = useState(defaultData);
+    // ///{type: 'bar', x: data.municipality, y: data.number_of_cases, name: data.description},
+    let {data, error, isLoading} = Api.getAnnualData(2023);             
+    if (error) {
+        return "ERROR!";
+    }
+    if (!data || isLoading) {
+        return "LOADING";
+    }
+    console.log(data);   
+    let plotData = jsonArrayToPlotDataArr(data, 'bar', 'municipality', 'number_of_cases', 'description');      
     return (
         <div>  
             <Plot
-                data={[
-                    // {
-                    // x: [1, 2, 3],
-                    // y: [2, 6, 3],
-                    // type: 'scatter',
-                    // mode: 'lines+markers',
-                    // marker: {color: 'red'},
-                    // },
-                    {type: 'bar', x: data.municipality, y: data.number_of_cases, name: data.description},
-                ]}
+                data={plotData}
                 layout={ {width: 320, height: 240, title: 'A Fancy Plot'} }
             />
         </div>

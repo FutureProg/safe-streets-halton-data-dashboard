@@ -1,17 +1,24 @@
-import { flattenDataAsync } from "./util";
+import useSWR, { Fetcher, SWRConfiguration } from "swr";
+
 const DATA_API_URL = process.env.dataAPI;
+const fetcher = (...args: any[]) => fetch(args[0], ...args.slice(1)).then(res => res.json());
 
 function getUrl(dir: string, query_params = {}) {
     const url = DATA_API_URL + '/' + dir;
-    const params = new URLSearchParams(query_params);
-    return url + params;
+    if (query_params) {
+        const params = new URLSearchParams(query_params);        
+        return url + '?' + params;
+    }    
+    return url;
 }
 
-export async function getAnnualData(year: number, flatten = true) {
+export function getAnnualData(year: number) {
     const url = getUrl('annual', {year});     
-    var response = await fetch(url, {method: 'GET'});
-    if (flattenDataAsync) {
-        return flattenDataAsync(response.json());        
-    }
-    return response.json();
+    // var response = await fetch(url, {method: 'GET'});    
+    let config = {
+        shouldRetryOnError: false,
+        revalidateOnMount: true
+    } as SWRConfiguration;
+    let {data, error, isLoading} = useSWR(url,fetcher, config);    
+    return {data, error, isLoading}
 }
