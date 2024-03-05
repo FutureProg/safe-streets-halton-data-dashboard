@@ -31,14 +31,14 @@ export default (/*{data}: {data: Partial<PlotData>[]}*/) => {
     }
     if (!data || isLoading) {
         return "LOADING";
-    }
-    console.log(data);   
-    let plotData = jsonArrayToPlotDataArr(data, 'bar', 'municipality', 'number_of_cases', 'description');      
+    }    
+    let plotData = jsonArrayToPlotDataArr(data.data, 'bar', 'municipality', 'number_of_cases', 'description');      
+    console.log(plotData);   
     return (
         <div>  
             <Plot
                 data={plotData}
-                layout={ {width: 320, height: 240, title: 'A Fancy Plot'} }
+                layout={ {width: 800, height: 800, title: 'A Fancy Plot'} }
             />
         </div>
     );

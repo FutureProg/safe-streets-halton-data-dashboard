@@ -16,8 +16,13 @@ export function getAnnualData(year: number) {
     const url = getUrl('annual', {year});     
     // var response = await fetch(url, {method: 'GET'});    
     let config = {
-        shouldRetryOnError: false,
-        revalidateOnMount: true
+        shouldRetryOnError: false,        
+        revalidateOnFocus: false,
+        revalidateOnMount:true,
+        revalidateOnReconnect: false,
+        refreshWhenOffline: false,
+        refreshWhenHidden: false,
+        refreshInterval: 0
     } as SWRConfiguration;
     let {data, error, isLoading} = useSWR(url,fetcher, config);    
     return {data, error, isLoading}

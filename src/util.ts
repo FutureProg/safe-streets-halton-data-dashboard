@@ -16,25 +16,25 @@ export function flattenData(data: Array<Record<string, any>>) {
 export function jsonArrayToPlotDataArr(data: Record<string, any>[], type: PlotType, x: string, y: string ,name?: string, other?: Partial<PlotData>): Partial<PlotData>[] {    
     let result = [] as Partial<PlotData>[];
     if (name) {
-        let template = {
+        let template = () => ({
             ...other,
             x: [] as any[],
             y: [] as any[],            
             type: type,            
-        }
-        let preResult = {} as Record<string, typeof template>;        
+        });
+        var preResult = {} as Record<string, any>;         
         for(let i = 0; i < data.length; i++) {
             let item = data[i];
-            var _name = item[name];
+            var _name = item[name];            
             if (!preResult.hasOwnProperty(_name)) {
-                preResult[_name] =  {...template, name: _name};
+                preResult[_name] =  {...template(), name: _name};
             }
             preResult[_name].x.push(item[x]);
             preResult[_name].y.push(item[y]);
         }
         Object.keys(preResult).forEach((key) =>{
             result.push(preResult[key]);
-        });
+        });                
     } else {        
         let re = {
             ...other,
