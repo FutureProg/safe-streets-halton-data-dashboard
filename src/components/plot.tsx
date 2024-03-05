@@ -27,10 +27,18 @@ export default (/*{data}: {data: Partial<PlotData>[]}*/) => {
     // ///{type: 'bar', x: data.municipality, y: data.number_of_cases, name: data.description},
     let {data, error, isLoading} = Api.getAnnualData(2023);             
     if (error) {
-        return "ERROR!";
+        return (
+            <div className='plot-loading' style={{width: '800px', height: '800px'}}>
+                <b>Error Loading Plot!<br/> {error.data}</b>
+            </div>
+        );
     }
     if (!data || isLoading) {
-        return "LOADING";
+        return (
+            <div className='plot-loading' style={{width: '800px', height: '800px'}}>
+                <b>Plot Loading...</b>
+            </div>
+        );
     }    
     let plotData = jsonArrayToPlotDataArr(data.data, 'bar', 'municipality', 'number_of_cases', 'description');      
     console.log(plotData);   
