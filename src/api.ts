@@ -12,18 +12,33 @@ function getUrl(dir: string, query_params = {}) {
     return url;
 }
 
+const SingleRequestConfig = {
+    shouldRetryOnError: false,        
+    revalidateOnFocus: false,
+    revalidateOnMount:true,
+    revalidateOnReconnect: false,
+    refreshWhenOffline: false,
+    refreshWhenHidden: false,
+    refreshInterval: 0
+} as SWRConfiguration;
+
+interface CountsQueryParams {
+    start_date: Date, 
+    end_date: Date, 
+    group:any[], 
+    filter?: string, 
+    item_offset?:number, 
+    item_count?:number
+}
+export function getCounts(queryParams: CountsQueryParams) {    
+    const url = getUrl('query/count', queryParams);
+    let {data, error, isLoading} = useSWR(url,fetcher, SingleRequestConfig);    
+    return {data, error, isLoading}
+}
+
 export function getAnnualData(year: number) {
     const url = getUrl('annual', {year});     
     // var response = await fetch(url, {method: 'GET'});    
-    let config = {
-        shouldRetryOnError: false,        
-        revalidateOnFocus: false,
-        revalidateOnMount:true,
-        revalidateOnReconnect: false,
-        refreshWhenOffline: false,
-        refreshWhenHidden: false,
-        refreshInterval: 0
-    } as SWRConfiguration;
-    let {data, error, isLoading} = useSWR(url,fetcher, config);    
+    let {data, error, isLoading} = useSWR(url,fetcher, SingleRequestConfig);    
     return {data, error, isLoading}
 }
