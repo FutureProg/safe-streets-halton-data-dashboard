@@ -5,6 +5,8 @@ import dynamic from 'next/dynamic';
 import { PlotData, Data as PlotlyData } from 'plotly.js';
 import * as Api from '../api';
 import { jsonArrayToPlotDataArr } from '@/util';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { LoadState, loadData } from '@/lib/features/graphdata/graphDataSlice';
 const Plot = dynamic(() => import('react-plotly.js'), { ssr: false });
 
 interface AnnualDataArr {
@@ -25,27 +27,33 @@ export default (/*{data}: {data: Partial<PlotData>[]}*/) => {
     // const defaultData = [] as Partial<PlotData>[];
     // const [data, setData] = useState(defaultData);
     // ///{type: 'bar', x: data.municipality, y: data.number_of_cases, name: data.description},
-    let {data, error, isLoading} = Api.getAnnualData(2023);             
+    let {error, loadState, data} = useAppSelector((state) => ({...state.graphData, originalData: undefined}));    
+    let dispatch = useAppDispatch();
+    useEffect(() => {
+        if (loadState == LoadState.None) {
+            dispatch(loadData(2023));
+        }
+    }, [dispatch, loadState]);
+
+    
     if (error) {
         return (
             <div className='plot-loading' style={{width: '800px', height: '800px'}}>
-                <b>Error Loading Plot!<br/> {error.data}</b>
+                <b>Error Loading Plot!<br/> {error}</b>
             </div>
         );
     }
-    if (!data || isLoading) {
+    if (!data || loadState === LoadState.Loading) {
         return (
             <div className='plot-loading' style={{width: '800px', height: '800px'}}>
                 <b>Plot Loading...</b>
             </div>
         );
     }    
-    let plotData = jsonArrayToPlotDataArr(data.data, 'bar', 'municipality', 'number_of_cases', 'description');      
-    console.log(plotData);   
     return (
         <div>  
             <Plot
-                data={plotData}
+                data={data}
                 layout={ {width: 800, height: 800, title: 'A Fancy Plot'} }
             />
         </div>

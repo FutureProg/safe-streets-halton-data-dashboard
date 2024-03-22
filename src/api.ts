@@ -42,3 +42,9 @@ export function getAnnualData(year: number) {
     let {data, error, isLoading} = useSWR(url,fetcher, SingleRequestConfig);    
     return {data, error, isLoading}
 }
+
+export async function fetchAnnualData(year: number) {
+    const url = getUrl('annual', {year});     
+    var response = (await fetch(url, {method: 'GET'})).json();
+    return response;
+}

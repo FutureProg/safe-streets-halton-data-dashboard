@@ -1,8 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
+import graphDataReducer from '@/lib/features/graphdata/graphDataSlice';
 
 export const makeStore = () => {
     return configureStore({
-        reducer: {}
+        reducer: {graphData: graphDataReducer}
     });
 };
 
