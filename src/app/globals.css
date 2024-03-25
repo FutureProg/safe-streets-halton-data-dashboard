@@ -106,6 +106,37 @@ main {
   flex-grow: 1;
 }
 
+button {
+  all: unset;
+  border: 1px solid black;
+  background: white;
+
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin: 4px;
+  text-align: center;
+  
+  transition: background-color 0.1s font-weight 0.1s border-width 0.1s;    
+}
+button:enabled:hover {
+  background-color: hsl(0, 100%, 100%);
+}
+button:disabled {
+  opacity: 0.5;
+}
+button:focus {
+  outline: auto;
+}
+
+button.primary {  
+  background-color: hsl(208, 80%, 40%);
+  border-color: hsl(208, 64%, 10%);
+  color: white;
+  font-weight: bold;
+}
+button.primary:enabled:hover {
+  background-color: hsl(208, 64%, 30%);
+}
 /* @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;

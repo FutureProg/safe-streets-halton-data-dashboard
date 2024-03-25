@@ -2,15 +2,28 @@
     display: grid;
     grid-template-columns: 2fr 3fr;
     grid-template-rows: auto 4fr 2fr;    
-    gap: 2rem;
+    gap: 24px;
     height: 100%;
-    width: 100%;
+    width: 100%;    
 }
 
 .filtersRow {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;    
+    justify-content: center;    
     grid-row: 1;
     grid-column: 1/ span 2;
+
+    margin-left: 14px;
+}
+
+.filtersRow label {
+    font-size: 18px;
+    font-weight: 400;
+
+    margin-right: 4px;
+}
+
+.filtersRow select {
+    font-size: 18px;    
 }
