@@ -36,7 +36,7 @@ export const UIPlot =  (/*{data}: {data: Partial<PlotData>[]}*/) : DataPlot => {
         if (loadState == LoadState.None) {
             dispatch(loadData(2023));
         }
-    }, [dispatch, loadState]);
+    }, [dispatch, loadState]); // also for when "Applied Filters" store state changes
 
     
     if (error) {
