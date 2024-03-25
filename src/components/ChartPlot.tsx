@@ -1,13 +1,16 @@
 'use client'
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { PlotData, Data as PlotlyData } from 'plotly.js';
-import * as Api from '../api';
-import { jsonArrayToPlotDataArr } from '@/util';
+// import { PlotData, Data as PlotlyData } from 'plotly.js';
+// import * as Api from '../api';
+// import { jsonArrayToPlotDataArr } from '@/util';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { LoadState, loadData } from '@/lib/features/graphdata/graphDataSlice';
-const Plot = dynamic(() => import('react-plotly.js'), { ssr: false });
+import { DataPlot } from '@/types';
+const PlotlyPlot = dynamic(() => import('react-plotly.js'), { ssr: false });
+
+import styles from './ChartPlot.module.css';
 
 interface AnnualDataArr {
     municipality: string,
@@ -23,7 +26,7 @@ interface AnnualData {
     number_of_entries: number
 };
 
-export default (/*{data}: {data: Partial<PlotData>[]}*/) => {    
+export const UIPlot =  (/*{data}: {data: Partial<PlotData>[]}*/) : DataPlot => {    
     // const defaultData = [] as Partial<PlotData>[];
     // const [data, setData] = useState(defaultData);
     // ///{type: 'bar', x: data.municipality, y: data.number_of_cases, name: data.description},
@@ -38,24 +41,26 @@ export default (/*{data}: {data: Partial<PlotData>[]}*/) => {
     
     if (error) {
         return (
-            <div className='plot-loading' style={{width: '800px', height: '800px'}}>
+            <div className={`${styles.chartPlot} ${styles.plotLoading}`}>
                 <b>Error Loading Plot!<br/> {error}</b>
             </div>
         );
     }
     if (!data || loadState === LoadState.Loading) {
         return (
-            <div className='plot-loading' style={{width: '800px', height: '800px'}}>
+            <div className={`${styles.chartPlot} ${styles.plotLoading}`}>
                 <b>Plot Loading...</b>
             </div>
         );
     }    
     return (
-        <div>  
-            <Plot
+        <div className={styles.chartPlot}>  
+            <PlotlyPlot
                 data={data}
                 layout={ {width: 800, height: 800, title: 'A Fancy Plot'} }
             />
         </div>
     );
 }
+
+export default UIPlot;

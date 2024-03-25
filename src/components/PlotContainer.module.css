@@ -1,0 +1,16 @@
+.plotContainer {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    grid-template-rows: 1fr 4fr 2fr;    
+    gap: 2rem;
+    height: 100%;
+    width: 100%;
+}
+
+.filtersRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;    
+    grid-row: 1;
+    grid-column: 1/ span 2;
+}

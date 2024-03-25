@@ -1,0 +1,14 @@
+
+.plotLoading {
+    border: 1px solid black;
+    background: white;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+.chartPlot {
+    display: block;
+    grid-row: 2;
+    grid-column: 1;
+    border: 1px solid black;
+}

@@ -3,18 +3,18 @@ import { useState, useEffect } from 'react';
 // import styles from "./page.module.css";
 import './homepage.css';
 import dynamic from "next/dynamic";
-import DPlot from '../components/plot';
+import ChartPlot from '../components/ChartPlot';
 import { PlotData, Data as PlotlyData } from 'plotly.js';
 import * as Api from '@/api';
 import { jsonArrayToPlotDataArr } from '@/util';
-import FormContainer from "@/components/plotcontainer";
+import PlotContainer from "@/components/PlotContainer";
 
 export default function Home() { 
   return (
     <main>
-      <FormContainer>
-        <DPlot/>   
-      </FormContainer>         
+      <PlotContainer>
+        <ChartPlot/>   
+      </PlotContainer>         
     </main>
   );
 }
