@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from "react";
-import style from './PlotContainer.module.css';
+import styles from './PlotContainer.module.css';
 
 export default ({ children,}: Readonly<{ children?: React.ReactNode; }>) => {
 
@@ -12,8 +12,8 @@ export default ({ children,}: Readonly<{ children?: React.ReactNode; }>) => {
     };
 
     return (
-      <div className={style.plotContainer}>
-        <div className={style.filtersRow}>
+      <div className={styles.plotContainer}>
+        <div className={styles.filtersRow}>
           <div>
             <label htmlFor="select-1">Year</label>
             <select name="year" id="select-1" onChange={onChange}>

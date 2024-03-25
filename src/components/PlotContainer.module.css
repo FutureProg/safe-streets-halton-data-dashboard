@@ -1,7 +1,7 @@
 .plotContainer {
     display: grid;
     grid-template-columns: 2fr 3fr;
-    grid-template-rows: 1fr 4fr 2fr;    
+    grid-template-rows: auto 4fr 2fr;    
     gap: 2rem;
     height: 100%;
     width: 100%;

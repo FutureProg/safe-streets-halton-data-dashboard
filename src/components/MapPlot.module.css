@@ -1,0 +1,9 @@
+.mapPlot {
+    display: block;
+    border: 1px solid black;
+    background: white;
+    content: 'Map';
+
+    grid-column: 2;
+    grid-row: 2 / span 2;
+}

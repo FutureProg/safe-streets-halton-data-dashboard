@@ -8,12 +8,16 @@ import { PlotData, Data as PlotlyData } from 'plotly.js';
 import * as Api from '@/api';
 import { jsonArrayToPlotDataArr } from '@/util';
 import PlotContainer from "@/components/PlotContainer";
+import MapPlot from "@/components/MapPlot";
+import DataTable from "@/components/DataTable";
 
 export default function Home() { 
   return (
     <main>
       <PlotContainer>
         <ChartPlot/>   
+        <MapPlot/>
+        <DataTable/>
       </PlotContainer>         
     </main>
   );
