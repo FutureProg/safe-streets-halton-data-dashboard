@@ -27,7 +27,7 @@ export default (/*{data}: {data: Partial<PlotData>[]}*/) => {
     // const defaultData = [] as Partial<PlotData>[];
     // const [data, setData] = useState(defaultData);
     // ///{type: 'bar', x: data.municipality, y: data.number_of_cases, name: data.description},
-    let {error, loadState, data} = useAppSelector((state) => ({...state.graphData, originalData: undefined}));    
+    let {error, loadState, data} = useAppSelector((state) => state.graphData);    
     let dispatch = useAppDispatch();
     useEffect(() => {
         if (loadState == LoadState.None) {
