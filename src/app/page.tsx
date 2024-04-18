@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 // import styles from "./page.module.css";
 import './homepage.css';
 import dynamic from "next/dynamic";
@@ -12,11 +12,17 @@ import MapPlot from "@/components/MapPlot";
 import DataTable from "@/components/DataTable";
 
 export default function Home() { 
+
+  const Map = React.useMemo( () => dynamic(
+    () => import('@/components/MapPlot'),
+    { ssr: false }
+  ), []);
+
   return (
     <main>
       <PlotContainer>
         <ChartPlot/>   
-        <MapPlot/>
+        <Map/>
         <DataTable/>
       </PlotContainer>         
     </main>
