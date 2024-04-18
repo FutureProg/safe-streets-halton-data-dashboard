@@ -2,9 +2,6 @@
 import React from 'react';
 import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
-// import { PlotData, Data as PlotlyData } from 'plotly.js';
-// import * as Api from '../api';
-// import { jsonArrayToPlotDataArr } from '@/util';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { LoadState, loadData } from '@/lib/features/graphdata/graphDataSlice';
 import { DataPlot } from '@/types';

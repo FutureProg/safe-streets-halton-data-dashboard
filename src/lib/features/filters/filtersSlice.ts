@@ -26,16 +26,7 @@ export const filtersSlice = createSlice({
     }
 });
 
-export const selectFilter = createAppSelector(
-    [
-        (state: RootState) => state.filters.filters,
-        (state: RootState, filter: string) => filter
-    ],
-    (filters : Record<string, any>, filterId: string) => {
-        return filters[filterId];
-    }
-)
-
+export const selectFilter = (filterId: string) => (state: RootState) => state.filters.filters[filterId];
 export const selectFilters = (state: RootState) => state.filters.filters;
 
 export default filtersSlice.reducer;
