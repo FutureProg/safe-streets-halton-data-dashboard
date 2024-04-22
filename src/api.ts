@@ -66,7 +66,7 @@ export const fetchAnnualData = async (year: number) => simpleQuery('query/count'
 export interface FetchCaseDataParams extends QueryParamBase {
     start_date: Date;
     end_date: Date;
-    excluded_cities: string[];   
+    excluded_cities?: string[];   
 }
 /**
  * Fetch case data with the specified constraints

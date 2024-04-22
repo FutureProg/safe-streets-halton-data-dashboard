@@ -1,4 +1,4 @@
-import { LoadState, CaseData } from "@/common";
+import { LoadState, CaseData, caseDataToText } from "@/common";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { LatLngExpression, MarkerOptions } from "leaflet";
 import * as Api from '@/api';
@@ -13,6 +13,7 @@ export interface MarkerData {
     options: MarkerDataOptions;
     position: LatLngExpression;
     caseData: CaseData;
+    popupText?: string;
 }
 
 export interface MarkerDataOptions {
@@ -46,7 +47,8 @@ function transformData(data: Record<string, any>[]): MarkerData[] {
             location: record['location'],
             longitude: record['longitude']
         };
-        re.push({ caseData, position, options });
+        let popupText = caseDataToText(caseData);
+        re.push({ caseData, position, options, popupText });
     }
     return re;
 }
