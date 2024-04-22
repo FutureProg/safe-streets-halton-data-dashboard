@@ -3,7 +3,7 @@ import React from 'react';
 import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { LoadState, loadData } from '@/lib/features/graphdata/graphDataSlice';
+import { LoadDataThunkParams, LoadState, loadData } from '@/lib/features/graphdata/graphDataSlice';
 import { DataPlot } from '@/types';
 const PlotlyPlot = dynamic(() => import('react-plotly.js'), { ssr: false });
 
@@ -31,7 +31,12 @@ export const UIPlot =  (/*{data}: {data: Partial<PlotData>[]}*/) : DataPlot => {
     let dispatch = useAppDispatch();
     useEffect(() => {
         if (loadState == LoadState.None) {
-            dispatch(loadData(2023));
+            var params : LoadDataThunkParams = {
+                start_date: new Date(2024, 0, 1),
+                end_date: new Date(),
+                group: ['city', 'description']                
+            }
+            dispatch(loadData(params));
         }
     }, [dispatch, loadState]); // also for when "Applied Filters" store state changes
 
@@ -54,7 +59,7 @@ export const UIPlot =  (/*{data}: {data: Partial<PlotData>[]}*/) : DataPlot => {
         <div className={styles.chartPlot}>  
             <PlotlyPlot
                 data={data}
-                layout={ {width: 800, height: 800, title: 'A Fancy Plot'} }
+                layout={ {width: 800, height: 800, title: ''} }
             />
         </div>
     );

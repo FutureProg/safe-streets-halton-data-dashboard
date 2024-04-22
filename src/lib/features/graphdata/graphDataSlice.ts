@@ -24,7 +24,17 @@ const initialState : GraphDataState = {
     originalData: []
 }
 
-export const loadData = createAsyncThunk('graphData/loadData', async(year: number) => {
+export interface LoadDataThunkParams extends Api.CountsQueryParams{    
+}
+export const loadData = createAsyncThunk('graphData/loadData', async(params: LoadDataThunkParams) => {    
+    const queryParams : Api.CountsQueryParams = {
+        ...params        
+    };
+    const response = await Api.fetchCounts(queryParams);
+    return await response;
+});
+
+export const _loadData = createAsyncThunk('graphData/loadAnnual', async(year: number) => {
     const response = await Api.fetchAnnualData(year);
     return await response;
 });
@@ -43,7 +53,7 @@ export const graphDataSlice = createSlice({
                 state.loadState = LoadState.Loaded;
                 state.error = undefined;
                 state.originalData = action.payload;
-                state.data = Util.jsonArrayToPlotDataArr(action.payload.data, 'bar', 'municipality', 'number_of_cases', 'description');      
+                state.data = Util.jsonArrayToPlotDataArr(action.payload.data, 'bar', 'city', 'records', 'description');      
             })
             .addCase(loadData.rejected, (state, action) => {
                 state.loadState = LoadState.Error;

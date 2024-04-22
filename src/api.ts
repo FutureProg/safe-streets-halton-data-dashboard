@@ -1,12 +1,14 @@
 import useSWR, { Fetcher, SWRConfiguration } from "swr";
+import { convertDateObjectsToISO } from "./util";
 
 const DATA_API_URL = process.env.dataAPI;
 const fetcher = (...args: any[]) => fetch(args[0], ...args.slice(1)).then(res => res.json());
 
 function getUrl(dir: string, query_params = {}) {
-    const url = DATA_API_URL + '/' + dir;
+    const url = DATA_API_URL + '/' + dir;    
     if (query_params) {
-        const params = new URLSearchParams(query_params);        
+        const paramsConverted = convertDateObjectsToISO(query_params);
+        const params = new URLSearchParams(paramsConverted);
         return url + '?' + params;
     }    
     return url;
@@ -22,7 +24,7 @@ const SingleRequestConfig = {
     refreshInterval: 0
 } as SWRConfiguration;
 
-interface CountsQueryParams {
+export interface CountsQueryParams {
     start_date: Date, 
     end_date: Date, 
     group:any[], 
@@ -41,6 +43,12 @@ export function getAnnualData(year: number) {
     // var response = await fetch(url, {method: 'GET'});    
     let {data, error, isLoading} = useSWR(url,fetcher, SingleRequestConfig);    
     return {data, error, isLoading}
+}
+
+export async function fetchCounts(queryParams: CountsQueryParams) {    
+    const url = getUrl('query/count', queryParams);
+    var response = (await fetch(url, {method: 'GET'})).json();
+    return response;
 }
 
 export async function fetchAnnualData(year: number) {

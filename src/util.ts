@@ -13,6 +13,18 @@ export function flattenData(data: Array<Record<string, any>>) {
     return result;
 }
 
+export function convertDateObjectsToISO(obj: object) {
+    let re: Record<string, any> = {};
+    for(const [key, value] of Object.entries(obj)) {
+        if (value && value instanceof Date) {
+            re[key] = (value as Date).toISOString();
+        } else {
+            re[key] = value;
+        }
+    }
+    return re;
+}
+
 export function jsonArrayToPlotDataArr(data: Record<string, any>[], type: PlotType, x: string, y: string ,name?: string, other?: Partial<PlotData>): Partial<PlotData>[] {    
     let result = [] as Partial<PlotData>[];
     if (name) {
@@ -32,6 +44,7 @@ export function jsonArrayToPlotDataArr(data: Record<string, any>[], type: PlotTy
             preResult[_name].x.push(item[x]);
             preResult[_name].y.push(item[y]);
         }
+        console.log(preResult);
         Object.keys(preResult).forEach((key) =>{
             result.push(preResult[key]);
         });                
