@@ -2,14 +2,8 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "@/lib/store";
 import { PlotData } from "plotly.js";
 import * as Api from '@/api';
+import {LoadState} from '@/common';
 import * as Util from '@/util';
-
-export enum LoadState {
-    None,
-    Loading,
-    Loaded,    
-    Error
-};
 
 export interface GraphDataState {
     loadState: LoadState,

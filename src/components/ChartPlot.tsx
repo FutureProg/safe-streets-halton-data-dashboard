@@ -3,7 +3,8 @@ import React from 'react';
 import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { LoadDataThunkParams, LoadState, loadData } from '@/lib/features/graphdata/graphDataSlice';
+import { LoadDataThunkParams, loadData } from '@/lib/features/graphdata/graphDataSlice';
+import {LoadState} from '@/common';
 import { DataPlot } from '@/types';
 const PlotlyPlot = dynamic(() => import('react-plotly.js'), { ssr: false });
 

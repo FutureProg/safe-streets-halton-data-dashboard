@@ -14,6 +14,23 @@ function getUrl(dir: string, query_params = {}) {
     return url;
 }
 
+/**
+ * Queries the server via a get request with the specified params
+ * @param dir The URL to connect to on the API server
+ * @param params the parameters to pass via the GET request
+ * @returns a JSON Promise of the request
+ */
+export async function simpleQuery(dir: string, params = {}) {
+    const url = getUrl(dir, params);
+    var response = (await fetch(url, {method: 'GET'})).json();
+    return response;
+}
+
+interface QueryParamBase {
+    item_offset?: number;
+    item_count?: number;
+}
+
 const SingleRequestConfig = {
     shouldRetryOnError: false,        
     revalidateOnFocus: false,
@@ -32,27 +49,47 @@ export interface CountsQueryParams {
     item_offset?:number, 
     item_count?:number
 }
+/**
+ * Fetch aggregated data for the specified time frame
+ * @param queryParams the parameters for the aggregated data 
+ * @returns data aggregated as specified by the user, giving the number of incidents and number of entries
+ */
+export const fetchCounts = async (queryParams: CountsQueryParams) => simpleQuery('query/count', queryParams);    
+
+/**
+ * Get aggregated data for the specified year
+ * @param year The Year to Get Data For
+ * @returns 
+ */
+export const fetchAnnualData = async (year: number) => simpleQuery('query/count', {year});
+
+export interface FetchCaseDataParams extends QueryParamBase {
+    start_date: Date;
+    end_date: Date;
+    excluded_cities: string[];   
+}
+/**
+ * Fetch case data with the specified constraints
+ * @param params 
+ * @returns 
+ */
+export const fetchCaseData = async (params: FetchCaseDataParams) => simpleQuery('get_data', params);
+
+/**
+ * @deprecated no longer using SWR, use fetchCounts instead.
+ */
 export function getCounts(queryParams: CountsQueryParams) {    
     const url = getUrl('query/count', queryParams);
     let {data, error, isLoading} = useSWR(url,fetcher, SingleRequestConfig);    
     return {data, error, isLoading}
 }
 
+/**
+ * @deprecated no longer using SWR, use fetchAnnualData instead.
+ */
 export function getAnnualData(year: number) {
     const url = getUrl('annual', {year});     
     // var response = await fetch(url, {method: 'GET'});    
     let {data, error, isLoading} = useSWR(url,fetcher, SingleRequestConfig);    
     return {data, error, isLoading}
-}
-
-export async function fetchCounts(queryParams: CountsQueryParams) {    
-    const url = getUrl('query/count', queryParams);
-    var response = (await fetch(url, {method: 'GET'})).json();
-    return response;
-}
-
-export async function fetchAnnualData(year: number) {
-    const url = getUrl('annual', {year});     
-    var response = (await fetch(url, {method: 'GET'})).json();
-    return response;
 }
