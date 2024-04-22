@@ -73,7 +73,7 @@ export interface FetchCaseDataParams extends QueryParamBase {
  * @param params 
  * @returns 
  */
-export const fetchCaseData = async (params: FetchCaseDataParams) => simpleQuery('get_data', params);
+export const fetchCaseData = async (params: FetchCaseDataParams) => simpleQuery('query/get_data', params);
 
 /**
  * @deprecated no longer using SWR, use fetchCounts instead.
