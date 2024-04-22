@@ -13,7 +13,6 @@ export interface CaseData {
     city: string;
     latitude: number;
     longitude: number;    
-    position: [number, number];    
     globalID: string;
 }
 

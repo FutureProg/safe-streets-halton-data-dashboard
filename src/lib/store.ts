@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 import graphDataReducer from '@/lib/features/graphdata/graphDataSlice';
 import filtersReducer from '@/lib/features/filters/filtersSlice';
+import mapDataReducer from './features/mapData/mapDataSlice';
 
 export const makeStore = () => {
     return configureStore({
         reducer: {
             graphData: graphDataReducer,
-            filters: filtersReducer
+            filters: filtersReducer,
+            mapData: mapDataReducer
         }
     });
 };
