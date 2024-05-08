@@ -3,30 +3,30 @@ import { RootState } from "@/lib/store";
 import { PayloadAction, createSelector, createSlice } from "@reduxjs/toolkit"
 
 export interface FiltersState {
-    filters: Record<string, any>
+    year: number;
 };
 
 const initialState : FiltersState = {
-    filters: {}
+    year: 2023
 };
 
-export interface SetFilterPayload {
-    id: string,
-    value: any
-};
+export type SetFilterPayload = Partial<FiltersState>;
 
 export const filtersSlice = createSlice({
     name: 'filters',
     initialState,
     reducers: {
-        setFilter: (state: FiltersState, action: PayloadAction<SetFilterPayload>) => {
-            let {id, value} = action.payload;
-            state.filters[id] = value;
+        setFilters: (state: FiltersState, action: PayloadAction<SetFilterPayload>) => {            
+            state = {
+                ...state,
+                ...action.payload
+            }            
+            return state;
         }
     }
 });
 
-export const selectFilter = (filterId: string) => (state: RootState) => state.filters.filters[filterId];
-export const selectFilters = (state: RootState) => state.filters.filters;
+export const selectFilters = (state: RootState) => state.filters;
+export const {setFilters} = filtersSlice.actions;
 
 export default filtersSlice.reducer;

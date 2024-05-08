@@ -9,6 +9,7 @@ import { DataPlot } from '@/types';
 const PlotlyPlot = dynamic(() => import('react-plotly.js'), { ssr: false });
 
 import styles from './ChartPlot.module.css';
+import { selectFilters } from '@/lib/features/filters/filtersSlice';
 
 interface AnnualDataArr {
     municipality: string,
@@ -29,17 +30,18 @@ export const UIPlot =  (/*{data}: {data: Partial<PlotData>[]}*/) : DataPlot => {
     // const [data, setData] = useState(defaultData);
     // ///{type: 'bar', x: data.municipality, y: data.number_of_cases, name: data.description},
     let {error, loadState, data} = useAppSelector((state) => state.graphData);    
+    let filters = useAppSelector(selectFilters);
     let dispatch = useAppDispatch();
     useEffect(() => {
         if (loadState == LoadState.None) {
             var params : LoadDataThunkParams = {
-                start_date: new Date(2024, 0, 1),
-                end_date: new Date(),
+                start_date: new Date(filters.year, 0, 1),
+                end_date: new Date(filters.year, 11, 31),
                 group: ['city', 'description']                
             }
             dispatch(loadData(params));
         }
-    }, [dispatch, loadState]); // also for when "Applied Filters" store state changes
+    }, [dispatch, loadState, filters]); // also for when "Applied Filters" store state changes
 
     
     if (error) {

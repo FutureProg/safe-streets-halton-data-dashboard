@@ -9,20 +9,22 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { useEffect } from "react";
 import { LoadState, caseDataToHTML } from "@/common";
 import { LoadDataThunkParams, MarkerData, loadData } from "@/lib/features/mapData/mapDataSlice";
+import { selectFilters } from "@/lib/features/filters/filtersSlice";
 
 export const MapPlot = () : DataPlot => {
     
     let {loadState, data, error} = useAppSelector((state) => state.mapData);
+    let filters = useAppSelector(selectFilters)
     let dispatch = useAppDispatch();
     useEffect(() => {
-        if (loadState == LoadState.None) {
+        if (loadState == LoadState.None) {            
             let params : LoadDataThunkParams = {
-                start_date: new Date(2024, 0, 1),
-                end_date: new Date()                
+                start_date: new Date(filters.year, 0, 1),
+                end_date: new Date(filters.year, 11, 31)                
             };
             dispatch(loadData(params));
         }
-    }, [dispatch, loadState]);    
+    }, [dispatch, loadState, filters]);    
 
     let items = data.map((markerData: MarkerData) => (
         <Marker position={markerData.position}>

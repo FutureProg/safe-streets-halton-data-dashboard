@@ -2,8 +2,9 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "@/lib/store";
 import { PlotData } from "plotly.js";
 import * as Api from '@/api';
-import {LoadState} from '@/common';
+import {LoadState, setLoadStateGeneric} from '@/common';
 import * as Util from '@/util';
+import { clearLoadStates } from "@/lib/actions";
 
 export interface GraphDataState {
     loadState: LoadState,
@@ -36,7 +37,11 @@ export const _loadData = createAsyncThunk('graphData/loadAnnual', async(year: nu
 export const graphDataSlice = createSlice({
     name: 'graphData',
     initialState,    
-    reducers: {        
+    reducers: {   
+        // setLoadState: (state: GraphDataState, action: PayloadAction<LoadState>) => {
+        //     state.loadState = action.payload;
+        // }
+        setLoadState: setLoadStateGeneric<GraphDataState>()
     },
     extraReducers(builder) {
         builder
@@ -53,8 +58,12 @@ export const graphDataSlice = createSlice({
                 state.loadState = LoadState.Error;
                 state.error = action.error.message;
             });
+        builder.addCase(clearLoadStates, (state, action) => {
+                state.loadState = LoadState.None;
+            });
     }
 });
 
+export const { setLoadState } = graphDataSlice.actions;
 export default graphDataSlice.reducer;
 

@@ -1,7 +1,8 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, createAction } from '@reduxjs/toolkit';
 import graphDataReducer from '@/lib/features/graphdata/graphDataSlice';
 import filtersReducer from '@/lib/features/filters/filtersSlice';
-import mapDataReducer from './features/mapData/mapDataSlice';
+import mapDataReducer, { setLoadState as setMapDataLoadState } from './features/mapData/mapDataSlice';
+import { LoadState } from '@/common';
 
 export const makeStore = () => {
     return configureStore({

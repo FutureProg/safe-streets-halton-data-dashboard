@@ -1,3 +1,5 @@
+import { PayloadAction } from "@reduxjs/toolkit";
+
 export enum LoadState {
     None,
     Loading,
@@ -26,4 +28,7 @@ export const caseDataToHTML = (data: CaseData) => {
     return Object.entries(data)
         .map(([key, value]) => (<p>{key}: {value instanceof Date? (value as Date).toDateString() : value}</p>));        
 }
-    
+
+export const setLoadStateGeneric = <T extends {loadState: LoadState},>() => (state: T, action: PayloadAction<LoadState>) => {
+    state.loadState = action.payload;
+};  

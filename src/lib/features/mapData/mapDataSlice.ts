@@ -1,7 +1,8 @@
-import { LoadState, CaseData, caseDataToText } from "@/common";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { LoadState, CaseData, caseDataToText, setLoadStateGeneric } from "@/common";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { LatLngExpression, MarkerOptions } from "leaflet";
 import * as Api from '@/api';
+import { clearLoadStates } from "@/lib/actions";
 
 export interface MapDataState {
     loadState: LoadState;
@@ -56,7 +57,9 @@ function transformData(data: Record<string, any>[]): MarkerData[] {
 export const mapDataSlice = createSlice({
     name: 'graphData',
     initialState,
-    reducers: {},
+    reducers: {
+        setLoadState: setLoadStateGeneric<MapDataState>()
+    },
     extraReducers(builder) {
         builder
             .addCase(loadData.pending, (state, action) => {
@@ -71,7 +74,11 @@ export const mapDataSlice = createSlice({
                 state.loadState = LoadState.Error;
                 state.error = action.error.message;
             });
+        builder.addCase(clearLoadStates, (state, action) => {
+                state.loadState = LoadState.None;
+            });
     }
 });
 
+export const { setLoadState } = mapDataSlice.actions;
 export default mapDataSlice.reducer;
