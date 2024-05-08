@@ -7,7 +7,7 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { useEffect } from "react";
-import { LoadState } from "@/common";
+import { LoadState, caseDataToHTML } from "@/common";
 import { LoadDataThunkParams, MarkerData, loadData } from "@/lib/features/mapData/mapDataSlice";
 
 export const MapPlot = () : DataPlot => {
@@ -26,7 +26,7 @@ export const MapPlot = () : DataPlot => {
 
     let items = data.map((markerData: MarkerData) => (
         <Marker position={markerData.position}>
-            {markerData.popupText? (<Popup>{markerData.popupText}</Popup>) : (<></>)}
+            {markerData.popupText? (<Popup>{caseDataToHTML(markerData.caseData)}</Popup>) : (<></>)}
         </Marker>
     ));
 

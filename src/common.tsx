@@ -22,3 +22,8 @@ export const caseDataToText = (data: CaseData) => {
         .join('\n');
 }
     
+export const caseDataToHTML = (data: CaseData) => {
+    return Object.entries(data)
+        .map(([key, value]) => (<p>{key}: {value instanceof Date? (value as Date).toDateString() : value}</p>));        
+}
+    
