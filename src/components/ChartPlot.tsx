@@ -1,5 +1,5 @@
 'use client'
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
@@ -29,7 +29,7 @@ export const UIPlot =  (/*{data}: {data: Partial<PlotData>[]}*/) : DataPlot => {
     // const defaultData = [] as Partial<PlotData>[];
     // const [data, setData] = useState(defaultData);
     // ///{type: 'bar', x: data.municipality, y: data.number_of_cases, name: data.description},
-    let {error, loadState, data} = useAppSelector((state) => state.graphData);    
+    let {error, loadState, data} = useAppSelector((state) => state.graphData);        
     let filters = useAppSelector(selectFilters);
     let dispatch = useAppDispatch();
     useEffect(() => {
@@ -43,6 +43,13 @@ export const UIPlot =  (/*{data}: {data: Partial<PlotData>[]}*/) : DataPlot => {
         }
     }, [dispatch, loadState, filters]); // also for when "Applied Filters" store state changes
 
+    let chartPlotContainer = useRef<HTMLDivElement>(null);
+    let [plotWidth, setPlotWidth] = useState(800);
+    useEffect(() => {
+        if (chartPlotContainer.current) {
+            setPlotWidth(chartPlotContainer.current.getBoundingClientRect().width);
+        }        
+    }, [chartPlotContainer]);
     
     if (error) {
         return (
@@ -59,10 +66,10 @@ export const UIPlot =  (/*{data}: {data: Partial<PlotData>[]}*/) : DataPlot => {
         );
     }    
     return (
-        <div className={styles.chartPlot}>  
+        <div ref={chartPlotContainer} className={styles.chartPlot}>  
             <PlotlyPlot
                 data={data}
-                layout={ {width: 800, height: 800, title: ''} }
+                layout={ {width: plotWidth, height: 800, title: ''} }
             />
         </div>
     );
