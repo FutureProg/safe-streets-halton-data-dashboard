@@ -4,10 +4,12 @@ import { PayloadAction, createSelector, createSlice } from "@reduxjs/toolkit"
 
 export interface FiltersState {
     year: number;
+    excluded_cities: string[];
 };
 
 const initialState : FiltersState = {
-    year: 2023
+    year: 2023,
+    excluded_cities: []
 };
 
 export type SetFilterPayload = Partial<FiltersState>;

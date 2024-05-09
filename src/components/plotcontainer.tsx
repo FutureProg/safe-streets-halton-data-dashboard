@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { clearLoadStates } from "@/lib/actions";
 import Multiselect from "multiselect-react-dropdown";
 import { MultiSelectStyles } from "@/types";
+import { arrayDifference, arrayDisjoint } from "@/util";
 
 export default ({ children,}: Readonly<{ children?: React.ReactNode; }>) => {
 
@@ -25,8 +26,12 @@ export default ({ children,}: Readonly<{ children?: React.ReactNode; }>) => {
 
     let onApply = () => {  
       console.log(selectedYear);    
+      
+      let tempArr = selectedCities.map(x => x.value);
+
       dispatch(setFilters({
-        year: selectedYear
+        year: selectedYear,
+        excluded_cities: arrayDifference(cities, tempArr)
       }));      
       dispatch(clearLoadStates());
       setApplyButtonEnabled(false);
@@ -38,9 +43,17 @@ export default ({ children,}: Readonly<{ children?: React.ReactNode; }>) => {
       'name': cityName.toLowerCase().split(" ").map((part) => part.charAt(0).toUpperCase() + part.substring(1)).join(" ")
     }));
     let [selectedCities, setSelectedCities] = useState(cityDropdownOptions);
-    let onCityChange = (selList: any, item: any) => {
-      console.log(selList);      
-    }
+    let onCityChange = (selList: typeof cityDropdownOptions, item: any) => {
+      setSelectedCities(selList);
+    }    
+    useEffect(() => {
+      let tempArr = selectedCities.map(x => x.value);
+      let newExcludes = arrayDifference(cities, tempArr);
+      let result = arrayDisjoint(newExcludes, filter.excluded_cities);
+      console.log(result);
+      let enableApply = arrayDisjoint(newExcludes, filter.excluded_cities).size > 0;
+      setApplyButtonEnabled(enableApply);              
+    }, [selectedCities])
     const multiSelectStyle : Partial<MultiSelectStyles> = {
       multiselectContainer: {
         display: 'inline-block'
