@@ -56,8 +56,11 @@ export default ({ children,}: Readonly<{ children?: React.ReactNode; }>) => {
     }, [selectedCities])
     const multiSelectStyle : Partial<MultiSelectStyles> = {
       multiselectContainer: {
-        display: 'inline-block'
+        display: 'inline-block'      
       }, 
+      searchBox: {
+        paddingRight: '14px'
+      },
       chips: {
         display: 'none'        
       }                 
@@ -86,6 +89,8 @@ export default ({ children,}: Readonly<{ children?: React.ReactNode; }>) => {
               onSelect={onCityChange}            
               displayValue="name"                        
               showCheckbox={true}
+              placeholder={selectedCities.length > 0? `${selectedCities.length} Municipalities Selected` : 'Select a Municipality'}
+              avoidHighlightFirstOption={true}
               />
             </span>            
             
