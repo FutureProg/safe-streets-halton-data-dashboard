@@ -137,6 +137,11 @@ button.primary {
 button.primary:enabled:hover {
   background-color: hsl(208, 64%, 30%);
 }
+
+div:has(> .inline-multi-select) {
+  display: inline-block;
+}
+
 /* @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;

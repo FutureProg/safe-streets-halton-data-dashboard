@@ -11,6 +11,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.2",
     "leaflet": "^1.9.4",
+    "multiselect-react-dropdown": "^2.0.25",
     "next": "14.1.0",
     "plotly.js": "^2.29.1",
     "react": "^18",
