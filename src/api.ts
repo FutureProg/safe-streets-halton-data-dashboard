@@ -46,6 +46,7 @@ export interface CountsQueryParams {
     end_date: Date, 
     group:any[], 
     filter?: string, 
+    excluded_cities?: string[],
     item_offset?:number, 
     item_count?:number
 }
