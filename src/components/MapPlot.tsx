@@ -14,6 +14,7 @@ import MarkerClusterGroup from "react-leaflet-cluster";
 
 import mvcCrashIcon from '@/img/mvc-crash-icon.png';
 import L, { divIcon } from "leaflet";
+import { MarkerPopupContents } from "./MarkerPopupContents";
 
 export const MapPlot = () : DataPlot => {
     
@@ -41,7 +42,7 @@ export const MapPlot = () : DataPlot => {
 
     let items = data.map((markerData: MarkerData) => (
         <Marker position={markerData.position} key={'Marker-' + markerData.position} icon={markerIcon}>
-            {markerData.popupText? (<Popup key={'Popup-' + markerData.position}>{markerData.popupText/*caseDataToHTML(markerData.caseData)*/}</Popup>) : (<></>)}
+            {markerData.popupText? (<MarkerPopupContents key={'Popup-' + markerData.position} data={markerData.caseData}/>) : (<></>)}
         </Marker>
     ));
 

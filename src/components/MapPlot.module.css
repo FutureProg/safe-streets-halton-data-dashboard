@@ -9,3 +9,14 @@
     position: relative;
     z-index: 0;
 }
+.mapPopupContent {
+
+}
+
+.mapPopupContent table {
+    table-layout: fixed;
+    border-collapse: collapse;        
+}
+.mapPopupContent th, .mapPopupContent td {    
+    padding: 8px 15px;
+}
