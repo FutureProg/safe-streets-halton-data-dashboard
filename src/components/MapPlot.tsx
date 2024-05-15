@@ -10,6 +10,10 @@ import { useEffect } from "react";
 import { LoadState, caseDataToHTML } from "@/common";
 import { LoadDataThunkParams, MarkerData, loadData } from "@/lib/features/mapData/mapDataSlice";
 import { selectFilters } from "@/lib/features/filters/filtersSlice";
+import MarkerClusterGroup from "react-leaflet-cluster";
+
+import mvcCrashIcon from '@/img/mvc-crash-icon.png';
+import L, { divIcon } from "leaflet";
 
 export const MapPlot = () : DataPlot => {
     
@@ -27,9 +31,17 @@ export const MapPlot = () : DataPlot => {
         }
     }, [dispatch, loadState, filters]);    
 
+    let markerIcon = new L.Icon({
+        iconUrl: mvcCrashIcon.src,
+        iconRetinaUrl: mvcCrashIcon.src,        
+        iconSize: [32, 45],
+        iconAnchor: [16, 45],
+        popupAnchor: [0, -45]
+    })
+
     let items = data.map((markerData: MarkerData) => (
-        <Marker position={markerData.position}>
-            {markerData.popupText? (<Popup>{caseDataToHTML(markerData.caseData)}</Popup>) : (<></>)}
+        <Marker position={markerData.position} key={'Marker-' + markerData.position} icon={markerIcon}>
+            {markerData.popupText? (<Popup key={'Popup-' + markerData.position}>{markerData.popupText/*caseDataToHTML(markerData.caseData)*/}</Popup>) : (<></>)}
         </Marker>
     ));
 
@@ -39,7 +51,9 @@ export const MapPlot = () : DataPlot => {
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>       
-                {items}         
+                <MarkerClusterGroup chunkedLoading>
+                    {items}         
+                </MarkerClusterGroup>                
             </MapContainer>
         </div>
     )
