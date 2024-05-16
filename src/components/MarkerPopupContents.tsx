@@ -32,6 +32,13 @@ export const MarkerPopupContents = (props: MarkerPopupContentProps) => {
         'IMPAIRED DRIVING': 'Impaired Driving',
         'DANGEROUS OPERATION - TRAFFIC': 'Dangerous Operation of Vehicle'
     }
+    // Typically will trigger on a reload
+    if (!caseData && props.data.length > 0) {
+        caseData = props.data[0];
+        setPageNumber(0);
+    } else if (!caseData || props.data.length == 0) {
+        return (<></>)
+    }
     return (
         <Popup key={props.key}>
             <div className={styles.mapPopupContent}>                                
@@ -49,11 +56,11 @@ export const MarkerPopupContents = (props: MarkerPopupContentProps) => {
                 }
                 <table>
                     <tr>
-                        <th>Case Number</th>
+                        <th>Case #</th>
                         <td>{caseData.case_no}</td>
                     </tr>
                     <tr>
-                        <th>City</th>
+                        <th>Municipality</th>
                         <td>{caseData.city}</td>
                     </tr>
                     <tr>
