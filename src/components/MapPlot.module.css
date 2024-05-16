@@ -15,7 +15,8 @@
 
 .mapPopupContent table {
     table-layout: fixed;
-    border-collapse: collapse;        
+    border-collapse: collapse; 
+    margin-top: 4px;       
 }
 .mapPopupContent th, .mapPopupContent td {    
     padding: 8px 15px;
