@@ -4,5 +4,6 @@
  * @type {import('next').NextConfig}
  */
 module.exports = {
-    basePath: '/ssh-dashboard'
+    basePath: '/ssh-dashboard',
+    output: 'export'
 }
