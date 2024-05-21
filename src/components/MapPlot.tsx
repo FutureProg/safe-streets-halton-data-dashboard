@@ -6,8 +6,8 @@ import styles from "./MapPlot.module.css";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { useEffect } from "react";
-import { LoadState, caseDataToHTML } from "@/common";
+import { useContext, useEffect } from "react";
+import { CaseData, LoadState, caseDataToHTML } from "@/common";
 import { LoadDataThunkParams, MarkerData, loadData } from "@/lib/features/mapData/mapDataSlice";
 import { selectFilters } from "@/lib/features/filters/filtersSlice";
 import MarkerClusterGroup from "react-leaflet-cluster";
@@ -15,9 +15,12 @@ import MarkerClusterGroup from "react-leaflet-cluster";
 import mvcCrashIcon from '@/img/mvc-crash-icon.png';
 import L, { divIcon } from "leaflet";
 import { MarkerPopupContents } from "./MarkerPopupContents";
+import { LocalFilterContext, LocalFilterType } from "@/contexts/LocalFilterContext";
 
 export const MapPlot = () : DataPlot => {
-    
+    let localFilters = useContext(LocalFilterContext);
+    let localFilterDescs = localFilters.description.map((v => v.value));
+
     let {loadState, data, error} = useAppSelector((state) => state.mapData);
     let filters = useAppSelector(selectFilters)
     let dispatch = useAppDispatch();
@@ -40,7 +43,14 @@ export const MapPlot = () : DataPlot => {
         popupAnchor: [0, -45]
     })
 
-    let items = data.map((markerData: MarkerData) => (
+    let items = data
+    .map((markerData: MarkerData) => { // apply local filters
+        let re = {...markerData, caseData: [] as CaseData[]};        
+        re.caseData = markerData.caseData.filter((value) => localFilterDescs.indexOf(value.description) >= 0);
+        return re;
+    })
+    .filter((val) => val.caseData.length > 0)
+    .map((markerData: MarkerData) => ( // create marker
         <Marker position={markerData.position} key={'Marker-' + markerData.position} icon={markerIcon}>
             {markerData.popupText? (<MarkerPopupContents key={'Popup-' + markerData.position} data={markerData.caseData}/>) : (<></>)}
         </Marker>

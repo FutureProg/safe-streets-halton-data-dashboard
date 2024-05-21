@@ -1,7 +1,7 @@
 .plotContainer {
     display: grid;
     grid-template-columns: 2fr 3fr;
-    grid-template-rows: auto 4fr 2fr;    
+    grid-template-rows: auto auto 4fr;    
     gap: 24px;
     height: 100%;
     width: 100%;    
@@ -10,7 +10,8 @@
 .filtersRow {
     display: flex;
     flex-direction: row;
-    justify-content: center;      
+    justify-content: center;
+    align-items: center;      
     flex-wrap: nowrap;  
     grid-row: 1;
     grid-column: 1/ span 2;
@@ -18,7 +19,19 @@
     margin-left: 14px;
 }
 
-.filtersRow label {
+.localFiltersRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;      
+    flex-wrap: nowrap;  
+    grid-row: 2;
+    grid-column: 1/ span 2;
+
+    margin-left: 14px;
+}
+
+.filtersRow label, .localFiltersRow label {
     font-size: 18px;
     font-weight: 400;
 
@@ -31,7 +44,10 @@
     display: inline-block;
     border-right: 2px solid #828282;
 }
+.filterItem:last-child {
+    border-right: none;
+}
 
-.filtersRow select {
+.filtersRow select, .localFiltersRow select {
     font-size: 18px;    
 }

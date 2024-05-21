@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from './PlotContainer.module.css';
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { selectFilters, setFilters } from "@/lib/features/filters/filtersSlice";
@@ -8,13 +8,14 @@ import { clearLoadStates } from "@/lib/actions";
 import Multiselect from "multiselect-react-dropdown";
 import { MultiSelectStyles } from "@/types";
 import { arrayDifference, arrayDisjoint } from "@/util";
+import { LocalFilterContext, LocalFilterType } from "@/contexts/LocalFilterContext";
 
 export default ({ children,}: Readonly<{ children?: React.ReactNode; }>) => {
 
     let [isApplyButtonEnabled, setApplyButtonEnabled] = useState(false);
     let [selectedYear, setSelectedYear] = useState(2023);    
     let filter = useAppSelector(selectFilters);
-    let dispatch = useAppDispatch();
+    let dispatch = useAppDispatch();    
 
     // When the filters are changed, re-enable the apply button
     useEffect(() => {
@@ -66,6 +67,24 @@ export default ({ children,}: Readonly<{ children?: React.ReactNode; }>) => {
       }                 
     }    
 
+    let caseDescriptions = [
+      'MVC - HIT & RUN',
+      'THEFT OF BICYCLE',
+      'ROADSIDE TEST',
+      'IMPAIRED DRIVING',
+      'MVC - PI',
+      'DANGEROUS OPERATION - TRAFFIC',
+      'MVC - FATALITY'
+  ];;
+    let dropdownDescriptionOptions = caseDescriptions.map((val) => ({'value': val, 'name': val}))
+    let [selectedDescriptions, setSelectedDescriptions] = useState(dropdownDescriptionOptions);
+    let onLocalDescFilterChange = (selList: typeof dropdownDescriptionOptions, item: any) => {
+      setSelectedDescriptions(selList);
+    }
+
+    let localFilters : LocalFilterType = {
+      description: selectedDescriptions
+    };
     return (
       <div className={styles.plotContainer}>
         <div className={styles.filtersRow}>
@@ -89,15 +108,37 @@ export default ({ children,}: Readonly<{ children?: React.ReactNode; }>) => {
               onSelect={onCityChange}            
               displayValue="name"                        
               showCheckbox={true}
-              placeholder={selectedCities.length > 0? `${selectedCities.length} Municipalities Selected` : 'Select a Municipality'}
+              placeholder={selectedCities.length > 0? `${selectedCities.length} Municipalities Selected` : 'Select at least one municipality'}
               avoidHighlightFirstOption={true}
               />
             </span>            
             
             <button className="primary" disabled={!isApplyButtonEnabled} onClick={onApply}>Apply</button>
-          </div>                    
-        </div>      
-        {children}
+          </div>                              
+        </div>
+        <div className={styles.localFiltersRow}>
+          <div>
+              <span className={styles.filterItem}>
+                  <label htmlFor="select-city">Incident Type</label>
+                  <Multiselect
+                  style={multiSelectStyle}
+                  showArrow={true}
+                  className="inline-multi-select"
+                  options={dropdownDescriptionOptions}
+                  selectedValues={selectedDescriptions}
+                  onRemove={onLocalDescFilterChange}
+                  onSelect={onLocalDescFilterChange}            
+                  displayValue="name"                        
+                  showCheckbox={true}
+                  placeholder={selectedDescriptions.length > 0? `${selectedDescriptions.length} Incident Types` : 'Select at least one incident type'}
+                  avoidHighlightFirstOption={true}
+                  />
+              </span>
+            </div>
+        </div>
+        <LocalFilterContext.Provider value={localFilters}>
+          {children}
+        </LocalFilterContext.Provider>        
       </div>
     );
 }

@@ -2,10 +2,9 @@
     display: block;
     border: 1px solid black;
     background: white;
-    content: 'Map';
 
     grid-column: 2;
-    grid-row: 2 / span 2;
+    grid-row: 3 / span 1;
     position: relative;
     z-index: 0;
 }

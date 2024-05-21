@@ -52,7 +52,7 @@ export const graphDataSlice = createSlice({
                 state.loadState = LoadState.Loaded;
                 state.error = undefined;
                 state.originalData = action.payload;
-                state.data = Util.jsonArrayToPlotDataArr(action.payload.data, 'bar', 'city', 'records', 'description');      
+                state.data = Util.jsonArrayToPlotDataArr(action.payload.data, 'bar', 'city', 'cases', 'description');      
             })
             .addCase(loadData.rejected, (state, action) => {
                 state.loadState = LoadState.Error;

@@ -1,5 +1,5 @@
 'use client'
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
@@ -10,6 +10,7 @@ const PlotlyPlot = dynamic(() => import('react-plotly.js'), { ssr: false });
 
 import styles from './ChartPlot.module.css';
 import { selectFilters } from '@/lib/features/filters/filtersSlice';
+import { LocalFilterContext } from '@/contexts/LocalFilterContext';
 
 interface AnnualDataArr {
     municipality: string,
@@ -29,9 +30,16 @@ export const UIPlot =  (/*{data}: {data: Partial<PlotData>[]}*/) : DataPlot => {
     // const defaultData = [] as Partial<PlotData>[];
     // const [data, setData] = useState(defaultData);
     // ///{type: 'bar', x: data.municipality, y: data.number_of_cases, name: data.description},
-    let {error, loadState, data} = useAppSelector((state) => state.graphData);        
+
+    let localFilters = useContext(LocalFilterContext);
+    let localFilterDescs = localFilters.description.map((v => v.value));
+
+    let {error, loadState, data} = useAppSelector((state) => state.graphData);      
     let filters = useAppSelector(selectFilters);
     let dispatch = useAppDispatch();
+
+    let presentationData = data.filter((plotData) => localFilterDescs.indexOf(plotData.name!) >= 0);
+
     useEffect(() => {
         if (loadState == LoadState.None) {
             var params : LoadDataThunkParams = {
@@ -72,7 +80,7 @@ export const UIPlot =  (/*{data}: {data: Partial<PlotData>[]}*/) : DataPlot => {
     return (
         <div ref={chartPlotContainer} className={styles.chartPlot}>  
             <PlotlyPlot
-                data={data}
+                data={presentationData}
                 layout={ {width: plotWidth, height: 800, title: ''} }
             />
         </div>
