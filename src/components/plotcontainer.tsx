@@ -5,7 +5,7 @@ import { LocalFilterContext, LocalFilterType, defaultFilters } from "@/contexts/
 import { LocalFilters } from "./filters/LocalFilters";
 import { ServerFilters } from "./filters/ServerFilters";
 
-export default ({ children,}: Readonly<{ children?: React.ReactNode; }>) => {                 
+const PlotContainer = ({ children,}: Readonly<{ children?: React.ReactNode; }>) => {                 
     
     let [localFilters, setLocalFilters] = useState<LocalFilterType>(defaultFilters);
 
@@ -19,3 +19,4 @@ export default ({ children,}: Readonly<{ children?: React.ReactNode; }>) => {
       </div>
     );
 }
+export default PlotContainer;
