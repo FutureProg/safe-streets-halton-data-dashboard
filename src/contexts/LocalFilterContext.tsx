@@ -1,7 +1,7 @@
 import { useContext, createContext } from "react";
 
 export type LocalFilterType = {
-    description: {name: string, value: string}[]
+    description: string[]
 }
 
 let caseDescriptions = [
@@ -15,7 +15,7 @@ let caseDescriptions = [
 ];
 let dropdownDescriptionOptions = caseDescriptions.map((val) => ({'value': val, 'name': val}));
 export const defaultFilters = {
-    description: dropdownDescriptionOptions
+    description: caseDescriptions
 };
 
 export const LocalFilterContext = createContext(defaultFilters);

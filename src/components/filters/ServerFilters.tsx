@@ -7,7 +7,13 @@ import { arrayDifference, arrayDisjoint } from '@/util';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { selectFilters, setFilters } from '@/lib/features/filters/filtersSlice';
 import { clearLoadStates } from '@/lib/actions';
+import { DropDownChangeEventType, DropDownFilter } from './DropDownFilter';
 
+
+/**
+ * Contains filters that are sent to the server when fetching data after clicking the apply button.
+ * @returns A "view" containing each of the filters.
+ */
 export const ServerFilters = () => {
     let {multiSelectStyle} = useContext(AppThemeContext);
     let [isApplyButtonEnabled, setApplyButtonEnabled] = useState(false);
@@ -20,12 +26,12 @@ export const ServerFilters = () => {
       'value': cityName, 
       'name': cityName.toLowerCase().split(" ").map((part) => part.charAt(0).toUpperCase() + part.substring(1)).join(" ")
     }));
-    let [selectedCities, setSelectedCities] = useState(cityDropdownOptions);
-    let onCityChange = (selList: typeof cityDropdownOptions, item: any) => {
+    let [selectedCities, setSelectedCities] = useState(cities);
+    let onCityChange = (selList: typeof cities, item: any) => {
       setSelectedCities(selList);
     }    
     useEffect(() => {
-      let tempArr = selectedCities.map(x => x.value);
+      let tempArr = selectedCities;
       let newExcludes = arrayDifference(cities, tempArr);
       let result = arrayDisjoint(newExcludes, filter.excluded_cities);
       console.log(result);
@@ -36,7 +42,7 @@ export const ServerFilters = () => {
     let onApply = () => {  
         console.log(selectedYear);    
         
-        let tempArr = selectedCities.map(x => x.value);
+        let tempArr = selectedCities;
   
         dispatch(setFilters({
           year: selectedYear,
@@ -49,37 +55,31 @@ export const ServerFilters = () => {
     useEffect(() => {
         setApplyButtonEnabled(selectedYear !== filter.year);
     }, [selectedYear]);
-    let onYearChange = (sel: any) => {                                           
-        setSelectedYear(Number.parseInt(sel.target.value));
+    let onYearChange = (allSelectedOptions: number[], changeType: DropDownChangeEventType, item: number) => {                                           
+        setSelectedYear(allSelectedOptions[0]);
     }; 
 
     return (
         <div className={styles.filtersRow}>
           <div>
-            <span className={styles.filterItem}>
-              <label htmlFor="select-1">Year</label>
-              <select name="year" id="select-1" onChange={onYearChange} defaultValue={selectedYear}>
-                <option value={2023}>2023</option>
-                <option value={2024}>2024</option>            
-              </select>
-            </span>            
-            <span className={styles.filterItem}>
-              <label htmlFor="select-city">Municipality</label>
-              <Multiselect
-              style={multiSelectStyle}
-              showArrow={true}
-              className="inline-multi-select"
-              options={cityDropdownOptions}
-              selectedValues={selectedCities}
-              onRemove={onCityChange}
-              onSelect={onCityChange}            
-              displayValue="name"                        
-              showCheckbox={true}
-              placeholder={selectedCities.length > 0? `${selectedCities.length} Municipalities Selected` : 'Select at least one municipality'}
-              avoidHighlightFirstOption={true}
-              />
-            </span>            
-            
+            <DropDownFilter<number>
+                defaultSelection={selectedYear}
+                onChange={onYearChange}
+                options={[
+                    {name: '2023', value: 2023},
+                    {name: '2024', value: 2024}
+                ]}                
+                label='Year'
+            />
+            <DropDownFilter<string>
+                defaultSelection={selectedCities}
+                onChange={onCityChange}
+                options={cityDropdownOptions}                
+                label='Municipality'
+                multiselect={true}
+                nounPlural='municipalities'
+                nounSingular='municipality'
+            />            
             <button className="primary" disabled={!isApplyButtonEnabled} onClick={onApply}>Apply</button>
           </div>                              
         </div> 

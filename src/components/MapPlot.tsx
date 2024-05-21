@@ -19,7 +19,6 @@ import { LocalFilterContext, LocalFilterType } from "@/contexts/LocalFilterConte
 
 export const MapPlot = () : DataPlot => {
     let localFilters = useContext(LocalFilterContext);
-    let localFilterDescs = localFilters.description.map((v => v.value));
 
     let {loadState, data, error} = useAppSelector((state) => state.mapData);
     let filters = useAppSelector(selectFilters)
@@ -46,7 +45,7 @@ export const MapPlot = () : DataPlot => {
     let items = data
     .map((markerData: MarkerData) => { // apply local filters
         let re = {...markerData, caseData: [] as CaseData[]};        
-        re.caseData = markerData.caseData.filter((value) => localFilterDescs.indexOf(value.description) >= 0);
+        re.caseData = markerData.caseData.filter((value) => localFilters.description.indexOf(value.description) >= 0);
         return re;
     })
     .filter((val) => val.caseData.length > 0)

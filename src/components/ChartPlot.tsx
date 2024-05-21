@@ -32,13 +32,12 @@ export const UIPlot =  (/*{data}: {data: Partial<PlotData>[]}*/) : DataPlot => {
     // ///{type: 'bar', x: data.municipality, y: data.number_of_cases, name: data.description},
 
     let localFilters = useContext(LocalFilterContext);
-    let localFilterDescs = localFilters.description.map((v => v.value));
 
     let {error, loadState, data} = useAppSelector((state) => state.graphData);      
     let filters = useAppSelector(selectFilters);
     let dispatch = useAppDispatch();
 
-    let presentationData = data.filter((plotData) => localFilterDescs.indexOf(plotData.name!) >= 0);
+    let presentationData = data.filter((plotData) => localFilters.description.indexOf(plotData.name!) >= 0);
 
     useEffect(() => {
         if (loadState == LoadState.None) {
