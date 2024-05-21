@@ -14,7 +14,7 @@ let caseDescriptions = [
     'MVC - FATALITY'
 ];
 let dropdownDescriptionOptions = caseDescriptions.map((val) => ({'value': val, 'name': val}));
-let defaultFilters = {
+export const defaultFilters = {
     description: dropdownDescriptionOptions
 };
 

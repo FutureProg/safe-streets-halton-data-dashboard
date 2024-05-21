@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "./StoreProvider";
 import Head from "next/head";
+import { LayoutContextProvider } from "@/contexts/LayoutContextProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +17,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
+  return (    
     <html lang="en">
       <Head>
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -25,10 +26,12 @@ export default function RootLayout({
       </Head>
       <body className={inter.className}>
         <StoreProvider>
-          <nav>
-            <h1>Safe Streets Dashboard (Beta)</h1>
-          </nav>
-          {children}
+          <LayoutContextProvider>
+            <nav>
+              <h1>Safe Streets Dashboard (Beta)</h1>
+            </nav>
+            {children}
+          </LayoutContextProvider>          
         </StoreProvider>        
       </body>
     </html>
