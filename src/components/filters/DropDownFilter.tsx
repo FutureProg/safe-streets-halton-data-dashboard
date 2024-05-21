@@ -84,7 +84,7 @@ export const DropDownFilter = <T,>(props: DropDownFilterProps<T>) => {
               />
         )
     } else {
-        let options = props.options.map(({ name, }, idx) => <option value={idx}>{name}</option>);
+        let options = props.options.map(({ name, }, idx) => <option key={idx} value={idx}>{name}</option>);
         let onChange = (evt: ChangeEvent<HTMLSelectElement>) => {
             let selection = Number(evt.target.value);
             let selectedOption = props.options[selection].value;
