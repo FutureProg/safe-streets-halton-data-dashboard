@@ -75,22 +75,3 @@ export interface FetchCaseDataParams extends QueryParamBase {
  * @returns 
  */
 export const fetchCaseData = async (params: FetchCaseDataParams) => simpleQuery('query/get_data', params);
-
-/**
- * @deprecated no longer using SWR, use fetchCounts instead.
- */
-export function getCounts(queryParams: CountsQueryParams) {    
-    const url = getUrl('query/count', queryParams);
-    let {data, error, isLoading} = useSWR(url,fetcher, SingleRequestConfig);    
-    return {data, error, isLoading}
-}
-
-/**
- * @deprecated no longer using SWR, use fetchAnnualData instead.
- */
-export function getAnnualData(year: number) {
-    const url = getUrl('annual', {year});     
-    // var response = await fetch(url, {method: 'GET'});    
-    let {data, error, isLoading} = useSWR(url,fetcher, SingleRequestConfig);    
-    return {data, error, isLoading}
-}
