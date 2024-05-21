@@ -30,6 +30,9 @@ export default function RootLayout({
             <nav>
               <h1>Safe Streets Dashboard (Beta)</h1>
             </nav>
+            <span style={{marginLeft: '8px'}}>
+              <b>Note:</b> HRPS data does duplicate cases, and often provides inaccurate & different locations. Map markers indicate the incident occured in the general vicinity.
+            </span>
             {children}
           </LayoutContextProvider>          
         </StoreProvider>        
