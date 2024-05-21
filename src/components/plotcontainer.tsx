@@ -1,5 +1,5 @@
 'use client';
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import styles from './PlotContainer.module.css';
 import { LocalFilterContext, LocalFilterType, defaultFilters } from "@/contexts/LocalFilterContext";
 import { LocalFilters } from "./filters/LocalFilters";
