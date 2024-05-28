@@ -1,36 +1,12 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Safe Streets Dashboard
+This dashboard uses data from the Halton Regional Police Services to display stats and maps of traffic-related incidents in Halton Region. 
+![screenshot of dashboard website](screenshot_1.png)
 
-## Getting Started
+## Why this dashboard?
+The [existing dashboard](https://experience.arcgis.com/experience/e2d6a32212ba438da4144ea42dfccaf9) for the Halton Regional Police is limited to the past 365 days, data prior to that is deleted.
+By keeping records locally, we are able to perform long-term time-series analysis that currently isn't facilitated. The dashboard aims to make understanding safety issues simpler, and raising awareness of the issue in Halton as well as solutions. 
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## How it works
+1. A python pipeline reads data from the [ArcGIS REST API](https://developers.arcgis.com/rest/) once-a-day and puts it into a MySQL server.
+2. The data from MySQL is served to the webpage via Node ExpressJS.
+3. The NextJS React web application makes requests to the NodeJS backend, and displays them on a map using [Plotly](https://plotly.com/javascript/react/) and [Leaflet](https://leafletjs.com/). 
