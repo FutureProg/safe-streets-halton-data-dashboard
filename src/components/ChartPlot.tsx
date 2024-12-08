@@ -42,10 +42,10 @@ export const UIPlot =  (/*{data}: {data: Partial<PlotData>[]}*/) : DataPlot => {
     useEffect(() => {
         if (loadState == LoadState.None) {
             var params : LoadDataThunkParams = {
-                start_date: new Date(filters.year, 0, 1),
-                end_date: new Date(filters.year, 11, 31),    
-                excluded_cities: filters.excluded_cities,
-                group: ['city', 'description']                
+                startDate: new Date(filters.year, 0, 1).getTime(),
+                endDate: new Date(filters.year, 11, 31).getTime(),    
+                excludedCities: filters.excluded_cities,
+                groupBy: ['city', 'description']                
             }
             if (filters.excluded_cities.length > 0) {
                 params.filter = `city not in (${filters.excluded_cities.map(x => `"${x}"`).join(",")})`;

@@ -42,13 +42,13 @@ const SingleRequestConfig = {
 } as SWRConfiguration;
 
 export interface CountsQueryParams {
-    start_date: Date, 
-    end_date: Date, 
-    group:any[], 
+    startDate: number, 
+    endDate: number, 
+    groupBy:any[], 
     filter?: string, 
-    excluded_cities?: string[],
-    item_offset?:number, 
-    item_count?:number
+    excludedCities?: string[],
+    itemOffset?:number, 
+    itemCount?:number
 }
 /**
  * Fetch aggregated data for the specified time frame

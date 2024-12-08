@@ -3,7 +3,7 @@ interface PagingParams {
     itemCount: number;
 }
 
-interface PagingResponseBody<T> {
+export interface PagingResponseBody<T> {
     data: T[],
     offset: number,
     itemCount: number,

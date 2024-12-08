@@ -5,7 +5,7 @@ import { findDataGroupBy, HRPSDataColumns } from "@/db/db";
 export const GET = async (request: NextRequest) => {
     const searchParams = request.nextUrl.searchParams;
     const { itemCount, itemOffset } = getPagingParams(searchParams);
-    const groupBy = searchParams.get("groupBy") as unknown;
+    const groupBy = searchParams.get("groupBy")?.split(",");
     const endDate = new Date(
         Number.parseInt(searchParams.get("endDate") ?? Date.now().toString()),
     );
