@@ -18,7 +18,7 @@
     "leaflet": "^1.9.4",
     "multiselect-react-dropdown": "^2.0.25",
     "mysql2": "^3.11.5",
-    "next": "14.1.0",
+    "next": "14.2.20",
     "pg": "^8.13.1",
     "plotly.js": "^2.29.1",
     "react": "^18",
