@@ -10,7 +10,7 @@ export default async (phase, {defaultConfig}) => {
     const nextConfig = {    
         env,
         basePath: '/ssh-dashboard',
-        output: 'export'
+        output: 'standalone'
     }
 
     return nextConfig;

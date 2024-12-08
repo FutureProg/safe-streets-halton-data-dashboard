@@ -74,4 +74,8 @@ export interface FetchCaseDataParams extends QueryParamBase {
  * @param params 
  * @returns 
  */
-export const fetchCaseData = async (params: FetchCaseDataParams) => simpleQuery('query/get_data', params);
+export const fetchCaseData = async (params: FetchCaseDataParams) => {
+    const urLSearchParams = new URLSearchParams(Object.entries(params));
+    const url = 'ssh-dashboard/api/data?' + urLSearchParams;
+    return (await fetch(url, {method: 'GET'})).json();
+}
