@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const PORT = process.env.PORT || 3002;
-const baseURL = `http://localhost:${PORT}`;
+const baseURL = `http://localhost:${PORT}/ssh-dashboard`;
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -25,7 +25,7 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: [['line'], ['json']],
+  reporter: [['line'], ['html']],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -75,8 +75,11 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: `npx next dev --port ${PORT}`,
+    command: `npx next dev -p ${PORT}`,
     url: baseURL,
+    timeout: 10 * 1000,
+    stdout: 'pipe',
+    stderr: 'pipe',
     reuseExistingServer: !process.env.CI,
   },
 });
