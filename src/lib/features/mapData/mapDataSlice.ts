@@ -30,16 +30,16 @@ const initialState: MapDataState = {
 export interface LoadDataThunkParams extends Api.FetchCaseDataParams { }
 export const loadData = createAsyncThunk("mapData/loadData", async (params: LoadDataThunkParams, thunkAPI) => {
     let totalData = []
-    params.item_count = 500;
-    let data = await Api.fetchCaseData({ ...params } as Api.FetchCaseDataParams);
-    totalData.push(...data.data);
-    while (data.hit_request_limit) {
-        params.item_offset = data.offset + data.limit;        
-        data = await Api.fetchCaseData({ ...params } as Api.FetchCaseDataParams);
-        totalData.push(...data.data);
+    params.itemCount = 500;
+    let response = await Api.fetchCaseData({ ...params } as Api.FetchCaseDataParams);
+    totalData.push(...response.data);
+    while (response.hitRequestLimit) {
+        params.itemOffset = response.offset + response.itemCount;        
+        response = await Api.fetchCaseData({ ...params } as Api.FetchCaseDataParams);
+        totalData.push(...response.data);
     }
-    data.data = totalData;    
-    return await data;
+    response.data = totalData;    
+    return await response;
 });
 
 function transformData(data: Record<string, any>[]): MarkerData[] {

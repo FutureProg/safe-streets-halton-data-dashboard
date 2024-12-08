@@ -27,8 +27,8 @@ export async function simpleQuery(dir: string, params = {}) {
 }
 
 interface QueryParamBase {
-    item_offset?: number;
-    item_count?: number;
+    itemOffset?: number;
+    itemCount?: number;
 }
 
 const SingleRequestConfig = {
