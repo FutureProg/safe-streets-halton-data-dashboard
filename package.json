@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "playwright test"
   },
   "dependencies": {
     "@next/env": "^15.0.4",
@@ -29,6 +30,7 @@
     "swr": "^2.2.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.49.0",
     "@types/leaflet": "^1.9.11",
     "@types/node": "^20",
     "@types/react": "^18",
