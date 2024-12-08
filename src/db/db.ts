@@ -1,8 +1,8 @@
 import { drizzle } from "drizzle-orm/mysql2";
 import { hrpsData } from "./schema";
 import mysql2 from "mysql2/promise.js";
-import { and, between, eq, notInArray } from "drizzle-orm";
-import { MySqlColumn } from "drizzle-orm/mysql-core";
+import { and, between, count, countDistinct, eq, notInArray, sql } from "drizzle-orm";
+import { MySqlColumn, MySqlSelectBuilder } from "drizzle-orm/mysql-core";
 import { HRPSDataModel } from "./models";
 import "../../envConfig";
 
@@ -13,7 +13,7 @@ export const db = drizzle({
     ),
 });
 
-type HRPSDataColumns = keyof HRPSDataModel;
+export type HRPSDataColumns = keyof HRPSDataModel;
 export const findData = async (startDate: Date, endDate: Date, options?: {
     excludedCities?: string[];
     itemOffset?: number;
@@ -37,6 +37,7 @@ export const findDataGroupBy = async (
     filter: string,
     startDate: Date,
     endDate: Date,
+    addCounts: boolean = false,
     options?: {
         excludedCities?: string[];
         itemOffset?: number;
@@ -52,5 +53,20 @@ export const findDataGroupBy = async (
     groupby.forEach((value) => {
         selectFields[value] = hrpsData[value];
     });
-    let result = db.select(selectFields);
+    let selectBuilder = null;
+    if (addCounts) {
+        selectBuilder = db.select({...selectFields, cases: countDistinct(hrpsData.caseNo), records: count()});
+    } else {
+        selectBuilder = db.select(selectFields);
+    }
+    return selectBuilder
+        .from(hrpsData)
+        .groupBy(...Object.values(selectFields))
+        .where(and(
+            between(hrpsData.date, startDate, endDate),
+            notInArray(hrpsData.city, options.excludedCities as string[]),
+            filter? sql<string>`${filter}` : eq(sql<string>`1`,1)
+        ))
+        .offset(options.itemOffset!)
+        .limit(options.itemCount!);
 };

@@ -62,7 +62,11 @@ export const fetchCounts = async (queryParams: CountsQueryParams) => simpleQuery
  * @param year The Year to Get Data For
  * @returns 
  */
-export const fetchAnnualData = async (year: number) => simpleQuery('query/count', {year});
+export const fetchAnnualData = async (year: number) => {
+    const endpointUrl = 'ssh-dashboard/api/data/count';
+
+    simpleQuery('query/count', {year});
+}
 
 export interface FetchCaseDataParams extends QueryParamBase {
     startDate: number;

@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import { findData } from '@/db/db';
 import { NextRequest } from 'next/server';
+import { createPagingResponseBody } from '../utils';
 
 export const GET = async (request: NextRequest) => {
     const searchParams = request.nextUrl.searchParams;
@@ -13,11 +14,6 @@ export const GET = async (request: NextRequest) => {
     const startDate = new Date(Number.parseInt(searchParams.get('startDate') ?? defaultStartDate.getTime().toString()));
     const excludedCities = searchParams.getAll('excludeCity');
     const data = await findData(startDate, endDate, {excludedCities, itemCount, itemOffset});
-    let responseBody = {
-        data,
-        offset: itemOffset,
-        itemCount,
-        hitRequestLimit: data.length >= itemCount
-    } 
+    let responseBody = createPagingResponseBody(data, itemOffset, itemCount);
     return Response.json(responseBody);
 }
