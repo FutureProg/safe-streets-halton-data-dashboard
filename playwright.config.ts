@@ -75,7 +75,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'npx next dev --port 3002',
+    command: `npx next dev --port ${PORT}`,
     url: baseURL,
     reuseExistingServer: !process.env.CI,
   },
