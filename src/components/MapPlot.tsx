@@ -26,9 +26,9 @@ export const MapPlot = () : DataPlot => {
     useEffect(() => {
         if (loadState == LoadState.None) {            
             let params : LoadDataThunkParams = {
-                start_date: new Date(filters.year, 0, 1),
-                end_date: new Date(filters.year, 11, 31),
-                excluded_cities: filters.excluded_cities                
+                startDate: new Date(filters.year, 0, 1).getTime(),
+                endDate: new Date(filters.year, 12, 31).getTime(),
+                excludedCities: filters.excluded_cities                
             };
             dispatch(loadData(params));
         }
