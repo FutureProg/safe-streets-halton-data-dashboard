@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest } from "next/server";
 import { createPagingResponseBody, getPagingParams } from "../../utils";
 import { findDataGroupBy, HRPSDataColumns } from "@/db/db";
@@ -20,11 +22,10 @@ export const GET = async (request: NextRequest) => {
     const excludedCities = searchParams.getAll("excludeCity");
     const data = await findDataGroupBy(
         groupBy as HRPSDataColumns[],
-        "true",
         startDate,
         endDate,
         true,
-        { excludedCities, itemCount, itemOffset },
+        { excludedCities, itemCount, itemOffset }
     );
     const body = createPagingResponseBody(data, itemOffset, itemCount);
     return Response.json(body);

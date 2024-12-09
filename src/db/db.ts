@@ -34,14 +34,14 @@ export const findData = async (startDate: Date, endDate: Date, options?: {
 
 export const findDataGroupBy = async (
     groupby: (HRPSDataColumns)[],
-    filter: string,
     startDate: Date,
     endDate: Date,
-    addCounts: boolean = false,
+    addCounts: boolean = true,
     options?: {
         excludedCities?: string[];
         itemOffset?: number;
         itemCount?: number;
+        filter?: string;
     },
 ) => {
     options = {
@@ -54,19 +54,23 @@ export const findDataGroupBy = async (
         selectFields[value] = hrpsData[value];
     });
     let selectBuilder = null;
-    if (addCounts) {
+    if (addCounts === true) {
         selectBuilder = db.select({...selectFields, cases: countDistinct(hrpsData.caseNo), records: count()});
     } else {
         selectBuilder = db.select(selectFields);
     }
-    return selectBuilder
+    let filters = [
+        between(hrpsData.date, startDate, endDate),
+        notInArray(hrpsData.city, options.excludedCities as string[])
+    ];
+    console.log(filters.length);
+    const result = selectBuilder
         .from(hrpsData)
         .groupBy(...Object.values(selectFields))
         .where(and(
-            between(hrpsData.date, startDate, endDate),
-            notInArray(hrpsData.city, options.excludedCities as string[]),
-            filter? sql<string>`${filter}` : eq(sql<string>`1`,1)
+            ...filters
         ))
         .offset(options.itemOffset!)
         .limit(options.itemCount!);
+    return await result;
 };

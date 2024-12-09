@@ -55,7 +55,11 @@ export interface CountsQueryParams {
  * @param queryParams the parameters for the aggregated data 
  * @returns data aggregated as specified by the user, giving the number of incidents and number of entries
  */
-export const fetchCounts = async (queryParams: CountsQueryParams) => simpleQuery('query/count', queryParams);    
+export const fetchCounts = async (queryParams: CountsQueryParams) => {
+    const urLSearchParams = new URLSearchParams(Object.entries(queryParams));
+    const url = 'ssh-dashboard/api/data/count?' + urLSearchParams;
+    return (await fetch(url, {method: 'GET'})).json();
+}
 
 /**
  * Get aggregated data for the specified year
