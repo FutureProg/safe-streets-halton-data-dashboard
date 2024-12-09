@@ -63,7 +63,6 @@ export const findDataGroupBy = async (
         between(hrpsData.date, startDate, endDate),
         notInArray(hrpsData.city, options.excludedCities as string[])
     ];
-    console.log(filters.length);
     const result = selectBuilder
         .from(hrpsData)
         .groupBy(...Object.values(selectFields))
