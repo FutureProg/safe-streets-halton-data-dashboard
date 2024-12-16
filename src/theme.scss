@@ -22,3 +22,11 @@ $foreground-color-map: (
     background-color: map.get($color-map, $variant);
     color: map.get($foreground-color-map, $variant);
 }
+
+@mixin text-light {
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 100%;
+}

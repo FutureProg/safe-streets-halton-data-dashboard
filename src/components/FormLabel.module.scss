@@ -1,0 +1,19 @@
+@use '/src/theme.scss';
+
+.view {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+
+    @include theme.text-light;
+
+    color: #000000;
+}
+
+.image {
+    height: 16px;
+    width: auto;
+}
