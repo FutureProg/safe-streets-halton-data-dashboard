@@ -1,0 +1,76 @@
+@use '/src/theme.scss';
+@use 'sass:color';
+
+$hoverOpacity: 0.1;
+
+@mixin text-style-standard {
+    /* button secondary */
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 100%;
+}
+@mixin text-style-secondary {
+    /* button secondary */
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 100%;
+}
+.view {
+    border: none;
+    border-radius: 8px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    cursor: pointer;
+}
+
+.sizeSmall {
+    padding: 8px 12px;
+}
+
+.variantPrimary {
+    @include theme.GetColorPair("Primary");
+    @include text-style-standard;
+
+    &:hover {
+        background: color.adjust(theme.$colorPrimary, $lightness: -10%);
+    }
+}
+.variantSecondary {
+    background: none;
+    border: 1px solid theme.$colorPrimary;
+    color: theme.$colorPrimary;
+    @include text-style-secondary;
+
+    &:hover {
+        background: color.change(theme.$colorPrimary, $alpha: $hoverOpacity);
+    }
+}
+.variantNeutral {
+    background: none;
+    border: 1px solid #000;
+    color: #000;
+    @include text-style-secondary;
+
+    &:hover {
+        background: color.change(#000, $alpha: $hoverOpacity);
+    }
+}
+.variantSubtle {
+    background: none;
+    border: none;
+    color: theme.$colorPrimary;
+    @include text-style-secondary;
+    
+    &:hover {
+        border: 1px solid theme.$colorPrimary;
+    }
+}

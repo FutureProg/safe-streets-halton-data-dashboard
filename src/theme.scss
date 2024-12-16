@@ -1,0 +1,24 @@
+@use 'sass:map';
+
+$colorPrimary: rgb(60, 97, 170);
+$colorSecondary: #9B3CAA;
+$colorTertiary: #8DAA3C;
+$color-map: (
+    "Primary": $colorPrimary,
+    "Secondary": $colorSecondary,
+    "Tertiary": $colorTertiary
+);
+
+$colorPrimaryForeground: #FFFFFF;
+$colorSecondaryForeground: #FFFFFF;
+$colorTertiaryForeground: #000000;
+$foreground-color-map: (
+    "Primary": $colorPrimaryForeground,
+    "Secondary": $colorSecondaryForeground,
+    "Tertiary": $colorTertiaryForeground
+);
+
+@mixin GetColorPair($variant) {
+    background-color: map.get($color-map, $variant);
+    color: map.get($foreground-color-map, $variant);
+}
