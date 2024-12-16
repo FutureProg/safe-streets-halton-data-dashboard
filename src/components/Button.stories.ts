@@ -1,6 +1,19 @@
-import type {Meta, StoryObj} from '@storybook/react';
+import type {ArgTypes, Meta, StoryObj} from '@storybook/react';
 
 import Button, { ButtonSize, ButtonVariant } from './Button';
+import { InputType } from 'storybook/internal/types';
+
+const argTypeFromEnum = <T extends object>(enumType: T, description='undefined') : InputType => {
+    const options = Object.keys(typeof enumType)
+        .filter((key) => !isNaN(parseInt(key)));
+    
+    return {
+        options: enumType,
+        control: {
+            type: 'select'
+        }
+    }
+}
 
 const meta: Meta<typeof Button> = {
     component: Button,
@@ -12,20 +25,8 @@ const meta: Meta<typeof Button> = {
         layout: 'centered'
     },
     argTypes: {
-        size: {
-            options: ButtonSize,
-            control: {
-                type: 'select',
-                labels: Object.keys(ButtonVariant)
-            }
-        },
-        variant: {
-            options: ButtonVariant,
-            control: {
-                type: 'select',
-                labels: Object.keys(ButtonVariant)
-            }
-        }
+        size: argTypeFromEnum(ButtonSize),
+        variant: argTypeFromEnum(ButtonVariant)
     }
 }
 
@@ -37,8 +38,8 @@ export const Primary : Story = {
     },
     args: {
         children: "Button Text",
-        size: "default",
-        variant: ButtonVariant.Primary
+        size: "default" as ButtonSize,
+        variant: "primary" as ButtonVariant
     }
 }
 

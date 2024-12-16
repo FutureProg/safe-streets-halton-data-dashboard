@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react"
+import { ButtonHTMLAttributes, PropsWithChildren } from "react"
 import classnames from 'classnames';
 import styles from './Button.module.scss';
 
@@ -15,16 +15,18 @@ export enum ButtonSize {
 }
 
 type Props = {
-    variant: ButtonVariant;
-    size?: ButtonSize;
-}
+    variant: ButtonVariant | keyof typeof ButtonVariant;
+    size?: ButtonSize | keyof typeof ButtonSize;
+    enabled?: boolean;
+} & ButtonHTMLAttributes<HTMLButtonElement>;
 
 export type ButtonProps = PropsWithChildren<Props>;
 
 export default ({
     variant = ButtonVariant.Subtle,
-    size = ButtonSize.Small,
-    children = ""
+    size = ButtonSize.Default,
+    children = "",
+    ...htmlProps
 }: ButtonProps) => {
     const variantStyle = () => {
         switch (variant) {
@@ -52,7 +54,7 @@ export default ({
         sizeStyle()
     );
     return (
-        <button className={classNames}>
+        <button {...htmlProps} className={classNames}>
             {children}
         </button>
     )
