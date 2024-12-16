@@ -30,3 +30,12 @@ $foreground-color-map: (
     font-size: 14px;
     line-height: 100%;
 }
+
+@mixin text-regular {
+    /* text regular */
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 100%;
+}
