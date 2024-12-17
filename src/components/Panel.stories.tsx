@@ -20,8 +20,8 @@ export const Default: Story = {
     children: [
       <SimpleForm>
         <FormElement>
-          <FormLabel icon={{src: TestImage, alt: ""}}>Test Form Label</FormLabel>
-          <InputText />
+          <FormLabel htmlFor='test' icon={{src: TestImage, alt: ""}}>Test Form Label</FormLabel>
+          <InputText id='test' />
         </FormElement>
       </SimpleForm>
     ]

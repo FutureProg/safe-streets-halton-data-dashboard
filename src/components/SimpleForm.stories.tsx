@@ -19,8 +19,8 @@ export const Default: Story = {
   args: {
     children: [
       <FormElement>
-        <FormLabel icon={{src: TestImage, alt: ""}}>Test Form Label</FormLabel>
-        <InputText />
+        <FormLabel htmlFor='test' icon={{src: TestImage, alt: ""}}>Test Form Label</FormLabel>
+        <InputText id='test' />
       </FormElement>
     ],
     buttonText: undefined

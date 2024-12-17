@@ -16,8 +16,8 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     children: [
-      <FormLabel icon={{src: TestImage, alt: ""}}>Test Form Label</FormLabel>,
-      <InputText />
+      <FormLabel htmlFor='test' icon={{src: TestImage, alt: ""}}>Test Form Label</FormLabel>,
+      <InputText id='test' />
     ]
   }
 };
