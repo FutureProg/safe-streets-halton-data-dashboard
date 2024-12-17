@@ -3,26 +3,19 @@ import { FormLabelProps } from "./FormLabel";
 import { InputTextProps } from "./InputText";
 import Button, { ButtonSize, ButtonVariant } from "./Button";
 import styles from './SimpleForm.module.scss';
-
-export type InputComponent = 
-    React.ReactElement<InputTextProps>;
+import { FormElementProps } from "./FormElement";
 
 export type SimpleFormProps = {
-    children: [
-        React.ReactElement<FormLabelProps>,       
-        InputComponent
-    ],
-    buttonText?: string
+    children: React.ReactElement<FormElementProps>[];
+    buttonText?: string;
 } & FormHTMLAttributes<HTMLFormElement>
 export default ({children, buttonText = 'Submit', ...htmlProps}: SimpleFormProps) => {
-    const [label, inputComponent] = children;
     return (
         <form {...htmlProps} className={styles.view}>
-            {label}
             <div className={styles.inputRow}>
-                {inputComponent}
-                <Button size={ButtonSize.Small} variant={ButtonVariant.Primary} type="submit">{buttonText}</Button>
+                {children}
             </div>
+            <Button size={ButtonSize.Small} variant={ButtonVariant.Primary} type="submit">{buttonText}</Button>
         </form>
     )
 }
