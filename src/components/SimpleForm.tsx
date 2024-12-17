@@ -6,7 +6,7 @@ import styles from './SimpleForm.module.scss';
 import { FormElementProps } from "./FormElement";
 
 export type SimpleFormProps = {
-    children: React.ReactElement<FormElementProps>[];
+    children: React.ReactElement<FormElementProps>[] | React.ReactElement<FormElementProps>;
     buttonText?: string;
 } & FormHTMLAttributes<HTMLFormElement>
 export default ({children, buttonText = 'Submit', ...htmlProps}: SimpleFormProps) => {
