@@ -1,22 +1,22 @@
-import React, { PropsWithChildren } from "react";
+import React from "react";
 import { InputTextProps } from "./InputText";
 import { FormLabelProps } from "./FormLabel";
 import styles from './FormElement.module.scss';
 import assert from "assert";
 
 export type InputComponent = 
-    React.ReactElement<InputTextProps>;
+    React.ReactElement<InputTextProps & { id: string }>;
 
 export type FormElementProps = {
     children: [
-        React.ReactElement<FormLabelProps>,       
+        React.ReactElement<FormLabelProps & { htmlFor: string }>,       
         InputComponent
     ]
 };
 
-export default ({children: [label, inputComponent]}: FormElementProps) => {
-    assert(label.props.htmlFor == inputComponent.props.id, "htmlFor and input name are not the same!");
-    assert(label.props.htmlFor && inputComponent.props.id, "label htmlFor or input name not set!");
+const FormElement = ({children: [label, inputComponent]}: FormElementProps) => {
+    assert(label.props.htmlFor === inputComponent.props.id, "htmlFor and input id are not the same!");
+    assert(label.props.htmlFor && inputComponent.props.id, "label htmlFor or input id not set!");
     return (
         <div className={styles.view}>
             {label}
@@ -24,3 +24,5 @@ export default ({children: [label, inputComponent]}: FormElementProps) => {
         </div>
     )
 }
+
+export default FormElement;
