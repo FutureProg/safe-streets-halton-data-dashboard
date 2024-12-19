@@ -1,0 +1,88 @@
+@use '/src/theme.scss';
+
+.view {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    font-family: Arial, sans-serif;
+}
+
+.inputContainer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 8px 12px;
+    position: relative;
+
+    background: #E8E8E8;
+    border-radius: 8px;
+    border: none;
+
+    @include theme.text-regular;
+    color: #000;
+
+    &:has(input:focus) {
+        border: 1px solid #434343;
+    }
+    &:has(input:disabled) {
+        color: #505050;
+        background-color: #606060;
+    }
+}
+
+.selectedOption {
+    display: flex;
+    align-items: center;
+    background-color: #e0e0e0;
+    border-radius: 2px;
+    padding: 2px 5px;
+    margin: 2px;
+    font-size: 14px;
+}
+
+.selectedOption button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.selectedOption button:focus {
+    outline: none;
+}
+
+input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 5px;
+    background: none;
+}
+
+.optionsList {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-top: none;
+    background-color: #fff;
+    z-index: 1;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.optionsList li {
+    padding: 10px;
+    cursor: pointer;
+
+    &:hover,
+    &[aria-selected="true"],
+    &.highlightedOption {
+        background-color: #f0f0f0;
+    }
+}
