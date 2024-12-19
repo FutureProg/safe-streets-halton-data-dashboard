@@ -8,9 +8,10 @@ interface Option {
 
 interface MultiSelectProps {
     options: Option[];
+    onChange?: (selectedOptions: Option[]) => void;
 }
 
-const MultiSelect = ({ options }: MultiSelectProps) => {
+const MultiSelect = ({ options, ...props }: MultiSelectProps) => {
     const [selectedOptions, setSelectedOptions] = useState<Option[]>([]);
     const [inputValue, setInputValue] = useState("");
     const [isOpen, setIsOpen] = useState(false);
@@ -32,6 +33,11 @@ const MultiSelect = ({ options }: MultiSelectProps) => {
             !selectedOptions.find((selected) => selected.value === option.value)
         ) {
             setSelectedOptions([...selectedOptions, option]);
+            props.onChange?.([...selectedOptions, option]);
+        } else {
+            const newOptions = selectedOptions.filter((value) => value !== option);
+            setSelectedOptions(newOptions);
+            props.onChange?.([...newOptions]);
         }
         setInputValue("");
         if (inputRef.current) {
