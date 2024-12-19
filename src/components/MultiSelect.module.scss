@@ -4,7 +4,7 @@
     position: relative;
     width: 100%;
     max-width: 400px;
-    font-family: Arial, sans-serif;
+    @include theme.text-regular;
 }
 
 .inputContainer {
@@ -21,6 +21,8 @@
     @include theme.text-regular;
     color: #000;
 
+    cursor: text;
+
     &:has(input:focus) {
         border: 1px solid #434343;
     }
@@ -33,23 +35,25 @@
 .selectedOption {
     display: flex;
     align-items: center;
-    background-color: #e0e0e0;
-    border-radius: 2px;
-    padding: 2px 5px;
-    margin: 2px;
+    justify-content: flex-start;
+    background-color: #447A38;
+    color: #fff;
+
+    border-radius: 4px;
+    padding: 4px;
+    padding-right: 12px;
     font-size: 14px;
-}
+    margin: 0 4px;
 
-.selectedOption button {
-    background: none;
-    border: none;
-    font-size: 16px;
-    margin-left: 5px;
-    cursor: pointer;
-}
-
-.selectedOption button:focus {
-    outline: none;
+    button {
+        background: none;
+        border: none;
+        font-size: 16px;
+        line-height: 100%;
+        cursor: pointer;
+        color: #fff;
+    }
+    text-align: right;
 }
 
 input {
@@ -70,6 +74,7 @@ input {
     border: 1px solid #ccc;
     border-top: none;
     background-color: #fff;
+    border-radius: 6px;
     z-index: 1;
     list-style: none;
     margin: 0;

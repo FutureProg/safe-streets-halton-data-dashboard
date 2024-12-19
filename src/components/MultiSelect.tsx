@@ -100,10 +100,9 @@ const MultiSelect = ({ options }: MultiSelectProps) => {
 
     return (
         <div className={styles.view} ref={containerRef}>
-            <div className={styles.inputContainer}>
+            <div className={styles.inputContainer} onClick={() => inputRef.current?.focus()}>
                 {selectedOptions.map((option) => (
-                    <span key={option.value} className={styles.selectedOption}>
-                        {option.label}
+                    <span key={option.value} className={styles.selectedOption}>                        
                         <button
                             type="button"
                             onClick={() =>
@@ -112,6 +111,7 @@ const MultiSelect = ({ options }: MultiSelectProps) => {
                         >
                             &times;
                         </button>
+                        {option.label}
                     </span>
                 ))}
                 <input
