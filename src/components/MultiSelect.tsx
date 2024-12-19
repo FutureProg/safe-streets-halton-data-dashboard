@@ -120,12 +120,7 @@ const MultiSelect = ({ options }: MultiSelectProps) => {
                     value={inputValue}
                     onChange={handleInputChange}
                     onFocus={() => setIsOpen(true)}
-                    onBlur={(evt) => {
-                        if (listRef.current?.contains(evt.relatedTarget as Node)) {
-                            return;
-                        }
-                        setIsOpen(false);
-                    }}
+                    onBlur={() => setIsOpen(false)}
                     onKeyDown={handleKeyDown}
                     aria-expanded={isOpen}
                     aria-haspopup="listbox"
