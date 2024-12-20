@@ -62,6 +62,8 @@ input {
     outline: none;
     padding: 5px;
     background: none;
+    width: fit-content;
+    min-width: 30px;
 }
 
 .optionsList {

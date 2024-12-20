@@ -9,6 +9,7 @@ interface Option {
 interface MultiSelectProps {
     options: Option[];
     onChange?: (selectedOptions: Option[]) => void;
+    id?: string;
 }
 
 const MultiSelect = ({ options, ...props }: MultiSelectProps) => {
@@ -121,6 +122,7 @@ const MultiSelect = ({ options, ...props }: MultiSelectProps) => {
                     </span>
                 ))}
                 <input
+                    id={props.id}
                     type="text"
                     role="combobox"
                     value={inputValue}
