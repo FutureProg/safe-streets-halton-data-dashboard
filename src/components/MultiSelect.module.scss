@@ -88,8 +88,20 @@ input {
     cursor: pointer;
 
     &:hover,
-    &[aria-selected="true"],
     &.highlightedOption {
         background-color: #f0f0f0;
+    }
+
+    &[aria-selected="true"] {
+        background-color: #447A38;
+        color: #fff;
+        border-bottom: 1px solid #fff;
+
+        &:hover {
+            background-color: hsl(109, 37%, 25%);
+        }
+        &:last-child {
+            border: none;
+        }
     }
 }
