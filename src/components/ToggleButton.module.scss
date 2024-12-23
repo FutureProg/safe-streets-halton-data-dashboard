@@ -12,6 +12,8 @@
     border: 1px solid rgba(0, 0, 0, 0);
     border-radius: 8px;
 
+    cursor: pointer;
+
     &[data-toggled='true'] {
         background: rgba(0,0,0,0.1);
     }
@@ -20,5 +22,4 @@
         background: none;
         border: 1px solid rgba(0, 0, 0, 0.1);
     }
-
 }
