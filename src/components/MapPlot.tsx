@@ -1,9 +1,10 @@
-'use client'
+'use client';
 import dynamic from "next/dynamic";
 import { DataPlot } from "@/types";
 
 import styles from "./MapPlot.module.css";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+
 import 'leaflet/dist/leaflet.css';
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { useContext, useEffect } from "react";
@@ -69,5 +70,3 @@ export const MapPlot = () : DataPlot => {
         </div>
     )
 };
-
-export default MapPlot;
