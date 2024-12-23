@@ -10,13 +10,14 @@ const Marker = dynamic(() => import("react-leaflet").then(mod => mod.Marker), { 
 const Popup = dynamic(() => import("react-leaflet").then(mod => mod.Popup), { ssr: false });
 
 
-export const BaseMap = (props: PropsWithChildren) => {
+export const BaseMap = ({children}: PropsWithChildren) => {
     return (
         <MapContainer zoomControl={false} center={[43.5203105, -79.794951]} zoom={11.25} scrollWheelZoom={true} style={{width: '100%', height: '100%'}}>
             <ZoomControl position="bottomright" />
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+            {children}
         </MapContainer>
     );
 }
