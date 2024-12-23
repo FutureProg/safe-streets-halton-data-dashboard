@@ -9,7 +9,6 @@ export default async (phase, {defaultConfig}) => {
     /** @type {import('next').NextConfig} */
     const nextConfig = {    
         env,
-        basePath: '/ssh-dashboard',
         output: 'standalone'
     }
 
