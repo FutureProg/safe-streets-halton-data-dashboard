@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import Image, { StaticImageData } from "next/image";
-import React, { AriaAttributes, MouseEventHandler, ReactElement, useState } from "react";
+import React, { AriaAttributes, AriaRole, MouseEventHandler, ReactElement, useState } from "react";
 import styles from './ToggleButton.module.scss';
 
 export type ToggleButtonProps = {
@@ -13,6 +13,7 @@ export type ToggleButtonProps = {
     className?: string;
     alt?: string;
     style?: React.CSSProperties;
+    role?: AriaRole;
 } & AriaAttributes;
 
 export type ToggleIconOptions = {
@@ -22,7 +23,7 @@ export type ToggleIconOptions = {
 
 const ToggleButton: React.FC<ToggleButtonProps> = ({
     onToggle,
-    defaultToggled,
+    defaultToggled = false,
     text,
     name,
     id,
@@ -31,7 +32,7 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({
     className,
     ...props
 }) => {
-    const [isToggled, setIsToggled] = useState(defaultToggled || false);
+    const [isToggled, setIsToggled] = useState(defaultToggled);
 
     const toggle: MouseEventHandler<HTMLButtonElement> = () => {
         setIsToggled(!isToggled);
@@ -46,7 +47,7 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({
         console.warn("icon provided to ToggleButton component without alt text!", {id, name, text, icon});
     }
 
-    const styleClasses = classNames(className, {[styles.toggled]: isToggled}, styles.view);
+    const styleClasses = classNames(className, styles.view);
     const getImage = (icon?: StaticImageData | ToggleIconOptions | React.ReactElement<typeof Image>) : ReactElement<any, any> | undefined => {
         if (isStaticImageData(icon)) {
             return <Image src={icon} alt={iconAlt ?? ""} />
