@@ -18,6 +18,15 @@ const config: StorybookConfig = {
     options: {},
   },
 
+  build: {
+    test: {
+      disabledAddons: [
+        '@storybook/addon-docs',
+        '@storybook/addon-essentials/docs'
+      ]
+    }
+  },
+
   staticDirs: ["../public"],
 
   docs: {}
