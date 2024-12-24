@@ -1,4 +1,5 @@
 @use '/src/theme.scss';
+@use '/src/components/InputText.module.scss' as inputText;
 
 .mapContainer {
     position: absolute;
@@ -19,7 +20,7 @@
     padding: 12px 20px;
 
     display: grid;
-    grid-template-columns: 1fr 3fr 1fr;
+    grid-template-columns: 1fr 3fr auto;
     pointer-events: none;
 
     & > * {
@@ -31,4 +32,8 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+}
+
+.filterForm {
+    width: 100%;
 }
