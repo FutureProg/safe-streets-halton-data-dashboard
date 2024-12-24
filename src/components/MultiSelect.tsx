@@ -1,15 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./MultiSelect.module.scss";
 
-interface Option {
+export interface Option {
     label: string;
     value: string;
 }
 
-interface MultiSelectProps {
+export interface MultiSelectProps {
     options: Option[];
     onChange?: (selectedOptions: Option[]) => void;
     id?: string;
+    name?: string;
 }
 
 const MultiSelect = ({ options, ...props }: MultiSelectProps) => {
