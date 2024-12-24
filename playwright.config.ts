@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const PORT = process.env.PORT || 3002;
-const baseURL = `http://localhost:${PORT}/ssh-dashboard`;
+const baseURL = `http://localhost:${PORT}/`;
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
