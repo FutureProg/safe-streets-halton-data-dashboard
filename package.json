@@ -10,7 +10,7 @@
     "test": "playwright test",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test-storybook": "test-storybook --coverage --url http://localhost:6007 --browsers chromium firefox webkit"
+    "test-storybook": "test-storybook --coverage --browsers chromium firefox webkit"
   },
   "dependencies": {
     "@next/env": "^15.0.4",
