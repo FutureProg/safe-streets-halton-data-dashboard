@@ -9,7 +9,7 @@ test("Test GET Count from server", async () => {
         groupBy: ["city", "description"]
     }
     const params = new URLSearchParams(Object.entries(queryParams));
-    const url = `http://localhost:3002/ssh-dashboard/api/data/count?` + params;
+    const url = `http://localhost:3002/api/data/count?` + params;
     const response = await (await fetch(url)).json() as PagingResponseBody<any>;
     expect(response).not.toBeNull();
     expect(response.offset).toEqual(0);
