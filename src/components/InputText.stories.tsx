@@ -1,8 +1,16 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from "@storybook/react";
 
-import InputText from './InputText';
+import InputText from "./InputText";
 
 const meta = {
+  decorators: [
+    (Story) => (
+      <>
+        <label htmlFor="input-text">Test</label>
+        <Story />
+      </>
+    ),
+  ],
   component: InputText,
 } satisfies Meta<typeof InputText>;
 
@@ -12,12 +20,14 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    disabled: false
-  }
+    id: "input-text",
+    disabled: false,
+  },
 };
 
 export const Disabled: Story = {
   args: {
-    disabled: true
-  }
+    id: "input-text",
+    disabled: true,
+  },
 };
