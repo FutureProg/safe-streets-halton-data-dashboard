@@ -14,7 +14,7 @@ export const Default: Story = {
   decorators: [
     (Story) => (
       <>
-        <label htmlFor='multi-select'></label>
+        <label htmlFor='multi-select'>Test</label>
         <Story />
       </>
     )
