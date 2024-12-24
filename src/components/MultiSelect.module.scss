@@ -30,6 +30,17 @@
         color: #505050;
         background-color: #606060;
     }
+
+    input {
+        flex: 1;
+        border: none;
+        outline: none;
+        padding: 5px;
+        background: none;
+        width: fit-content;
+        min-width: 30px;
+    }
+
 }
 
 .selectedOption {
@@ -54,16 +65,6 @@
         color: #fff;
     }
     text-align: right;
-}
-
-input {
-    flex: 1;
-    border: none;
-    outline: none;
-    padding: 5px;
-    background: none;
-    width: fit-content;
-    min-width: 30px;
 }
 
 .optionsList {
