@@ -1,5 +1,5 @@
 @use '/src/theme.scss';
-@use '/src/components/InputText.module.scss' as inputText;
+@use '/src/components/Panel.module.scss' as Panel;
 
 .mapContainer {
     position: absolute;
@@ -23,7 +23,7 @@
     grid-template-columns: 1fr 3fr auto;
     pointer-events: none;
 
-    & > * {
+    & > div > * {
         pointer-events: auto;
     }
 }
@@ -35,5 +35,9 @@
 }
 
 .filterForm {
+    @extend .view;
     width: 100%;
+    & > * {
+        width: 100%;
+    }
 }

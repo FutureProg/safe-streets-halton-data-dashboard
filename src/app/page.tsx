@@ -10,10 +10,38 @@ import LookupIcon from '@/img/icon-lookup.svg';
 import Panel from '@/components/Panel';
 import InputText from '@/components/InputText';
 import FormElement from '@/components/FormElement';
-
+import CityIcon from '@/img/icon-city.svg';
 import CalendarIcon from '@/img/icon-calendar.svg';
+import MultiSelect, { Option } from '@/components/MultiSelect';
 
 export default function Home() {
+
+  const cityOptions = [
+    {
+      "label": "Burlington",
+      "value": "burlington"
+    },
+    {
+      "label": "Halton Hills",
+      "value": "Halton Hills"
+    },
+    {
+      "label": "Milton",
+      "value": "milton"
+    },
+    {
+      "label": "Oakville",
+      "value": "oakville"
+    },
+    {
+      "label": "Georgetown",
+      "value": "georgetown"
+    },
+    {
+      "label": "Acton",
+      "value": "acton"
+    }
+  ] satisfies Option[];
 
   return (
     <main>
@@ -24,10 +52,9 @@ export default function Home() {
         <div className={styles.columnContainer}>
           <MenuPanel />
         </div>
-        <div>
-          {/* Empty container */}
-        </div>
+        <div></div>
         <div className={styles.columnContainer} style={{alignItems: 'flex-end'}}>
+          {/* Lookup by Case ID */}
           <Panel>
             <SimpleForm>
               <FormElement>
@@ -37,14 +64,20 @@ export default function Home() {
             </SimpleForm>
           </Panel>
 
-          <Panel style={{width: '100%'}}>
-            <form className={styles.filterForm}>
+          <form className={styles.filterForm}>
               <FormElement>
                 <FormLabel icon={{src: CalendarIcon, alt: ""}} htmlFor="startDate" >Start Date</FormLabel>
                 <InputText style={{width: '100%'}} id="startDate" name="startDate" />
               </FormElement>
-            </form>
-          </Panel>
+              <FormElement>
+                <FormLabel icon={{src: CalendarIcon, alt: ""}} htmlFor="endDate" >End Date</FormLabel>
+                <InputText style={{width: '100%'}} id="endDate" name="endDate" />
+              </FormElement>
+              <FormElement>
+                <FormLabel icon={{src: CityIcon, alt: ""}} htmlFor="city" >Municipality</FormLabel>
+                <MultiSelect options={cityOptions} id="city" name="city" />
+              </FormElement>
+          </form>
 
         </div>
       </div>  
