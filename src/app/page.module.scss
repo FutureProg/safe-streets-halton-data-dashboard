@@ -40,4 +40,12 @@
     & > * {
         width: 100%;
     }
+
+    .buttonRow {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 24px;
+    }
+
 }

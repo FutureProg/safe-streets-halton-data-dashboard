@@ -13,6 +13,7 @@ import FormElement from '@/components/FormElement';
 import CityIcon from '@/img/icon-city.svg';
 import CalendarIcon from '@/img/icon-calendar.svg';
 import MultiSelect, { Option } from '@/components/MultiSelect';
+import Button, { ButtonVariant } from '@/components/Button';
 
 export default function Home() {
 
@@ -77,6 +78,10 @@ export default function Home() {
                 <FormLabel icon={{src: CityIcon, alt: ""}} htmlFor="city" >Municipality</FormLabel>
                 <MultiSelect options={cityOptions} id="city" name="city" />
               </FormElement>
+              <div className={styles.buttonRow}>
+                <Button variant={ButtonVariant.Primary} type='submit'>Search</Button>
+                <Button variant={ButtonVariant.Subtle} type='reset'>Reset</Button>
+              </div>              
           </form>
 
         </div>
