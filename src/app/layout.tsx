@@ -4,6 +4,7 @@ import "./globals.css";
 import StoreProvider from "./StoreProvider";
 import Head from "next/head";
 import { LayoutContextProvider } from "@/contexts/LayoutContextProvider";
+import '@/i18n';
 
 const inter = Inter({ subsets: ["latin"] });
 
