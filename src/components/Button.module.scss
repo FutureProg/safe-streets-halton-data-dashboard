@@ -20,7 +20,7 @@ $hoverOpacity: 0.1;
     line-height: 100%;
 }
 .view {
-    border: none;
+    border: 1px solid rgba(0,0,0,0);
     border-radius: 8px;
 
     display: flex;
@@ -66,7 +66,7 @@ $hoverOpacity: 0.1;
 }
 .variantSubtle {
     background: none;
-    border: none;
+    border: 1px solid rgba(0,0,0,0);
     color: theme.$colorPrimary;
     @include text-style-secondary;
     
