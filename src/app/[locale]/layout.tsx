@@ -4,6 +4,8 @@ import "../globals.css";
 import StoreProvider from "../StoreProvider";
 import Head from "next/head";
 import { LayoutContextProvider } from "@/contexts/LayoutContextProvider";
+import TranslationProvider from "../TranslationProvider";
+import initTranslations from "../i18n";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,12 +14,16 @@ export const metadata: Metadata = {
   description: "visualize traffic safety data in Halton Region",
 };
 
-export default function RootLayout({
+const i18nNamespaces = ['translations']
+
+export default async function RootLayout({
   children, params: {locale}
 }: Readonly<{
   children: React.ReactNode;
-  params: {locale?: string};
+  params: {locale: string};
 }>) {
+  const {resources} = await initTranslations(locale, i18nNamespaces);
+
   return (    
     <html lang={locale}>
       <Head>
@@ -28,10 +34,16 @@ export default function RootLayout({
       <body className={inter.className}>
         <StoreProvider>
           <LayoutContextProvider>
+            <TranslationProvider
+              namespaces={i18nNamespaces}
+              locale={locale}
+              resources={resources}
+            >
+              {children}
+            </TranslationProvider>
             {/* <span style={{marginLeft: '8px'}}>
               <b>Note:</b> HRPS data does duplicate cases, and often provides inaccurate & different locations. Map markers indicate the incident occured in the general vicinity.
             </span> */}
-            {children}
           </LayoutContextProvider>          
         </StoreProvider>        
       </body>
