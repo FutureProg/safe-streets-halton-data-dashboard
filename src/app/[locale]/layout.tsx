@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
-import StoreProvider from "./StoreProvider";
+import "../globals.css";
+import StoreProvider from "../StoreProvider";
 import Head from "next/head";
 import { LayoutContextProvider } from "@/contexts/LayoutContextProvider";
-import '@/i18n';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,12 +13,13 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  children,
+  children, params: {locale}
 }: Readonly<{
   children: React.ReactNode;
+  params: {locale?: string};
 }>) {
   return (    
-    <html lang="en">
+    <html lang={locale}>
       <Head>
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
