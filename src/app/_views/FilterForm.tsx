@@ -8,6 +8,7 @@ import CityIcon from "@/img/icon-city.svg";
 import CalendarIcon from "@/img/icon-calendar.svg";
 
 import styles from "./FilterForm.module.scss";
+import { FormEventHandler } from "react";
 
 const formatDate = (date: Date) => {
     return `${date.getFullYear()}-${date.getMonth()}-${
@@ -47,8 +48,30 @@ export default function FilterForm() {
     const defaultStartDate = new Date();
     defaultStartDate.setDate(defaultStartDate.getDate() - 7);
     
+    const onSubmit : FormEventHandler<HTMLFormElement> = (evt) => {
+        evt.preventDefault();
+
+        const evalDate = (dateStr: string, boundary: 'start' | 'end') => {
+            let newDate = Date.parse(dateStr);
+            if (boundary == 'end') {
+                let baseDate = new Date(newDate);
+                newDate = new Date(newDate).setDate(baseDate.getDate() + 1);
+                newDate = new Date(newDate).setMilliseconds(baseDate.getMilliseconds() - 1);
+            }
+            return newDate
+        }
+
+        const formData = new FormData(evt.target as HTMLFormElement);
+        formData.set('startDate', `${evalDate(formData.get('startDate') as string, 'start')}`);
+        formData.set('endDate', `${evalDate(formData.get('endDate') as string, 'end')}`);
+        const urlParams = new URLSearchParams(formData.entries().map(([key, val]) => {
+            return [key, val as string];
+        }).toArray());
+        fetch('/api/data?' + urlParams);
+    }
+
     return (
-        <form className={styles.filterForm}>
+        <form className={styles.filterForm} onSubmit={onSubmit}>
             <FormElement>
                 <FormLabel
                     icon={{ src: CalendarIcon, alt: "" }}

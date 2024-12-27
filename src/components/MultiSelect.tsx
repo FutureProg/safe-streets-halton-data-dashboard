@@ -173,7 +173,7 @@ const MultiSelect = ({ options, ...props }: MultiSelectProps) => {
                         </li>
                     ))}
                 </ul>
-                {props.name? <input type="hidden" name={props.name} value={selectedOptions.map(option => option.value).join(',')} /> : null}
+                {props.name? <input type="hidden" name={props.name} value={selectedOptions.map(option => option.value)} /> : null}
         </div>
     );
 };
