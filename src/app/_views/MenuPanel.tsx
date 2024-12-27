@@ -39,7 +39,7 @@ const MenuPanel: React.FC<PropsWithChildren> = ({ children }) => {
                     </ToggleButton>
                 </div>
             </Panel>
-            <div id="menu-popup" className={styles.popup} data-isOpen={isOpen}>
+            <div id="menu-popup" className={styles.popup} data-open={isOpen}>
                 <Panel>
                     <ul role="menu" aria-labelledby="menu-panel-toggle-button">
                         <li role="menuitem">

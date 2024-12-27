@@ -27,7 +27,7 @@
 
     @include theme.text-regular;
 
-    &[data-isopen='false'] {
+    &[data-open='false'] {
         display: none;
     }
 
