@@ -89,7 +89,6 @@ export default function Home() {
               </FormElement>
               <div className={styles.buttonRow}>
                 <Button variant={ButtonVariant.Primary} type='submit'>Search</Button>
-                <Button variant={ButtonVariant.Subtle} type='reset'>Reset</Button>
               </div>              
           </form>
 
