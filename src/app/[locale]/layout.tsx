@@ -9,10 +9,13 @@ import initTranslations from "../i18n";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "Safe Street Dashboard [Beta]",
-  description: "visualize traffic safety data in Halton Region",
-};
+export const generateMetadata = async ({locale}: {locale: string}) => {
+  const {t} = await initTranslations(locale, i18nNamespaces);;
+  return {
+    title: t("AppName"),
+    description: "visualize traffic safety data in Halton Region"
+  };
+}
 
 const i18nNamespaces = ['translations']
 

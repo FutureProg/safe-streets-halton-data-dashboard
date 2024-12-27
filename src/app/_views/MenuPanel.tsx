@@ -5,9 +5,12 @@ import styles from "./MenuPanel.module.scss";
 import MenuToggleIcon from "@/img/bars.svg";
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
+
 
 const MenuPanel: React.FC<PropsWithChildren> = ({ children }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const {t: translate} = useTranslation();
 
     const menuIcon = (
         <Image
@@ -23,7 +26,7 @@ const MenuPanel: React.FC<PropsWithChildren> = ({ children }) => {
         <div style={{ position: "relative", width: 'fit-content' }}>
             <Panel>
                 <div className={styles.menuPanel}>
-                    <span className={styles.title}>Safe Streets Dashboard</span>
+                    <span className={styles.title}>{translate('AppTitle')}</span>
                     <ToggleButton
                         onToggle={setIsOpen}
                         icon={menuIcon}

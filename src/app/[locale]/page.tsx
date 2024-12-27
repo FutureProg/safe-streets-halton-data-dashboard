@@ -14,6 +14,7 @@ import CityIcon from '@/img/icon-city.svg';
 import CalendarIcon from '@/img/icon-calendar.svg';
 import MultiSelect, { Option } from '@/components/MultiSelect';
 import Button, { ButtonVariant } from '@/components/Button';
+import { Metadata } from 'next';
 
 export default function Home() {
 
