@@ -16,6 +16,10 @@ import MultiSelect, { Option } from '@/components/MultiSelect';
 import Button, { ButtonVariant } from '@/components/Button';
 import { Metadata } from 'next';
 
+const formatDate = (date: Date) => {
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate() < 10? "0": ""}${date.getDate()}`;
+}
+
 export default function Home() {
 
   const cityOptions = [
@@ -45,6 +49,10 @@ export default function Home() {
     }
   ] satisfies Option[];
 
+  const defaultEndDate = new Date();
+  const defaultStartDate = new Date();
+  defaultStartDate.setDate(defaultStartDate.getDate() - 7);
+
   return (
     <main>
       <div className={styles.mapContainer}>
@@ -69,11 +77,11 @@ export default function Home() {
           <form className={styles.filterForm}>
               <FormElement>
                 <FormLabel icon={{src: CalendarIcon, alt: ""}} htmlFor="startDate" >Start Date</FormLabel>
-                <InputText style={{width: '100%'}} id="startDate" name="startDate" />
+                <InputText style={{width: '100%'}} id="startDate" name="startDate" type='date'  defaultValue={formatDate(defaultStartDate)} />
               </FormElement>
               <FormElement>
                 <FormLabel icon={{src: CalendarIcon, alt: ""}} htmlFor="endDate" >End Date</FormLabel>
-                <InputText style={{width: '100%'}} id="endDate" name="endDate" />
+                <InputText style={{width: '100%'}} id="endDate" name="endDate" type='date' defaultValue={formatDate(defaultEndDate)} />
               </FormElement>
               <FormElement>
                 <FormLabel icon={{src: CityIcon, alt: ""}} htmlFor="city" >Municipality</FormLabel>
