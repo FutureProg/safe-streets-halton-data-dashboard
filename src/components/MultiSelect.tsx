@@ -11,10 +11,12 @@ export interface MultiSelectProps {
     onChange?: (selectedOptions: Option[]) => void;
     id?: string;
     name?: string;
+    defaultValues?: string[];
 }
 
 const MultiSelect = ({ options, ...props }: MultiSelectProps) => {
-    const [selectedOptions, setSelectedOptions] = useState<Option[]>([]);
+    let defaultSelection = props.defaultValues? options.filter((option) => props.defaultValues!.indexOf(option.value) >= 0) : []
+    const [selectedOptions, setSelectedOptions] = useState<Option[]>(defaultSelection);
     const [inputValue, setInputValue] = useState("");
     const [isOpen, setIsOpen] = useState(false);
     const [highlightedIndex, setHighlightedIndex] = useState<number | null>(

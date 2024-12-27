@@ -29,7 +29,7 @@ export default function Home() {
     },
     {
       "label": "Halton Hills",
-      "value": "Halton Hills"
+      "value": "halton hills"
     },
     {
       "label": "Milton",
@@ -85,7 +85,7 @@ export default function Home() {
               </FormElement>
               <FormElement>
                 <FormLabel icon={{src: CityIcon, alt: ""}} htmlFor="city" >Municipality</FormLabel>
-                <MultiSelect options={cityOptions} id="city" name="city" />
+                <MultiSelect options={cityOptions} defaultValues={['burlington', 'milton', 'oakville', 'halton hills']} id="city" name="city" />
               </FormElement>
               <div className={styles.buttonRow}>
                 <Button variant={ButtonVariant.Primary} type='submit'>Search</Button>
