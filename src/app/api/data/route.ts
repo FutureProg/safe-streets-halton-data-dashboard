@@ -12,8 +12,8 @@ export const GET = async (request: NextRequest) => {
     const defaultStartDate = new Date(endDate);
     defaultStartDate.setDate(endDate.getDate() - 30);
     const startDate = new Date(Number.parseInt(searchParams.get('startDate') ?? defaultStartDate.getTime().toString()));
-    const excludedCities = searchParams.getAll('excludeCity');
-    const data = await findData(startDate, endDate, {excludedCities, itemCount, itemOffset});
+    const cities = searchParams.getAll('city');
+    const data = await findData(startDate, endDate, {includedCities: cities, itemCount, itemOffset});
     let responseBody = createPagingResponseBody(data, itemOffset, itemCount);
     return Response.json(responseBody);
 }

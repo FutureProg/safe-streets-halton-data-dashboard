@@ -1,7 +1,7 @@
 import { drizzle } from "drizzle-orm/mysql2";
 import { hrpsData } from "./schema";
 import mysql2 from "mysql2/promise.js";
-import { and, between, count, countDistinct, eq, notInArray, sql } from "drizzle-orm";
+import { and, between, count, countDistinct, eq, inArray, notInArray, sql } from "drizzle-orm";
 import { MySqlColumn, MySqlSelectBuilder } from "drizzle-orm/mysql-core";
 import { HRPSDataModel } from "./models";
 import "../../envConfig";
@@ -15,18 +15,18 @@ export const db = drizzle({
 
 export type HRPSDataColumns = keyof HRPSDataModel;
 export const findData = async (startDate: Date, endDate: Date, options?: {
-    excludedCities?: string[];
+    includedCities?: string[];
     itemOffset?: number;
     itemCount?: number;
 }) => {
     options = {
-        excludedCities: options?.excludedCities ?? [""],
         itemCount: options?.itemCount ?? 100,
         itemOffset: options?.itemOffset ?? 0,
+        includedCities: options?.includedCities ?? []
     };
     return await db.select().from(hrpsData).where(and(
         between(hrpsData.date, startDate, endDate),
-        notInArray(hrpsData.city, options.excludedCities!),
+        inArray(hrpsData.city, options.includedCities!),
     ))
         .offset(options.itemOffset!)
         .limit(options.itemCount!);
@@ -38,14 +38,14 @@ export const findDataGroupBy = async (
     endDate: Date,
     addCounts: boolean = true,
     options?: {
-        excludedCities?: string[];
+        includedCities?: string[];
         itemOffset?: number;
         itemCount?: number;
         filter?: string;
     },
 ) => {
     options = {
-        excludedCities: options?.excludedCities ?? [""],
+        includedCities: options?.includedCities ?? [],
         itemCount: options?.itemCount ?? 100,
         itemOffset: options?.itemOffset ?? 0,
     };
@@ -61,7 +61,7 @@ export const findDataGroupBy = async (
     }
     let filters = [
         between(hrpsData.date, startDate, endDate),
-        notInArray(hrpsData.city, options.excludedCities as string[])
+        inArray(hrpsData.city, options.includedCities as string[])
     ];
     const result = selectBuilder
         .from(hrpsData)

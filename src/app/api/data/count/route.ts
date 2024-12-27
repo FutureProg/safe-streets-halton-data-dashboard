@@ -19,13 +19,13 @@ export const GET = async (request: NextRequest) => {
                 defaultStartDate.getTime().toString(),
         ),
     );
-    const excludedCities = searchParams.getAll("excludeCity");
+    const cities = searchParams.getAll("city");
     const data = await findDataGroupBy(
         groupBy as HRPSDataColumns[],
         startDate,
         endDate,
         true,
-        { excludedCities, itemCount, itemOffset }
+        { includedCities: cities, itemCount, itemOffset }
     );
     const body = createPagingResponseBody(data, itemOffset, itemCount);
     return Response.json(body);
