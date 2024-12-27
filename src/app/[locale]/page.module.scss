@@ -33,19 +33,3 @@
     flex-direction: column;
     gap: 12px;
 }
-
-.filterForm {
-    @extend .view;
-    width: 100%;
-    & > * {
-        width: 100%;
-    }
-
-    .buttonRow {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 24px;
-    }
-
-}

@@ -1,0 +1,18 @@
+@use '/src/theme.scss';
+@use '/src/components/Panel.module.scss' as Panel;
+
+.filterForm {
+    @extend .view;
+    width: 100%;
+    & > * {
+        width: 100%;
+    }
+
+    .buttonRow {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 24px;
+    }
+
+}
