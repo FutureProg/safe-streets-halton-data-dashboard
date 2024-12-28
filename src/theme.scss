@@ -24,7 +24,7 @@ $foreground-color-map: (
 }
 
 @mixin text-light {
-    font-family: 'Poppins';
+    font-family: inherit;
     font-style: normal;
     font-weight: 300;
     font-size: 14px;
@@ -32,8 +32,7 @@ $foreground-color-map: (
 }
 
 @mixin text-regular {
-    /* text regular */
-    font-family: 'Poppins';
+    font-family: inherit;
     font-style: normal;
     font-weight: 400;
     font-size: 14px;

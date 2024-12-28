@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Poppins} from "next/font/google";
 import "../globals.css";
 import StoreProvider from "../StoreProvider";
 import Head from "next/head";
@@ -7,7 +7,10 @@ import { LayoutContextProvider } from "@/contexts/LayoutContextProvider";
 import TranslationProvider from "../TranslationProvider";
 import initTranslations from "../i18n";
 
-const inter = Inter({ subsets: ["latin"] });
+const poppins = Poppins({
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  subsets: ["latin"]
+});
 
 export const generateMetadata = async ({locale}: {locale: string}) => {
   const {t} = await initTranslations(locale, i18nNamespaces);;
@@ -34,7 +37,7 @@ export default async function RootLayout({
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
         crossOrigin=""/>
       </Head>
-      <body className={inter.className}>
+      <body className={poppins.className}>
         <StoreProvider>
           <LayoutContextProvider>
             <TranslationProvider
