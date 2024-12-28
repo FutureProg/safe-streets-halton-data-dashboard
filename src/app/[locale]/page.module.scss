@@ -33,3 +33,16 @@
     flex-direction: column;
     gap: 12px;
 }
+
+.divider {
+    width: 50%;
+    height: 0px;
+    margin: 0 auto;
+
+    border: 1px solid #FFFFFF;
+
+    /* Inside auto layout */
+    flex: none;
+    flex-grow: 0;
+
+}

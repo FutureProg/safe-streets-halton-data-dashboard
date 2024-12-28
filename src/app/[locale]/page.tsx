@@ -13,8 +13,17 @@ import FormElement from '@/components/FormElement';
 import MultiSelect, { Option } from '@/components/MultiSelect';
 import Button, { ButtonVariant } from '@/components/Button';
 import FilterForm from '../_views/FilterForm';
+import CarCrashIcon from '@/img/icon-car-crash.svg';
+import { useTranslation } from 'react-i18next';
 
 export default function Home() {
+
+  let {t: translate} = useTranslation();
+
+  const incidentTypes = [
+    {label: "Fatality", value: "Fatality"},
+    {label: "Injury", value: "Injury"}
+  ] satisfies Option[];
 
   return (
     <main>
@@ -35,9 +44,20 @@ export default function Home() {
                 <InputText id="caseNumber" name="caseNumber" />
               </FormElement>
             </SimpleForm>
-          </Panel>
+          </Panel>          
           <FilterForm />
-
+          <div className={styles.divider}></div>
+          <Panel>
+            <FormElement>
+              <FormLabel icon={{src: CarCrashIcon, alt: ""}} htmlFor='incidentType'>{translate("IncidentType")}</FormLabel>
+              <MultiSelect
+                options={incidentTypes}
+                defaultValues={incidentTypes.map(({value}) => value)}
+                name='incidentType'
+                id='incidentType'
+               />
+              </FormElement>
+          </Panel>
         </div>
       </div>  
     </main>
