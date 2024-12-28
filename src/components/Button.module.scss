@@ -5,7 +5,7 @@ $hoverOpacity: 0.1;
 
 @mixin text-style-standard {
     /* button secondary */
-    font-family: 'Poppins';
+    font-family: inherit;
     font-style: normal;
     font-weight: 400;
     font-size: 14px;
@@ -13,7 +13,7 @@ $hoverOpacity: 0.1;
 }
 @mixin text-style-secondary {
     /* button secondary */
-    font-family: 'Poppins';
+    font-family: inherit;
     font-style: normal;
     font-weight: 500;
     font-size: 14px;
