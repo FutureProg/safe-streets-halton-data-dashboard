@@ -15,7 +15,7 @@ const fetchData = (params: FetchDataParams) => {
     
     const baseURL = '/api/data?';
     let urlParams = new URLSearchParams(Object.entries(params).map(([k,v]) => [k, v as string]));
-    return fetch(baseURL + urlParams).then(Response.json);
+    return fetch(baseURL + urlParams).then((response) => response.json());
 }
 
 const mapDataMachine = setup({
