@@ -8,7 +8,8 @@ import CityIcon from "@/img/icon-city.svg";
 import CalendarIcon from "@/img/icon-calendar.svg";
 
 import styles from "./FilterForm.module.scss";
-import { FormEventHandler } from "react";
+import { FormEventHandler, useEffect } from "react";
+import { FetchDataParams, MapDataContext, MapDataMachine } from "../_state/MapDataState";
 
 const formatDate = (date: Date) => {
     return `${date.getFullYear()}-${date.getMonth()}-${
@@ -17,6 +18,9 @@ const formatDate = (date: Date) => {
 };
 
 export default function FilterForm() {
+    const mapDataActor = MapDataContext.useActorRef();
+    const loadStatus = MapDataContext.useSelector((snapshot) => snapshot.value);
+
     const cityOptions = [
         {
             "label": "Burlington",
@@ -64,11 +68,24 @@ export default function FilterForm() {
         const formData = new FormData(evt.target as HTMLFormElement);
         formData.set('startDate', `${evalDate(formData.get('startDate') as string, 'start')}`);
         formData.set('endDate', `${evalDate(formData.get('endDate') as string, 'end')}`);
-        const urlParams = new URLSearchParams(formData.entries().map(([key, val]) => {
+        const dataDict = Object.fromEntries(formData.entries().map(([key, val]) => {
             return [key, val as string];
-        }).toArray());
-        fetch('/api/data?' + urlParams);
+        }));
+        if (loadStatus !== 'loading') {
+            mapDataActor.send({type: 'request', params: {
+                cities: dataDict['city']?.split(',') ?? [],
+                endDate: dataDict['endDate']!,
+                startDate: dataDict['startDate']!
+            }});
+        }
     }
+
+    useEffect(() => {
+        const subscription = mapDataActor.subscribe((snapshot) => {
+            console.log(snapshot.toJSON());
+        });
+        return subscription.unsubscribe;
+    }, [mapDataActor]);
 
     return (
         <form className={styles.filterForm} onSubmit={onSubmit}>

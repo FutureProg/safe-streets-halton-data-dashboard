@@ -21,7 +21,7 @@ const fetchData = (params: FetchDataParams) => {
 const mapDataMachine = setup({
     types: {
         context: {} as { data?: any, params?: any, error?: any },
-        events: {} as { type: 'request' },
+        events: {} as { type: 'request', params: FetchDataParams },
         input: {} as FetchDataParams
     },
     actors: {
@@ -45,7 +45,7 @@ const mapDataMachine = setup({
             invoke: {
                 id: 'getData',
                 src: 'fetchData',
-                input: ({ context: {params}, event: {}}) => ({...params} satisfies FetchDataParams),
+                input: ({ event: {params}}) => ({...params} satisfies FetchDataParams),
                 onDone: {
                     target: 'success',
                     actions: assign({data: ({event}) => event.output})
@@ -57,7 +57,11 @@ const mapDataMachine = setup({
             }
         },
         success: {
-
+            on: {
+                'request': {
+                    target: 'loading'
+                }
+            }
         },
         failure: {
 
