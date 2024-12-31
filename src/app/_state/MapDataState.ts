@@ -2,6 +2,8 @@
 
 import { assign, fromPromise, setup } from 'xstate';
 import {createActorContext} from '@xstate/react';
+import { CaseData } from '@/common';
+import { LatLngExpression } from 'leaflet';
 
 export type FetchDataParams = { 
     city: string[], 
@@ -18,9 +20,54 @@ const fetchData = (params: FetchDataParams) => {
     return fetch(baseURL + urlParams).then((response) => response.json());
 }
 
+export interface MarkerData {
+    options: MarkerDataOptions;
+    position: LatLngExpression;
+    caseData: CaseData[];
+    popupText?: string;
+}
+
+
+export interface MarkerDataOptions {
+
+}
+
+function createMarkerData(data: Record<string, any>[]): MarkerData[] {
+    let re: MarkerData[] = [];    
+    let tempData : Record<string, CaseData[]> = {};
+    const toKeyStr = (lat: number, lng: number) => `${lat},${lng}`;
+    for (let record of data) {
+        let options: MarkerDataOptions = {};
+        let position: LatLngExpression = [record['latitude'], record['longitude']];
+        let lngShort = Number.parseFloat((record['longitude'] as number).toFixed(4));
+        let latShort = Number.parseFloat((record['latitude'] as number).toFixed(4));
+        let keyStr = toKeyStr(latShort, lngShort);
+        let caseData: CaseData = {
+            case_no: record['caseNo'],
+            city: record['city'],
+            date: new Date(record['date']),
+            description: record['description'],
+            globalID: record['globalID'],
+            latitude: record['latitude'],
+            location: record['location'],
+            longitude: record['longitude']
+        };
+        if (!(keyStr in tempData)) {
+            tempData[keyStr] = [];
+        }
+        tempData[keyStr].push(caseData);
+        // let popupText = caseDataToText(caseData);
+    }
+    for (const key in tempData) {
+        let [lat, lng] = key.split(',').map(Number.parseFloat);        
+        re.push({ caseData: tempData[key], position: [lat, lng], options: {}, popupText: "test text" });
+    }    
+    return re;
+}
+
 const mapDataMachine = setup({
     types: {
-        context: {} as { data?: any, params?: any, error?: any },
+        context: {} as { data?: any, params?: any, error?: any, markerData?: MarkerData[] },
         events: {} as { type: 'request', params: FetchDataParams },
         input: {} as FetchDataParams
     },
@@ -30,7 +77,6 @@ const mapDataMachine = setup({
         })
     }
 }).createMachine({
-    /** @xstate-layout N4IgpgJg5mDOIC5QAoC2BDAxgCwJYDswBKAOgBsB7dCAqAYggsJIIDcKBrMEmAFwBF0vdAG0ADAF1EoAA4VYuXribSQAD0QBWAGwBmEmIAs2gBwnDAJhO6AjAE47mgDQgAnohM2Shhw+03dbTFNOwtNAF9wlzQsPEJSSmpaOjAAJ1SKVJIZMiEAM0zUHjABIVFJVTkFJRUkdS09A2MzS2t7Rxd3BBsAdkNvTVsLMR6xOxMLR21IqJB8Cgg4VRicAmJK+UVlfFUNBABabU7EQ4Mxc7FdEz07QxHDE0jojFX4lggyMA3q7d3ES2O3V63h62h0Vh6AR6Fl6TxAKzixHIVBo+Cg3y2tVAewsuk0Bh6nl0dlGNh0JMMgJs9hIJLBgyCPU0mjCujhCLWpFgAFdMJg4PA6lVMTs6ntoV5CTZJnZtP4JoEqZcSBYLGCgsZAqCLIZ2S9EaQ8uhcGRuakvkLNjVRdjEBKSFKZXKbAqjm5EPZtCRerKTJpLn1jJoejNwkA */
     initial: 'idle',
     context: { data: {} },
     states: {
@@ -48,7 +94,10 @@ const mapDataMachine = setup({
                 input: ({ event: {params}}) => ({...params} satisfies FetchDataParams),
                 onDone: {
                     target: 'success',
-                    actions: assign({data: ({event}) => event.output})
+                    actions: [
+                        assign({data: ({event}) => event.output}),
+                        assign({markerData: ({event}) => createMarkerData((event.output as any).data)})
+                    ]
                 },
                 onError: {
                     target: 'failure',

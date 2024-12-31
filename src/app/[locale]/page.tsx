@@ -15,6 +15,9 @@ import Button, { ButtonVariant } from '@/components/Button';
 import FilterForm from '../_views/FilterForm';
 import CarCrashIcon from '@/img/icon-car-crash.svg';
 import { useTranslation } from 'react-i18next';
+import dynamic from 'next/dynamic';
+
+const MapMakerCluster = dynamic(() => import('@/components/map/MapMarkerCluster'), {ssr: false});
 
 export default function Home() {
 
@@ -28,7 +31,9 @@ export default function Home() {
   return (
     <main>
       <div className={styles.mapContainer}>
-        <BaseMap></BaseMap>
+        <BaseMap>
+          <MapMakerCluster />
+        </BaseMap>
       </div>    
       <div className={styles.contentView}>
         <div className={styles.columnContainer}>
