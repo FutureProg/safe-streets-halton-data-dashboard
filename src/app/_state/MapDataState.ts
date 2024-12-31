@@ -1,3 +1,5 @@
+'use client';
+
 import { assign, fromPromise, setup } from 'xstate';
 import {createActorContext} from '@xstate/react';
 

@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
-import { Inter, Poppins} from "next/font/google";
+import { Poppins } from "next/font/google";
 import "../globals.css";
 import StoreProvider from "../StoreProvider";
 import Head from "next/head";
 import { LayoutContextProvider } from "@/contexts/LayoutContextProvider";
 import TranslationProvider from "../TranslationProvider";
 import initTranslations from "../i18n";
+import Providers from "../Providers";
 
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -45,7 +45,9 @@ export default async function RootLayout({
               locale={locale}
               resources={resources}
             >
-              {children}
+              <Providers>
+                {children}
+              </Providers>              
             </TranslationProvider>
             {/* <span style={{marginLeft: '8px'}}>
               <b>Note:</b> HRPS data does duplicate cases, and often provides inaccurate & different locations. Map markers indicate the incident occured in the general vicinity.
