@@ -15,6 +15,7 @@
   "dependencies": {
     "@next/env": "^15.0.4",
     "@reduxjs/toolkit": "^2.2.2",
+    "@statelyai/inspect": "^0.4.0",
     "@types/pg": "^8.11.10",
     "@unly/universal-language-detector": "^2.0.3",
     "@xstate/react": "^5.0.1",
