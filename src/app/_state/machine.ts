@@ -1,4 +1,5 @@
 import { assign, fromPromise, setup } from 'xstate';
+import {createActorContext} from '@xstate/react';
 
 export type FetchDataParams = { 
     cities: string[], 
@@ -60,4 +61,8 @@ const mapDataMachine = setup({
 
         }
     }
-})
+});
+
+
+export const MapDataMachine = mapDataMachine;
+export const MapDataContext = createActorContext(mapDataMachine);
