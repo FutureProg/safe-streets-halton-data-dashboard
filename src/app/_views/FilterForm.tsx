@@ -73,7 +73,7 @@ export default function FilterForm() {
         }));
         if (loadStatus !== 'loading') {
             mapDataActor.send({type: 'request', params: {
-                cities: dataDict['city']?.split(',') ?? [],
+                city: dataDict['city']?.split(',') ?? [],
                 endDate: dataDict['endDate']!,
                 startDate: dataDict['startDate']!
             }});

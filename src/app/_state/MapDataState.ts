@@ -4,7 +4,7 @@ import { assign, fromPromise, setup } from 'xstate';
 import {createActorContext} from '@xstate/react';
 
 export type FetchDataParams = { 
-    cities: string[], 
+    city: string[], 
     startDate: string | number | Date, 
     endDate: string | number | Date 
 }
