@@ -42,7 +42,7 @@ export default function Home() {
           <MenuPanel />
         </div>
         <div></div>
-        <div className="absolute right-0 flex flex-col items-end gap-3 *:pointer-events-auto">
+        <div className="hidden lg:flex absolute right-0 flex-col items-end gap-3 *:pointer-events-auto">
           {/* Lookup by Case ID */}
           <Panel>
             <SimpleForm>
