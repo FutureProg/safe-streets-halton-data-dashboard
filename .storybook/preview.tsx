@@ -2,6 +2,7 @@ import React from "react";
 import type { Preview } from "@storybook/react";
 import TranslationProvider from "../src/app/TranslationProvider";
 import initTranslations from "../src/app/i18n";
+import Providers from '../src/app/Providers';
 
 const preview: Preview = {
   parameters: {
@@ -33,7 +34,9 @@ const preview: Preview = {
           namespaces={i18nNamespaces}
           resources={i18nResources}
         >
-          <Story />
+          <Providers>
+            <Story />
+          </Providers>
         </TranslationProvider>
       );
     },
