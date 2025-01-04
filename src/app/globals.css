@@ -12,6 +12,10 @@
   }
 }
 
+.leaflet-control-zoom.leaflet-control{
+  @apply hidden lg:block;
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
