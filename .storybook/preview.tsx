@@ -3,6 +3,7 @@ import type { Preview } from "@storybook/react";
 import TranslationProvider from "../src/app/TranslationProvider";
 import initTranslations from "../src/app/i18n";
 import Providers from '../src/app/Providers';
+import '../src/app/globals.css';
 
 const preview: Preview = {
   parameters: {
