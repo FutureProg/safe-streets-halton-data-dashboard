@@ -23,10 +23,9 @@ const MenuPanel: React.FC<PropsWithChildren> = ({ children }) => {
     );
 
     return (
-        <div style={{ position: "relative", width: 'fit-content' }}>
-            <Panel>
-                <div className={styles.menuPanel}>
-                    <span className={styles.title}>{translate('AppTitle')}</span>
+        <div className="relative w-fit">
+            <div className="panel flex-row justify-start items-center gap-4">
+                    <span className="hidden lg:inline font-sans font-normal text-base">{translate('AppTitle')}</span>
                     <ToggleButton
                         onToggle={setIsOpen}
                         icon={menuIcon}
@@ -37,8 +36,7 @@ const MenuPanel: React.FC<PropsWithChildren> = ({ children }) => {
                         aria-expanded={isOpen}
                     >
                     </ToggleButton>
-                </div>
-            </Panel>
+            </div>
             <div id="menu-popup" className={styles.popup} data-open={isOpen}>
                 <Panel>
                     <ul role="menu" aria-labelledby="menu-panel-toggle-button">

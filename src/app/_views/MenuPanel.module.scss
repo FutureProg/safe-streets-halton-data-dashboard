@@ -1,23 +1,5 @@
 @use '/src/theme.scss';
 
-.menuPanel {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 14px;
-
-    .title {
-        @include theme.text-regular;
-        font-weight: 500;
-        font-size: 16px;
-        
-        color: #2F2F2F;
-        user-select: none;
-    }
-}
-
 .popup {
     position: absolute;
     margin-top: 4px;
