@@ -30,17 +30,17 @@ export default function Home() {
 
   return (
     <main>
-      <div className={styles.mapContainer}>
+      <div className="absolute inset-0 z-0">
         <BaseMap>
           <MapMakerCluster />
         </BaseMap>
       </div>    
-      <div className={styles.contentView}>
-        <div className={styles.columnContainer}>
+      <div className="absolute z-10 inset-x-3 inset-y-5 pointer-events-none">
+        <div className="absolute left-0 flex flex-col gap-3 *:pointer-events-auto">
           <MenuPanel />
         </div>
         <div></div>
-        <div className={styles.columnContainer} style={{alignItems: 'flex-end'}}>
+        <div className="absolute right-0 flex flex-col gap-3 items-end *:pointer-events-auto">
           {/* Lookup by Case ID */}
           <Panel>
             <SimpleForm>
