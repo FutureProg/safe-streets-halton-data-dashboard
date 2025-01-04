@@ -8,11 +8,12 @@ module.exports = {
       sans: ['Poppins', 'sans-serif'],
       serif: ['Merriweather', 'serif']
     },
-    colors: {
-      'primary': '#3C61AA',
-      'text-primary': '#FFFFFF'
+    extend: {
+      colors: {
+        'primary': '#3C61AA',
+        'text-primary': '#FFFFFF'
+      }
     },
-    extend: {},
   },
   plugins: [],
 }
