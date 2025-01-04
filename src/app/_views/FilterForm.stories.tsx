@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import FilterForm from './FilterForm';
 import { within, expect } from '@storybook/test';
+import { formatDateHtmlInput } from '@/util';
 
 const meta = {
   component: FilterForm,
@@ -10,12 +11,6 @@ const meta = {
 export default meta;
 
 type Story = StoryObj<typeof meta>;
-
-const formatDate = (date: Date) => {
-  return `${date.getFullYear()}-${date.getMonth()}-${
-      date.getDate() < 10 ? "0" : ""
-  }${date.getDate()}`;
-};
 
 export const Default: Story = {
 
@@ -27,7 +22,7 @@ export const Default: Story = {
 
     const endDateInput = canvasElement.querySelector("[name='endDate']");
     expect(endDateInput).toBeInTheDocument();
-    expect(endDateInput).toHaveValue(formatDate(new Date()));
+    expect(endDateInput).toHaveValue(formatDateHtmlInput(new Date()));
   }
 
 };

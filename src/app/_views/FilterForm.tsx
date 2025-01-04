@@ -10,12 +10,7 @@ import CalendarIcon from "@/img/icon-calendar.svg";
 import styles from "./FilterForm.module.scss";
 import { FormEventHandler, useEffect } from "react";
 import { FetchDataParams, MapDataContext, MapDataMachine } from "../_state/MapDataState";
-
-const formatDate = (date: Date) => {
-    return `${date.getFullYear()}-${date.getMonth()}-${
-        date.getDate() < 10 ? "0" : ""
-    }${date.getDate()}`;
-};
+import { formatDateHtmlInput } from "@/util";
 
 export default function FilterForm() {
     const mapDataActor = MapDataContext.useActorRef();
@@ -48,8 +43,8 @@ export default function FilterForm() {
         },
     ] satisfies Option[];
 
-    const defaultEndDate = new Date();
-    const defaultStartDate = new Date();
+    const defaultEndDate = new Date(Date.now());
+    const defaultStartDate = new Date(Date.now());
     defaultStartDate.setDate(defaultStartDate.getDate() - 7);
     
     const onSubmit : FormEventHandler<HTMLFormElement> = (evt) => {
@@ -101,7 +96,7 @@ export default function FilterForm() {
                     id="startDate"
                     name="startDate"
                     type="date"
-                    defaultValue={formatDate(defaultStartDate)}
+                    defaultValue={formatDateHtmlInput(defaultStartDate)}
                 />
             </FormElement>
             <FormElement>
@@ -116,7 +111,7 @@ export default function FilterForm() {
                     id="endDate"
                     name="endDate"
                     type="date"
-                    defaultValue={formatDate(defaultEndDate)}
+                    defaultValue={formatDateHtmlInput(defaultEndDate)}
                 />
             </FormElement>
             <FormElement>

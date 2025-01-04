@@ -25,6 +25,13 @@ export function convertDateObjectsToISO(obj: object) {
     return re;
 }
 
+export const formatDateHtmlInput = (date: Date) => {
+    const yearStr = date.getFullYear().toString().padStart(4, "0");
+    const monthStr = (date.getMonth() + 1).toString().padStart(2, "0");
+    const dayStr = date.getDate().toString().padStart(2, "0");
+    return `${yearStr}-${monthStr}-${dayStr}`;
+};
+
 export function jsonArrayToPlotDataArr(data: Record<string, any>[], type: PlotType, x: string, y: string ,name?: string, other?: Partial<PlotData>): Partial<PlotData>[] {    
     let result = [] as Partial<PlotData>[];
     if (name) {
