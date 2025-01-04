@@ -7,7 +7,6 @@ import MultiSelect, { Option } from "@/components/MultiSelect";
 import CityIcon from "@/img/icon-city.svg";
 import CalendarIcon from "@/img/icon-calendar.svg";
 
-import styles from "./FilterForm.module.scss";
 import { FormEventHandler, useEffect } from "react";
 import { FetchDataParams, MapDataContext, MapDataMachine } from "../_state/MapDataState";
 import { formatDateHtmlInput } from "@/util";
@@ -83,7 +82,7 @@ export default function FilterForm() {
     }, [mapDataActor]);
 
     return (
-        <form className={styles.filterForm} onSubmit={onSubmit}>
+        <form className="panel container *:w-full" onSubmit={onSubmit}>
             <FormElement>
                 <FormLabel
                     icon={{ src: CalendarIcon, alt: "" }}
@@ -130,7 +129,7 @@ export default function FilterForm() {
                     name="city"
                 />
             </FormElement>
-            <div className={styles.buttonRow}>
+            <div className="flex justify-center items-center gap-6">
                 <Button variant={ButtonVariant.Primary} type="submit">
                     Search
                 </Button>
