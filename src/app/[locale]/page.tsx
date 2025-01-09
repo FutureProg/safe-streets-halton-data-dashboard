@@ -15,6 +15,8 @@ import CarCrashIcon from "@/img/icon-car-crash.svg";
 import { useTranslation } from "react-i18next";
 import dynamic from "next/dynamic";
 import { HTMLInputOption } from "../common";
+import { useContext } from "react";
+import { StaticValuesContext } from "../StaticValuesContext";
 
 const MapMakerCluster = dynamic(
   () => import("@/components/map/MapMarkerCluster"),
@@ -23,11 +25,9 @@ const MapMakerCluster = dynamic(
 
 export default function Home() {
   let { t: translate } = useTranslation();
+  let staticValues = useContext(StaticValuesContext);
 
-  const incidentTypes = [
-    { label: "Fatality", value: "Fatality" },
-    { label: "Injury", value: "Injury" },
-  ] satisfies HTMLInputOption[];
+  const incidentTypes = staticValues.incidentTypes;
 
   return (
     <main>
