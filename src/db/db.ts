@@ -1,7 +1,7 @@
 import { drizzle } from "drizzle-orm/mysql2";
 import { hrpsData } from "./schema";
 import mysql2 from "mysql2/promise.js";
-import { and, between, count, countDistinct, eq, getTableColumns, inArray, notInArray, sql } from "drizzle-orm";
+import { and, between, count, countDistinct, eq, getTableColumns, inArray, isNotNull, notInArray, sql } from "drizzle-orm";
 import { MySqlColumn, MySqlSelectBuilder } from "drizzle-orm/mysql-core";
 import { HRPSDataModel } from "./models";
 import "../../envConfig";
@@ -35,12 +35,12 @@ export const findData = async (startDate: Date, endDate: Date, options?: {
 
 export const findInfo = async () => {
     const descriptionUniqueInfo = db.selectDistinct({value: hrpsData.description}).from(hrpsData);
-    const citiesUniqueInfo = db.selectDistinct({value: hrpsData.city}).from(hrpsData);
+    const citiesUniqueInfo = db.selectDistinct({value: hrpsData.city}).from(hrpsData).where(isNotNull(hrpsData.city));
     return Promise.allSettled([descriptionUniqueInfo, citiesUniqueInfo])
         .then(([incidentTypes, cities]) => {
             return {
                 "incidents": incidentTypes.status == 'fulfilled'? incidentTypes.value.map(x => x.value) : undefined,
-                "cities": cities.status == 'fulfilled'? cities.value.map(x => x.value) : undefined
+                "cities": cities.status == 'fulfilled'? cities.value.map(x => x.value!) : undefined
             }
         });
 }

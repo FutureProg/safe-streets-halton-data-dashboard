@@ -1,0 +1,15 @@
+{
+    "MVC - PI": "Injury",
+    "MVC - FATALITY": "Fatality",
+    "ROADSIDE TEST": "Roadside Test",
+    "MVC - HIT & RUN": "Hit & Run",
+    "IMPAIRED DRIVING": "Impaired Driving",
+    "DANGEROUS OPERATION - TRAFFIC": "Dangerous Operation of Vehicle",
+
+    "BURLINGTON": "Burlington",
+    "GEORGETOWN": "Georgetown",
+    "MILTON": "Milton",
+    "HALTON HILLS": "Halton Hills",
+    "OAKVILLE": "Oakville",
+    "ACTON": "Acton"
+}

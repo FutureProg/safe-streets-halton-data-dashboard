@@ -5,6 +5,9 @@ import { LayoutContextProvider } from "@/contexts/LayoutContextProvider";
 import TranslationProvider from "../TranslationProvider";
 import initTranslations from "../i18n";
 import Providers from "../Providers";
+import { findInfo } from "@/db/db";
+import { HTMLInputOption, StaticValues } from "../common";
+import { StaticValuesProvider } from "../StaticValuesContext";
 
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -19,7 +22,7 @@ export const generateMetadata = async ({locale}: {locale: string}) => {
   };
 }
 
-const i18nNamespaces = ['translations']
+const i18nNamespaces = ['translations', 'staticValues']
 
 export default async function RootLayout({
   children, params: {locale}
@@ -27,7 +30,13 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: {locale: string};
 }>) {
-  const {resources} = await initTranslations(locale, i18nNamespaces);
+  const {t: translate, resources} = await initTranslations(locale, i18nNamespaces);
+  const staticValues = await findInfo().then(({incidents, cities}) => {
+    return {
+      incidentTypes: incidents?.map(key => ({label: translate(key, {ns: 'staticValues'}), value: key})) ?? [],
+      cities: cities?.map(key => ({label: translate(key, {ns: 'staticValues'}), value: key})) ?? []
+    } satisfies StaticValues;
+  })
 
   return (    
     <html lang={locale}>
@@ -43,9 +52,11 @@ export default async function RootLayout({
               locale={locale}
               resources={resources}
             >
-              <Providers>
-                {children}
-              </Providers>              
+              <StaticValuesProvider staticValues={staticValues}>
+                <Providers>
+                    {children}
+                </Providers>
+              </StaticValuesProvider>
             </TranslationProvider>
             {/* <span style={{marginLeft: '8px'}}>
               <b>Note:</b> HRPS data does duplicate cases, and often provides inaccurate & different locations. Map markers indicate the incident occured in the general vicinity.
