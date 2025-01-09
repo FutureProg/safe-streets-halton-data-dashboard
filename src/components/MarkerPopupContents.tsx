@@ -3,6 +3,7 @@ import { useState } from "react"
 import { Popup } from "react-leaflet"
 
 import styles from '@/components/MapPlot.module.css';
+import { useTranslation } from "react-i18next";
 
 export interface MarkerPopupContentProps {
     key: string,
@@ -11,6 +12,7 @@ export interface MarkerPopupContentProps {
 
 export const MarkerPopupContents = (props: MarkerPopupContentProps) => {
 
+    let {t: tStaticValues} = useTranslation('staticValues');
     const onPageButtonClick = (delta: number) => () => {
         let nPageNum = pageNumber + delta;
         if (nPageNum >= props.data.length) {
@@ -75,13 +77,10 @@ export const MarkerPopupContents = (props: MarkerPopupContentProps) => {
                         <th>Incident Code</th>
                         <td>{caseData.description}</td>
                     </tr>
-                    {
-                    caseData.description in descriptionTranslation? (
                     <tr>
                         <th>Description</th>
-                        <td>{descriptionTranslation[caseData.description]}</td>
-                    </tr>): (<></>)
-                    }
+                        <td>{tStaticValues(caseData.description)}</td>
+                    </tr>
                 </table> 
             </div>                       
         </Popup>
