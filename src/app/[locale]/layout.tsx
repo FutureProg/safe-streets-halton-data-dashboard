@@ -8,6 +8,7 @@ import Providers from "../Providers";
 import { findInfo } from "@/db/db";
 import { HTMLInputOption, StaticValues } from "../common";
 import { StaticValuesProvider } from "../StaticValuesContext";
+import { getStaticValues } from "../serverUtil";
 
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -31,12 +32,7 @@ export default async function RootLayout({
   params: {locale: string};
 }>) {
   const {t: translate, resources} = await initTranslations(locale, i18nNamespaces);
-  const staticValues = await findInfo().then(({incidents, cities}) => {
-    return {
-      incidentTypes: incidents?.map(key => ({label: translate(key, {ns: 'staticValues'}), value: key})) ?? [],
-      cities: cities?.map(key => ({label: translate(key, {ns: 'staticValues'}), value: key})) ?? []
-    } satisfies StaticValues;
-  })
+  const staticValues = await getStaticValues(translate);
 
   return (    
     <html lang={locale}>

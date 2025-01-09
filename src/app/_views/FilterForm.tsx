@@ -7,41 +7,15 @@ import MultiSelect from "@/components/MultiSelect";
 import CityIcon from "@/img/icon-city.svg";
 import CalendarIcon from "@/img/icon-calendar.svg";
 
-import { FormEventHandler, useEffect } from "react";
+import { FormEventHandler, useContext, useEffect } from "react";
 import { MapDataContext } from "../_state/MapDataState";
 import { formatDateHtmlInput } from "@/util";
-import { HTMLInputOption } from "@/app/common";
+import { StaticValuesContext } from "../StaticValuesContext";
 
 export default function FilterForm() {
     const mapDataActor = MapDataContext.useActorRef();
     const loadStatus = MapDataContext.useSelector((snapshot) => snapshot.value);
-
-    const cityOptions = [
-        {
-            "label": "Burlington",
-            "value": "burlington",
-        },
-        {
-            "label": "Halton Hills",
-            "value": "halton hills",
-        },
-        {
-            "label": "Milton",
-            "value": "milton",
-        },
-        {
-            "label": "Oakville",
-            "value": "oakville",
-        },
-        {
-            "label": "Georgetown",
-            "value": "georgetown",
-        },
-        {
-            "label": "Acton",
-            "value": "acton",
-        },
-    ] satisfies HTMLInputOption[];
+    const {cities: cityOptions} = useContext(StaticValuesContext);
 
     const defaultEndDate = new Date(Date.now());
     const defaultStartDate = new Date(Date.now());
@@ -120,12 +94,7 @@ export default function FilterForm() {
                 </FormLabel>
                 <MultiSelect
                     options={cityOptions}
-                    defaultValues={[
-                        "burlington",
-                        "milton",
-                        "oakville",
-                        "halton hills",
-                    ]}
+                    defaultValues={cityOptions.map((x) => x.value)}
                     id="city"
                     name="city"
                 />
