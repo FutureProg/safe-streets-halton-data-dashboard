@@ -21,6 +21,19 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Run storybook",
+            "runtimeExecutable": "npm",
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "run",
+                "storybook",
+                "--",
+                "--no-open"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Run dev",
             "runtimeExecutable": "npm",
             "runtimeArgs": [
