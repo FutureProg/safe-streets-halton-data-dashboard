@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import BaseMap from "@/components/BaseMap";
 import styles from "./page.module.scss";
 import MenuPanel from "@/app/_views/MenuPanel";
@@ -10,12 +9,12 @@ import LookupIcon from "@/img/icon-lookup.svg";
 import Panel from "@/components/Panel";
 import InputText from "@/components/InputText";
 import FormElement from "@/components/FormElement";
-import MultiSelect, { Option } from "@/components/MultiSelect";
-import Button, { ButtonVariant } from "@/components/Button";
+import MultiSelect from "@/components/MultiSelect";
 import FilterForm from "../_views/FilterForm";
 import CarCrashIcon from "@/img/icon-car-crash.svg";
 import { useTranslation } from "react-i18next";
 import dynamic from "next/dynamic";
+import { HTMLInputOption } from "../common";
 
 const MapMakerCluster = dynamic(
   () => import("@/components/map/MapMarkerCluster"),
@@ -28,7 +27,7 @@ export default function Home() {
   const incidentTypes = [
     { label: "Fatality", value: "Fatality" },
     { label: "Injury", value: "Injury" },
-  ] satisfies Option[];
+  ] satisfies HTMLInputOption[];
 
   return (
     <main>

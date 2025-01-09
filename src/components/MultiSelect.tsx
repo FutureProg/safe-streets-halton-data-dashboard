@@ -2,15 +2,11 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./MultiSelect.module.scss";
-
-export interface Option {
-    label: string;
-    value: string;
-}
+import { HTMLInputOption } from "@/app/common";
 
 export interface MultiSelectProps {
-    options: Option[];
-    onChange?: (selectedOptions: Option[]) => void;
+    options: HTMLInputOption[];
+    onChange?: (selectedOptions: HTMLInputOption[]) => void;
     id?: string;
     name?: string;
     defaultValues?: string[];
@@ -18,7 +14,7 @@ export interface MultiSelectProps {
 
 const MultiSelect = ({ options, ...props }: MultiSelectProps) => {
     let defaultSelection = props.defaultValues? options.filter((option) => props.defaultValues!.indexOf(option.value) >= 0) : []
-    const [selectedOptions, setSelectedOptions] = useState<Option[]>(defaultSelection);
+    const [selectedOptions, setSelectedOptions] = useState<HTMLInputOption[]>(defaultSelection);
     const [inputValue, setInputValue] = useState("");
     const [isOpen, setIsOpen] = useState(false);
     const [highlightedIndex, setHighlightedIndex] = useState<number | null>(
@@ -34,7 +30,7 @@ const MultiSelect = ({ options, ...props }: MultiSelectProps) => {
         setHighlightedIndex(null);
     };
 
-    const handleOptionClick = (option: Option) => {
+    const handleOptionClick = (option: HTMLInputOption) => {
         if (
             !selectedOptions.find((selected) => selected.value === option.value)
         ) {
@@ -52,7 +48,7 @@ const MultiSelect = ({ options, ...props }: MultiSelectProps) => {
         setHighlightedIndex(null);
     };
 
-    const handleRemoveOption = (option: Option) => {
+    const handleRemoveOption = (option: HTMLInputOption) => {
         setSelectedOptions(
             selectedOptions.filter((selected) =>
                 selected.value !== option.value

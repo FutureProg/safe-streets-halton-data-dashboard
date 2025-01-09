@@ -2,14 +2,15 @@ import Button, { ButtonVariant } from "@/components/Button";
 import FormElement from "@/components/FormElement";
 import FormLabel from "@/components/FormLabel";
 import InputText from "@/components/InputText";
-import MultiSelect, { Option } from "@/components/MultiSelect";
+import MultiSelect from "@/components/MultiSelect";
 
 import CityIcon from "@/img/icon-city.svg";
 import CalendarIcon from "@/img/icon-calendar.svg";
 
 import { FormEventHandler, useEffect } from "react";
-import { FetchDataParams, MapDataContext, MapDataMachine } from "../_state/MapDataState";
+import { MapDataContext } from "../_state/MapDataState";
 import { formatDateHtmlInput } from "@/util";
+import { HTMLInputOption } from "@/app/common";
 
 export default function FilterForm() {
     const mapDataActor = MapDataContext.useActorRef();
@@ -40,7 +41,7 @@ export default function FilterForm() {
             "label": "Acton",
             "value": "acton",
         },
-    ] satisfies Option[];
+    ] satisfies HTMLInputOption[];
 
     const defaultEndDate = new Date(Date.now());
     const defaultStartDate = new Date(Date.now());
