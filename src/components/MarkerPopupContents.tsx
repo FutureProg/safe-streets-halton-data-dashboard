@@ -34,7 +34,7 @@ export const MarkerPopupContents = (props: MarkerPopupContentProps) => {
         return (<></>)
     }
     return (
-        <Popup key={props.key}>
+        <Popup>
             <div className={styles.mapPopupContent}>                                
                 {props.data.length > 1 ? 
                     (
@@ -49,6 +49,7 @@ export const MarkerPopupContents = (props: MarkerPopupContentProps) => {
                     : (<></>)
                 }
                 <table>
+                    <tbody>
                     <tr>
                         <th>Case #</th>
                         <td>{caseData.case_no}</td>
@@ -73,6 +74,7 @@ export const MarkerPopupContents = (props: MarkerPopupContentProps) => {
                         <th>Description</th>
                         <td>{tStaticValues(caseData.description)}</td>
                     </tr>
+                    </tbody>
                 </table> 
             </div>                       
         </Popup>
