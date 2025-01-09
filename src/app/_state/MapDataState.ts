@@ -4,6 +4,7 @@ import { assign, fromPromise, setup } from 'xstate';
 import {createActorContext} from '@xstate/react';
 import { CaseData } from '@/common';
 import { LatLngExpression } from 'leaflet';
+import { ClientSideFilters } from '../common';
 
 export type FetchDataParams = { 
     city: string[], 
@@ -67,8 +68,8 @@ function createMarkerData(data: Record<string, any>[]): MarkerData[] {
 
 const mapDataMachine = setup({
     types: {
-        context: {} as { data?: any, params?: any, error?: any, markerData?: MarkerData[] },
-        events: {} as { type: 'request', params: FetchDataParams },
+        context: {} as { data?: any, params?: any, error?: any, markerData?: MarkerData[], clientFilters?: ClientSideFilters },
+        events: {} as { type: 'request', params: FetchDataParams } | {type: 'filterClient', filters: ClientSideFilters},
         input: {} as FetchDataParams
     },
     actors: {
@@ -79,6 +80,14 @@ const mapDataMachine = setup({
 }).createMachine({
     initial: 'idle',
     context: { data: {} },
+    on: {
+        'filterClient': {
+            actions: [
+                assign({clientFilters: ({event}) => event.filters})
+            ]
+        }
+    },
+    
     states: {
         idle: {
             on: {
@@ -91,7 +100,7 @@ const mapDataMachine = setup({
             invoke: {
                 id: 'getData',
                 src: 'fetchData',
-                input: ({ event: {params}}) => ({...params} satisfies FetchDataParams),
+                input: ({ event }) => event.type == 'request'? ({...event.params} as FetchDataParams) : undefined,
                 onDone: {
                     target: 'success',
                     actions: [

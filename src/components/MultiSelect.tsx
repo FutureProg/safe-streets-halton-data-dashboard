@@ -49,11 +49,12 @@ const MultiSelect = ({ options, ...props }: MultiSelectProps) => {
     };
 
     const handleRemoveOption = (option: HTMLInputOption) => {
-        setSelectedOptions(
-            selectedOptions.filter((selected) =>
-                selected.value !== option.value
-            ),
+        const newSelections = selectedOptions.filter((selected) =>
+            selected.value !== option.value
         );
+        setSelectedOptions(newSelections);
+        props.onChange?.([...newSelections]);
+
     };
 
     const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -110,7 +111,7 @@ const MultiSelect = ({ options, ...props }: MultiSelectProps) => {
         <div className={styles.view} ref={containerRef}>
             <div className={styles.inputContainer} onClick={() => inputRef.current?.focus()}>
                 {selectedOptions.map((option) => (
-                    <span key={option.value} className={styles.selectedOption}>                        
+                    <span key={option.value} className={styles.selectedOption} onClick={() => handleRemoveOption(option)}>                        
                         <button
                             type="button"
                             onClick={() =>

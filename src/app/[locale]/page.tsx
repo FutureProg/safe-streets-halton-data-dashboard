@@ -15,8 +15,9 @@ import CarCrashIcon from "@/img/icon-car-crash.svg";
 import { useTranslation } from "react-i18next";
 import dynamic from "next/dynamic";
 import { HTMLInputOption } from "../common";
-import { useContext } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import { StaticValuesContext } from "../StaticValuesContext";
+import { MapDataContext } from "../_state/MapDataState";
 
 const MapMakerCluster = dynamic(
   () => import("@/components/map/MapMarkerCluster"),
@@ -26,8 +27,27 @@ const MapMakerCluster = dynamic(
 export default function Home() {
   let { t: translate } = useTranslation();
   let staticValues = useContext(StaticValuesContext);
+  let mapDataActor = MapDataContext.useActorRef();
 
   const incidentTypes = staticValues.incidentTypes;
+
+  const onIncidentTypeChange = (options: HTMLInputOption[]) => {
+    mapDataActor.send({
+      type: 'filterClient', 
+      filters: {
+        incidentTypes: options.map((option) => option.value)
+      }
+    }); 
+  }
+
+  useEffect(() => {
+    mapDataActor.send({
+      type: 'filterClient', 
+      filters: {
+        incidentTypes: incidentTypes.map(({ value }) => value)
+      }
+    });
+  }, []);
 
   return (
     <main>
@@ -67,6 +87,7 @@ export default function Home() {
                 {translate("IncidentType")}
               </FormLabel>
               <MultiSelect
+                onChange={onIncidentTypeChange}
                 options={incidentTypes}
                 defaultValues={incidentTypes.map(({ value }) => value)}
                 name="incidentType"
