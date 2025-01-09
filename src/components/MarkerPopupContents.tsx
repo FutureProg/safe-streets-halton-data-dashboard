@@ -26,14 +26,6 @@ export const MarkerPopupContents = (props: MarkerPopupContentProps) => {
 
     let [pageNumber, setPageNumber] = useState(0);    
     let caseData = props.data[pageNumber];
-    let descriptionTranslation : Record<string, string> = {
-        'MVC - PI': 'Injury',
-        'MVC - FATALITY': 'Fatality',
-        'ROADSIDE TEST': 'Roadside Test',
-        'MVC - HIT & RUN': 'Hit & Run',
-        'IMPAIRED DRIVING': 'Impaired Driving',
-        'DANGEROUS OPERATION - TRAFFIC': 'Dangerous Operation of Vehicle'
-    }
     // Typically will trigger on a reload
     if (!caseData && props.data.length > 0) {
         caseData = props.data[0];
