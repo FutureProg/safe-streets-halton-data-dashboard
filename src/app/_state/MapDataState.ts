@@ -4,21 +4,43 @@ import { assign, fromPromise, setup } from 'xstate';
 import {createActorContext} from '@xstate/react';
 import { CaseData } from '@/common';
 import { LatLngExpression } from 'leaflet';
-import { ClientSideFilters } from '../common';
+import { ClientSideFilters, DataResponseBody } from '../common';
 
 export type FetchDataParams = { 
     city: string[], 
     startDate: string | number | Date, 
-    endDate: string | number | Date 
+    endDate: string | number | Date,
+    cursor?: string
 }
 
-const fetchData = (params: FetchDataParams) => {
+const fetchData = async (params: FetchDataParams) => {
     params.startDate = params.startDate instanceof Date? params.startDate.getTime() : params.startDate;
     params.endDate = params.endDate instanceof Date? params.endDate.getTime() : params.endDate;
     
-    const baseURL = '/api/data?';
-    let urlParams = new URLSearchParams(Object.entries(params).map(([k,v]) => [k, v as string]));
-    return fetch(baseURL + urlParams, {cache: 'no-cache'}).then((response) => response.json());
+    const baseURL = '/api/data?';    
+    let result: DataResponseBody | null = null;
+    let nextCursor = params.cursor;
+
+    // fetch all pages
+    do {
+        if (nextCursor) {
+            params.cursor = nextCursor;
+        }
+        let urlParams = new URLSearchParams(Object.entries(params).map(([k,v]) => [k, v as string]));
+        const tempResult: DataResponseBody = await fetch(baseURL + urlParams, {cache: 'no-cache'}).then((response) => response.json());        
+        if (!result) {
+            result = tempResult;
+        } else {
+            result.data = result.data.concat(tempResult.data);
+            result.nextCursor = tempResult.nextCursor;
+            result.hasMore = tempResult.hasMore;
+        }
+        if (tempResult.hasMore) {
+            nextCursor = tempResult.nextCursor ?? undefined;
+        }
+    } while (result && result.hasMore);
+
+    return result!;
 }
 
 export interface MarkerData {
