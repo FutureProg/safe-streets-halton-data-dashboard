@@ -1,6 +1,6 @@
 import React, * as ReactLib from "react";
 
-export type DataPlot = React.ReactElement;
+export type DataPlot = React.ReactElement<any>;
 
 
 /**

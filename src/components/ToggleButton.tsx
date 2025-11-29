@@ -9,7 +9,7 @@ export type ToggleButtonProps = {
     name?: string;
     id?: string;
     text?: string;
-    icon?: StaticImageData | ToggleIconOptions | React.ReactElement;
+    icon?: StaticImageData | ToggleIconOptions | React.ReactElement<any>;
     className?: string;
     alt?: string;
     style?: React.CSSProperties;

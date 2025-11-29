@@ -25,12 +25,22 @@ export const generateMetadata = async ({locale}: {locale: string}) => {
 
 const i18nNamespaces = ['translations', 'staticValues']
 
-export default async function RootLayout({
-  children, params: {locale}
-}: Readonly<{
-  children: React.ReactNode;
-  params: {locale: string};
-}>) {
+export default async function RootLayout(
+  props: Readonly<{
+    children: React.ReactNode;
+    params: {locale: string};
+  }>
+) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
+  const {
+    children
+  } = props;
+
   const {t: translate, resources} = await initTranslations(locale, i18nNamespaces);
   const staticValues = await getStaticValues(translate);
 
