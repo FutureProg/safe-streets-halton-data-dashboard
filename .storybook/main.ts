@@ -9,7 +9,8 @@ const config: StorybookConfig = {
     "@storybook/addon-designs",
     "@storybook/addon-a11y",
     "@storybook/addon-coverage",
-    "@storybook/addon-docs"
+    "@storybook/addon-docs",
+    "@storybook/addon-vitest"
   ],
 
   framework: {
