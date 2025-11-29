@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 
 import FilterForm from './FilterForm';
-import { within, expect } from '@storybook/test';
+import { within, expect } from 'storybook/test';
 import { formatDateHtmlInput } from '@/util';
 import { StaticValuesProvider } from '../StaticValuesContext';
 import { HTMLInputOption } from '../common';

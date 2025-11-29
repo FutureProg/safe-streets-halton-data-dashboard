@@ -1,4 +1,4 @@
-import type {ArgTypes, Meta, StoryObj} from '@storybook/react';
+import type {ArgTypes, Meta, StoryObj} from '@storybook/nextjs-vite';
 
 import Button, { ButtonSize, ButtonVariant } from './Button';
 import { InputType } from 'storybook/internal/types';

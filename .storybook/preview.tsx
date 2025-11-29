@@ -1,5 +1,5 @@
 import React from "react";
-import type { Preview } from "@storybook/react";
+import type { Preview } from "@storybook/nextjs-vite";
 import TranslationProvider from "../src/app/TranslationProvider";
 import initTranslations from "../src/app/i18n";
 import Providers from '../src/app/Providers';
