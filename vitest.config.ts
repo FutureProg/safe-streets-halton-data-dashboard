@@ -32,6 +32,15 @@ export default defineConfig({
             instances: [{ browser: "chromium" }],
           },
           setupFiles: [".storybook/vitest.setup.ts"],
+          env: {
+            // Define environment variables for Storybook tests
+            DB_USER: "test_user",
+            DB_HOST: "localhost",
+            DB_PASS: "test_pass",
+            DB_PORT: "3306",
+            DB_NAME: "test_db",
+            dataAPI: "http://localhost:3000/api",
+          },
         },
       },
     ],
