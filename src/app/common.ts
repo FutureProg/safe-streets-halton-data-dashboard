@@ -14,11 +14,6 @@ export type ClientSideFilters = {
     incidentTypes: string[]
 }
 
-export interface PaginationParams {
-    limit?: number;
-    cursor?: string;
-}
-
 export interface PagingResponseBody<T> {
     data: T[],
     nextCursor: string | null,

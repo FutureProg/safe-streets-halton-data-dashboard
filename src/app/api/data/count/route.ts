@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import { NextRequest } from "next/server";
-import { createPagingResponseBody, getPagingParams } from "../../utils";
+import { createPagingResponseBody, getPagingParams } from "../../pagination";
 import { findDataGroupBy, HRPSDataColumns } from "@/db/db";
 
 export const GET = async (request: NextRequest) => {

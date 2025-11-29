@@ -1,6 +1,6 @@
 import { CountsQueryParams } from "@/api";
 import test, { expect } from "@playwright/test";
-import { PagingResponseBody } from "../../utils";
+import { PagingResponseBody } from "../../pagination";
 
 test("Test GET Count from server", async () => {
     const queryParams : CountsQueryParams = {

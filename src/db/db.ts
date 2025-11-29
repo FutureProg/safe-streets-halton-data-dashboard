@@ -6,6 +6,7 @@ import { MySqlColumn, MySqlSelectBuilder } from "drizzle-orm/mysql-core";
 import { HRPSDataModel } from "./models";
 import "../../envConfig";
 import { unionAll } from "drizzle-orm/pg-core";
+import type { PaginationParams } from "@/app/common";
 
 const { DB_USER, DB_HOST, DB_PASS, DB_PORT, DB_NAME } = process.env;
 export const db = drizzle({
@@ -15,23 +16,6 @@ export const db = drizzle({
 });
 
 export type HRPSDataColumns = keyof HRPSDataModel;
-export const findData = async (startDate: Date, endDate: Date, options?: {
-    includedCities?: string[];
-    itemOffset?: number;
-    itemCount?: number;
-}) => {
-    options = {
-        itemCount: options?.itemCount ?? 100,
-        itemOffset: options?.itemOffset ?? 0,
-        includedCities: options?.includedCities ?? []
-    };
-    return await db.select().from(hrpsData).where(and(
-        between(hrpsData.date, startDate, endDate),
-        inArray(hrpsData.city, options.includedCities!),
-    ))
-        .offset(options.itemOffset!)
-        .limit(options.itemCount!);
-};
 
 export const findInfo = async () => {
     const descriptionUniqueInfo = db.selectDistinct({value: hrpsData.description}).from(hrpsData);
