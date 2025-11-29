@@ -31,7 +31,9 @@ jobs:
       run: |
         npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
           "npx http-server storybook-static --port 6007 --silent" \
-          "npx wait-on tcp:127.0.0.1:6007 && npm run test-storybook -- --url http://localhost:6007"
+          "npx wait-on tcp:127.0.0.1:6007 && npm run test-storybook -- --url http://localhost:6007"    
+    - name: Run storybook tests
+      run: npx vitest --project storybook
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
