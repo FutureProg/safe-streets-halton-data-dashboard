@@ -87,11 +87,6 @@ export const GET = async (request: NextRequest) => {
         ),
     );
     const cities = searchParams.get("city")?.split(",");
-    console.log(startDate, endDate, {
-        includedCities: cities,
-        limit,
-        cursor
-    });
     const body = await findData(startDate, endDate, {
         includedCities: cities,
         limit,
