@@ -1,4 +1,4 @@
-import test, { expect } from "@playwright/test";
+import { test, expect } from "vitest";
 import { formatDateHtmlInput } from "./util";
 
 test("Provides correct date in format yyyy-MM-dd", () => {
