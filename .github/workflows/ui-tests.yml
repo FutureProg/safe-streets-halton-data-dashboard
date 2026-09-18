@@ -1,4 +1,4 @@
-name: Playwright Tests
+name: UI Tests
 on:
   push:
     branches: [ main, master ]
@@ -19,12 +19,6 @@ jobs:
       run: npx playwright install --with-deps
     - name: Run Playwright tests
       run: npx playwright test
-      env:
-        DB_USER: ${{secrets.DB_USER}}
-        DB_PASS: ${{secrets.DB_PASS}}
-        DB_NAME: ${{secrets.DB_NAME}}
-        DB_HOST: ${{secrets.DB_HOST}}
-        DB_PORT: ${{secrets.DB_PORT}}
     - name: Build Storybook
       run: npm run build-storybook --quiet
     - name: Serve Storybook and run tests

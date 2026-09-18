@@ -73,11 +73,14 @@ export default defineConfig({
     // },
   ],
 
-  /* Run your local dev server before starting the tests */
+  /* Boots a throwaway MySQL container (Testcontainers), migrates + seeds it,
+   * then starts `next dev` against it. See e2e/support/testcontainers-server.mts.
+   * Requires Node 22.18+/23.6+ (type stripping enabled by default) to run a
+   * .mts file directly — no ts-node/tsx needed. */
   webServer: {
-    command: `npx next dev -p ${PORT}`,
+    command: `node e2e/support/testcontainers-server.mts`,
     url: baseURL,
-    timeout: 60 * 1000,
+    timeout: 180 * 1000,
     stdout: 'pipe',
     stderr: 'pipe',
     reuseExistingServer: !process.env.CI,
