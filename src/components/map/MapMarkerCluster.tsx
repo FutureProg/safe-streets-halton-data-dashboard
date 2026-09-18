@@ -2,10 +2,9 @@
 import 'react-leaflet-cluster/dist/assets/MarkerCluster.css';
 import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css';
 import { CaseData } from "@/common";
-import { MarkerData } from "@/lib/features/mapData/mapDataSlice";
 import MarkerClusterGroup from "react-leaflet-cluster"
 import { MarkerPopupContents } from "../MarkerPopupContents";
-import { MapDataContext } from "@/app/_state/MapDataState";
+import { MapDataContext, MarkerData } from "@/app/_state/MapDataState";
 
 import mvcCrashIcon from '@/img/mvc-crash-icon.png';
 import L from "leaflet";
