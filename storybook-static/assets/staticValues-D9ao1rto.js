@@ -1,0 +1,2 @@
+const t="Burlington",n="Georgetown",o="Milton",I="Oakville",T="Acton",e={"MVC - PI":"Injury","MVC - FATALITY":"Fatality","ROADSIDE TEST":"Roadside Test","MVC - HIT & RUN":"Hit & Run","IMPAIRED DRIVING":"Impaired Driving","DANGEROUS OPERATION - TRAFFIC":"Dangerous Operation of Vehicle","THEFT OF BICYCLE":"Bicycle Theft",BURLINGTON:t,GEORGETOWN:n,MILTON:o,"HALTON HILLS":"Halton Hills",OAKVILLE:I,ACTON:T};export{T as ACTON,t as BURLINGTON,n as GEORGETOWN,o as MILTON,I as OAKVILLE,e as default};
+//# sourceMappingURL=staticValues-D9ao1rto.js.map
