@@ -1,9 +1,12 @@
 allowBuilds:
   '@parcel/watcher': false
   '@swc/core': false
+  cpu-features: true
   es5-ext: false
   esbuild: true
+  protobufjs: true
   sharp: false
+  ssh2: true
   unrs-resolver: false
 minimumReleaseAgeExclude:
   - esbuild@0.24.3
