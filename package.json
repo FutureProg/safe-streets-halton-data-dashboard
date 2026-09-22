@@ -12,7 +12,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test-storybook": "test-storybook --coverage --browsers chromium firefox webkit",
-    "varlock-encrypt": "pnpm exec varlock encrypt --file .env.local"
+    "varlock-encrypt": "pnpm exec varlock encrypt --file .env.local",
+    "docs:audit": "node scripts/documentation-audit.mjs"
   },
   "dependencies": {
     "@next/env": "16.0.5",
