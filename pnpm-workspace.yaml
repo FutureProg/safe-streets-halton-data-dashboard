@@ -31,3 +31,6 @@ peerDependencyRules:
   allowedVersions:
     vite: "*"
     vitest: "*"
+permissions:
+  varlock:
+    skills: true
