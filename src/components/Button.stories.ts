@@ -1,74 +1,68 @@
-import type {ArgTypes, Meta, StoryObj} from '@storybook/nextjs-vite';
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
-import Button, { ButtonSize, ButtonVariant } from './Button';
-import { InputType } from 'storybook/internal/types';
+import Button, { ButtonSize, ButtonVariant } from "./Button";
+import { InputType } from "storybook/internal/types";
 
-const argTypeFromEnum = <T extends object>(enumType: T, description='undefined') : InputType => {
-    const options = Object.keys(typeof enumType)
-        .filter((key) => !isNaN(parseInt(key)));
-    
-    return {
-        options: enumType,
-        control: {
-            type: 'select'
-        }
-    }
-}
+const argTypeFromEnum = (enumType: object): InputType => ({
+  options: Object.values(enumType),
+  control: {
+    type: "select",
+  },
+});
 
 const meta: Meta<typeof Button> = {
-    component: Button,
-    parameters: {
-        design: {
-            type: 'figma',
-            url: 'https://www.figma.com/design/LFm8nDtTmvSWZdJK3GtxRK/Safe-Streets-Dashboard?node-id=2011-552&t=6jObnkF3fr9QAHst-4'
-        },
-        layout: 'centered'
+  component: Button,
+  parameters: {
+    design: {
+      type: "figma",
+      url: "https://www.figma.com/design/LFm8nDtTmvSWZdJK3GtxRK/Safe-Streets-Dashboard?node-id=2011-552&t=6jObnkF3fr9QAHst-4",
     },
-    argTypes: {
-        size: argTypeFromEnum(ButtonSize),
-        variant: argTypeFromEnum(ButtonVariant)
-    }
-}
+    layout: "centered",
+  },
+  argTypes: {
+    size: argTypeFromEnum(ButtonSize),
+    variant: argTypeFromEnum(ButtonVariant),
+  },
+};
 
 export default meta;
 
 type Story = StoryObj<typeof Button>;
-export const Primary : Story = {
-    parameters: {
-    },
-    args: {
-        children: "Button Text",
-        size: "default" as ButtonSize,
-        variant: "primary" as ButtonVariant
-    }
-}
+export const Primary: Story = {
+  parameters: {},
+  args: {
+    children: "Button Text",
+    size: ButtonSize.Default,
+    variant: ButtonVariant.Primary,
+  },
+};
 
 export const Neutral: Story = {
-    args: {
-        children: "Button Text",
-        size: "default",
-        variant: "neutral"
-    },
+  args: {
+    children: "Button Text",
+    size: ButtonSize.Default,
+    variant: ButtonVariant.Neutral,
+  },
 
-    parameters: {}
+  parameters: {},
 };
 
 export const Secondary: Story = {
-    args: {
-        children: "Button Text",
-        size: "default",
-        variant: "secondary"
-    },
+  args: {
+    children: "Button Text",
+    size: ButtonSize.Default,
+    variant: ButtonVariant.Secondary,
+  },
 
-    parameters: {}
+  parameters: {},
 };
 
 export const Subtle: Story = {
-    args: {
-        children: "Button Text",
-        size: "default",
-        variant: "subtle"
-    },
+  args: {
+    children: "Button Text",
+    size: ButtonSize.Default,
+    variant: ButtonVariant.Subtle,
+  },
 
-    parameters: {}
+  parameters: {},
 };

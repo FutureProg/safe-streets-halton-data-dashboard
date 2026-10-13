@@ -1,27 +1,27 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
-import FormLabel from './FormLabel';
+import FormLabel from "./FormLabel";
 
 const meta = {
   component: FormLabel,
   parameters: {
-    layout: 'centered'
+    layout: "centered",
   },
   argTypes: {
     icon: {
       mapping: {
-        src: 'StaticImageData',
-        alt: 'string'
+        src: "StaticImageData",
+        alt: "string",
       },
-      description: 'The static image data',
+      description: "The static image data",
       type: {
-        name: 'object',
+        name: "object",
         value: {
-          src: {name: 'other', value: 'StaticImageData'},
-          alt: {name: 'string'}
-        }
-      }
-    }
+          src: { name: "other", value: "StaticImageData" },
+          alt: { name: "string" },
+        },
+      },
+    },
   },
 } satisfies Meta<typeof FormLabel>;
 
@@ -31,8 +31,8 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    children: "Hello"
-  }
+    children: "Hello",
+  },
 };
 
 export const WithIcon: Story = {
@@ -40,14 +40,14 @@ export const WithIcon: Story = {
     children: "Hello",
 
     icon: {
-      "src": {
-        "src": "/layers.png",
-        "height": 82,
-        "width": 50,
-        "blurDataURL": "/layers.png"
+      src: {
+        src: "/layers.png",
+        height: 82,
+        width: 50,
+        blurDataURL: "/layers.png",
       },
 
-      "alt": ""
-    }
-  }
+      alt: "",
+    },
+  },
 };

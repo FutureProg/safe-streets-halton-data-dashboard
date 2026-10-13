@@ -1,39 +1,39 @@
-@use '../../theme.scss';
+@use "../../theme.scss";
 
 .popup {
-    position: absolute;
-    margin-top: 4px;
+  position: absolute;
+  margin-top: 4px;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+
+  @include theme.text-regular;
+
+  &[data-open="false"] {
+    display: none;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: flex;
-    justify-content: flex-end;
-    width: 100%;
+    flex-direction: column;
+    gap: 4px;
+    justify-content: center;
+    align-items: center;
 
-    @include theme.text-regular;
+    li {
+      padding: 4px;
 
-    &[data-open='false'] {
-        display: none;
+      &:hover {
+        background-color: #a8a8a8;
+      }
+
+      a {
+        color: #2f2f2f;
+        text-decoration: none;
+      }
     }
-
-    ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        justify-content: center;
-        align-items: center;
-
-        li {
-            padding: 4px;
-
-            &:hover {
-                background-color: #a8a8a8;
-            }
-
-            a {
-                color: #2F2F2F;
-                text-decoration: none;
-            }
-        }
-    }
+  }
 }

@@ -1,4 +1,4 @@
-import { Page, Route } from '@playwright/test';
+import { Page, Route } from "@playwright/test";
 
 /**
  * Shape returned by GET /api/data (see src/app/common.ts PagingResponseBody /
@@ -16,15 +16,17 @@ export type MockIncident = {
   globalID: string;
 };
 
-export const buildIncident = (overrides: Partial<MockIncident> = {}): MockIncident => ({
-  caseNo: 'CASE-0001',
+export const buildIncident = (
+  overrides: Partial<MockIncident> = {},
+): MockIncident => ({
+  caseNo: "CASE-0001",
   date: new Date().toISOString(),
-  description: 'Motor Vehicle Collision',
-  location: '123 Main St',
-  city: 'Oakville',
+  description: "Motor Vehicle Collision",
+  location: "123 Main St",
+  city: "Oakville",
   latitude: 43.4675,
   longitude: -79.6877,
-  globalID: 'GLOBAL-0001',
+  globalID: "GLOBAL-0001",
   ...overrides,
 });
 
@@ -33,11 +35,14 @@ export const buildIncident = (overrides: Partial<MockIncident> = {}): MockIncide
  * submit) and returns a single, non-paginated page of fixture incidents
  * instead of hitting the real database.
  */
-export const mockIncidentData = async (page: Page, incidents: MockIncident[]) => {
-  await page.route('**/api/data?**', async (route: Route) => {
+export const mockIncidentData = async (
+  page: Page,
+  incidents: MockIncident[],
+) => {
+  await page.route("**/api/data?**", async (route: Route) => {
     await route.fulfill({
       status: 200,
-      contentType: 'application/json',
+      contentType: "application/json",
       body: JSON.stringify({
         data: incidents,
         nextCursor: null,

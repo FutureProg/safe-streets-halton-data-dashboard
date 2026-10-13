@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
-import MenuPanel from './MenuPanel';
+import MenuPanel from "./MenuPanel";
 
 const meta = {
   component: MenuPanel,
@@ -11,5 +11,5 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: {}
+  args: {},
 };

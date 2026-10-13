@@ -10,7 +10,7 @@ const config: StorybookConfig = {
     "@storybook/addon-a11y",
     "@storybook/addon-coverage",
     "@storybook/addon-docs",
-    "@storybook/addon-vitest"
+    "@storybook/addon-vitest",
   ],
 
   framework: {
@@ -21,15 +21,14 @@ const config: StorybookConfig = {
   build: {
     test: {
       disabledAddons: [
-        '@storybook/addon-docs',
-        '@storybook/addon-essentials/docs'
-      ]
-    }
+        "@storybook/addon-docs",
+        "@storybook/addon-essentials/docs",
+      ],
+    },
   },
 
   staticDirs: ["../public"],
 
   docs: {},
-
 };
 export default config;

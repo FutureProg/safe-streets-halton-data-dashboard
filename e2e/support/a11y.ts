@@ -1,5 +1,5 @@
-import { Page, expect } from '@playwright/test';
-import { injectAxe, getViolations } from 'axe-playwright';
+import { Page, expect } from "@playwright/test";
+import { injectAxe, getViolations } from "axe-playwright";
 
 /**
  * Runs an axe-core scan against the current page state and fails the test
@@ -13,8 +13,11 @@ export const assertNoA11yViolations = async (page: Page) => {
   const violations = await getViolations(page);
 
   const summary = violations
-    .map((violation) => `${violation.id} (${violation.impact}): ${violation.help} - ${violation.nodes.length} node(s)`)
-    .join('\n');
+    .map(
+      (violation) =>
+        `${violation.id} (${violation.impact}): ${violation.help} - ${violation.nodes.length} node(s)`,
+    )
+    .join("\n");
 
   expect(violations, summary).toHaveLength(0);
 };

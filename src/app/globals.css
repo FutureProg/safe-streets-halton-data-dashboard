@@ -4,15 +4,11 @@
 
 @layer components {
   .panel {
-    @apply 
-    bg-white
-    flex flex-col justify-start items-center gap-4
-    p-3 w-fit 
-    rounded-lg;
+    @apply flex w-fit flex-col items-center justify-start gap-4 rounded-lg bg-white p-3;
   }
 }
 
-.leaflet-control-zoom.leaflet-control{
+.leaflet-control-zoom.leaflet-control {
   @apply hidden lg:block;
 }
 
@@ -34,7 +30,7 @@ body {
   color: rgb(var(--foreground-rgb));
   display: flex;
   flex-direction: column;
-  height: 100vh;  
+  height: 100vh;
   margin: 0;
   padding: 0;
 }

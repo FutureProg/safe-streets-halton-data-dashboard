@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import {expect, fn, userEvent, waitFor, within} from 'storybook/test';
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { expect, fn, userEvent, within } from "storybook/test";
 
-import ToggleButton from './ToggleButton';
-import TestImage from '@/img/icon-city.svg';
-import TestImage2 from '@/img/icon-lookup.svg';
+import ToggleButton from "./ToggleButton";
+import TestImage from "@/img/icon-city.svg";
+import TestImage2 from "@/img/icon-lookup.svg";
 
 const meta = {
   component: ToggleButton,
@@ -17,18 +17,24 @@ export const Default: Story = {
   args: {
     icon: TestImage,
     alt: "Test Image",
-    onToggle: fn()
+    onToggle: fn(),
   },
-  play: async ({args, canvasElement, step}) => {
+  play: async ({ args, canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    expect(canvas.getByRole('button')).toHaveAttribute('data-toggled', 'false');
-    await step('Click', async () => {
-      await userEvent.click(canvas.getByRole('button'));
+    await expect(canvas.getByRole("button")).toHaveAttribute(
+      "data-toggled",
+      "false",
+    );
+    await step("Click", async () => {
+      await userEvent.click(canvas.getByRole("button"));
     });
-    expect(args.onToggle).toHaveBeenCalledOnce();
-    expect(canvas.getByRole('button')).toHaveAttribute('data-toggled', 'true');
-  }
+    await expect(args.onToggle).toHaveBeenCalledOnce();
+    await expect(canvas.getByRole("button")).toHaveAttribute(
+      "data-toggled",
+      "true",
+    );
+  },
 };
 
 export const TwoIcons: Story = {
@@ -38,12 +44,12 @@ export const TwoIcons: Story = {
       untoggled: TestImage2,
     },
     alt: "Test Image",
-  }
+  },
 };
 
 export const Text: Story = {
   args: {
     text: "Test Toggle",
     alt: "Test Image",
-  }
+  },
 };
