@@ -22,4 +22,7 @@ export default defineConfig({
     sortTailwindcss: {},
     ignorePatterns: ["build", "coverage"],
   },
+  resolve: {
+    tsconfigPaths: true,
+  },
 });

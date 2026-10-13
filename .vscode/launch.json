@@ -10,7 +10,7 @@
       "name": "Run test-storybook",
       "runtimeExecutable": "npm",
       "cwd": "${workspaceFolder}",
-      "args": ["run", "test-storybook", "--", "--url", "http://localhost:6007"]
+      "args": ["run", "test-storybook"]
     },
     {
       "type": "node",

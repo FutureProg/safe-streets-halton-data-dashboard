@@ -15,6 +15,8 @@ const dirname =
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
   test: {
+    // v8 coverage doesn't support firefox/webkit browser instances
+    coverage: { provider: "istanbul" },
     // Vitest v4 compatibility: preserve mock call history.
     // Remove after tests no longer rely on calls from setup or earlier tests.
     // https://viteplus.dev/guide/vitest-v5#remove-unneeded-compatibility-settings
@@ -63,9 +65,12 @@ export default defineConfig({
             enabled: true,
             headless: true,
             provider: playwright({}),
-            instances: [{ browser: "chromium" }],
+            instances: [
+              { browser: "chromium" },
+              { browser: "firefox" },
+              { browser: "webkit" },
+            ],
           },
-          setupFiles: [".storybook/vitest.setup.ts"],
           env: {
             // Define environment variables for Storybook tests
             DB_USER: "test_user",
