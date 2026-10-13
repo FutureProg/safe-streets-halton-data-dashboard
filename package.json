@@ -6,7 +6,7 @@
     "dev": "varlock run -- next dev --webpack",
     "build": "varlock run -- next build --webpack",
     "start": "varlock run -- next start",
-    "lint": "eslint .",
+    "lint": "vp lint",
     "test": "playwright test",
     "test:unit": "vp test run --project unit",
     "storybook": "storybook dev -p 6006",

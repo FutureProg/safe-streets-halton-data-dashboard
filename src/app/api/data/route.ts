@@ -7,7 +7,7 @@ import { hrpsData } from "@/db/schema";
 import { and, between, desc, eq, inArray, lt, or } from "drizzle-orm";
 import { PaginationParams } from "@/app/common";
 
-export const findData = async (
+const findData = async (
   startDate: Date,
   endDate: Date,
   options?: {
