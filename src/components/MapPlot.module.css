@@ -1,43 +1,43 @@
 .mapPlot {
-    display: block;
-    border: 1px solid black;
-    background: white;
+  display: block;
+  border: 1px solid black;
+  background: white;
 
-    grid-column: 2;
-    grid-row: 3 / span 1;
-    position: relative;
-    z-index: 0;
+  grid-column: 2;
+  grid-row: 3 / span 1;
+  position: relative;
+  z-index: 0;
 }
 
 .mapPlotLoadStatus {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    z-index: 1001;
-    font-size: 28px;
-    font-weight: 400;
-    background-color: rgba(255, 255, 255, 0.8);
-    color: black;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 1001;
+  font-size: 28px;
+  font-weight: 400;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: black;
 
-    display: flex;
-    text-align: center;
+  display: flex;
+  text-align: center;
 }
 
 .mapPlotLoadStatus p {
-    margin: auto;
+  margin: auto;
 }
 
 .mapPopupContent {
-
 }
 
 .mapPopupContent table {
-    table-layout: fixed;
-    border-collapse: collapse; 
-    margin-top: 4px;       
+  table-layout: fixed;
+  border-collapse: collapse;
+  margin-top: 4px;
 }
-.mapPopupContent th, .mapPopupContent td {    
-    padding: 8px 15px;
+.mapPopupContent th,
+.mapPopupContent td {
+  padding: 8px 15px;
 }

@@ -1,6 +1,6 @@
-import { test, expect } from "vitest";
+import { test, expect } from "vite-plus/test";
 import { formatDateHtmlInput } from "./util";
 
 test("Provides correct date in format yyyy-MM-dd", () => {
-    expect(formatDateHtmlInput(new Date(2021, 0, 1))).toBe("2021-01-01");
+  expect(formatDateHtmlInput(new Date(2021, 0, 1))).toBe("2021-01-01");
 });

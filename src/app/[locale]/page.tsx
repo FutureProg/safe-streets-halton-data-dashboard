@@ -15,7 +15,7 @@ import CarCrashIcon from "@/img/icon-car-crash.svg";
 import { useTranslation } from "react-i18next";
 import dynamic from "next/dynamic";
 import { HTMLInputOption } from "../common";
-import { useCallback, useContext, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { StaticValuesContext } from "../StaticValuesContext";
 import { MapDataContext } from "../_state/MapDataState";
 
@@ -33,19 +33,19 @@ export default function Home() {
 
   const onIncidentTypeChange = (options: HTMLInputOption[]) => {
     mapDataActor.send({
-      type: 'filterClient', 
+      type: "filterClient",
       filters: {
-        incidentTypes: options.map((option) => option.value)
-      }
-    }); 
-  }
+        incidentTypes: options.map((option) => option.value),
+      },
+    });
+  };
 
   useEffect(() => {
     mapDataActor.send({
-      type: 'filterClient', 
+      type: "filterClient",
       filters: {
-        incidentTypes: incidentTypes.map(({ value }) => value)
-      }
+        incidentTypes: incidentTypes.map(({ value }) => value),
+      },
     });
   }, []);
 
@@ -61,7 +61,7 @@ export default function Home() {
           <MenuPanel />
         </div>
         <div></div>
-        <div className="hidden lg:flex absolute right-0 flex-col items-end gap-3 *:pointer-events-auto">
+        <div className="absolute right-0 hidden flex-col items-end gap-3 *:pointer-events-auto lg:flex">
           {/* Lookup by Case ID */}
           <Panel>
             <SimpleForm>

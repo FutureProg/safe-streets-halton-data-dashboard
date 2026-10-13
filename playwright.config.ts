@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from "@playwright/test";
 
 const PORT = process.env.PORT || 3002;
 const baseURL = `http://localhost:${PORT}/`;
@@ -14,7 +14,7 @@ const baseURL = `http://localhost:${PORT}/`;
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: '.',
+  testDir: "./e2e",
   testMatch: /.*\.spec\.(js|ts)x?$/,
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -25,31 +25,33 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: process.env.CI ? [['line']] : [['list'], ['html', {open: 'never'}]], 
+  reporter: process.env.CI
+    ? [["line"]]
+    : [["list"], ["html", { open: "never" }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'retry-with-trace',
+    trace: "retry-with-trace",
   },
 
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
     },
 
     {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      name: "firefox",
+      use: { ...devices["Desktop Firefox"] },
     },
 
     {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      name: "webkit",
+      use: { ...devices["Desktop Safari"] },
     },
 
     /* Test against mobile viewports. */
@@ -81,8 +83,8 @@ export default defineConfig({
     command: `node e2e/support/testcontainers-server.mts`,
     url: baseURL,
     timeout: 180 * 1000,
-    stdout: 'pipe',
-    stderr: 'pipe',
+    stdout: "pipe",
+    stderr: "pipe",
     reuseExistingServer: !process.env.CI,
   },
 });

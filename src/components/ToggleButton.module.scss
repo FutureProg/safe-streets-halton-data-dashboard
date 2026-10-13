@@ -1,25 +1,25 @@
-@use '../theme.scss';
+@use "../theme.scss";
 
 .view {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 8px;
-    gap: 8px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  gap: 8px;
 
+  background: none;
+  border: 1px solid rgba(0, 0, 0, 0);
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  &[data-toggled="true"] {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  &[data-toggled="false"]:hover {
     background: none;
-    border: 1px solid rgba(0, 0, 0, 0);
-    border-radius: 8px;
-
-    cursor: pointer;
-
-    &[data-toggled='true'] {
-        background: rgba(0,0,0,0.1);
-    }
-
-    &[data-toggled='false']:hover {
-        background: none;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-    }
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
 }

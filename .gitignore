@@ -46,3 +46,4 @@ node_modules/
 *storybook.log
 
 .nyc_output/
+.vitest/

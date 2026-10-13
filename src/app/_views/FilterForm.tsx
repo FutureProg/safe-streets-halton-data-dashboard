@@ -13,97 +13,104 @@ import { formatDateHtmlInput } from "@/util";
 import { StaticValuesContext } from "../StaticValuesContext";
 
 export default function FilterForm() {
-    const mapDataActor = MapDataContext.useActorRef();
-    const loadStatus = MapDataContext.useSelector((snapshot) => snapshot.value);
-    const {cities: cityOptions} = useContext(StaticValuesContext);
+  const mapDataActor = MapDataContext.useActorRef();
+  const loadStatus = MapDataContext.useSelector((snapshot) => snapshot.value);
+  const { cities: cityOptions } = useContext(StaticValuesContext);
 
-    const defaultEndDate = new Date(Date.now());
-    const defaultStartDate = new Date(Date.now());
-    defaultStartDate.setDate(defaultStartDate.getDate() - 7);
-    
-    const onSubmit : FormEventHandler<HTMLFormElement> = (evt) => {
-        evt.preventDefault();
+  const defaultEndDate = new Date(Date.now());
+  const defaultStartDate = new Date(Date.now());
+  defaultStartDate.setDate(defaultStartDate.getDate() - 7);
 
-        const evalDate = (dateStr: string, boundary: 'start' | 'end') => {
-            let newDate = Date.parse(dateStr);
-            if (boundary == 'end') {
-                let baseDate = new Date(newDate);
-                newDate = new Date(newDate).setDate(baseDate.getDate() + 1);
-                newDate = new Date(newDate).setMilliseconds(baseDate.getMilliseconds() - 1);
-            }
-            return newDate
-        }
+  const onSubmit: FormEventHandler<HTMLFormElement> = (evt) => {
+    evt.preventDefault();
 
-        const formData = new FormData(evt.target as HTMLFormElement);
-        formData.set('startDate', `${evalDate(formData.get('startDate') as string, 'start')}`);
-        formData.set('endDate', `${evalDate(formData.get('endDate') as string, 'end')}`);
-        const dataDict = Object.fromEntries(formData.entries().map(([key, val]) => {
-            return [key, val as string];
-        }));
-        if (loadStatus !== 'loading') {
-            mapDataActor.send({type: 'request', params: {
-                city: dataDict['city']?.split(',') ?? [],
-                endDate: dataDict['endDate']!,
-                startDate: dataDict['startDate']!
-            }});
-        }
-    }
+    const evalDate = (dateStr: string, boundary: "start" | "end") => {
+      let newDate = Date.parse(dateStr);
+      if (boundary == "end") {
+        let baseDate = new Date(newDate);
+        newDate = new Date(newDate).setDate(baseDate.getDate() + 1);
+        newDate = new Date(newDate).setMilliseconds(
+          baseDate.getMilliseconds() - 1,
+        );
+      }
+      return newDate;
+    };
 
-    useEffect(() => {
-        const subscription = mapDataActor.subscribe((snapshot) => {
-            console.log(snapshot.toJSON());
-        });
-        return subscription.unsubscribe;
-    }, [mapDataActor]);
-
-    return (
-        <form className="panel container *:w-full" onSubmit={onSubmit}>
-            <FormElement>
-                <FormLabel
-                    icon={{ src: CalendarIcon, alt: "" }}
-                    htmlFor="startDate"
-                >
-                    Start Date
-                </FormLabel>
-                <InputText
-                    style={{ width: "100%" }}
-                    id="startDate"
-                    name="startDate"
-                    type="date"
-                    defaultValue={formatDateHtmlInput(defaultStartDate)}
-                />
-            </FormElement>
-            <FormElement>
-                <FormLabel
-                    icon={{ src: CalendarIcon, alt: "" }}
-                    htmlFor="endDate"
-                >
-                    End Date
-                </FormLabel>
-                <InputText
-                    style={{ width: "100%" }}
-                    id="endDate"
-                    name="endDate"
-                    type="date"
-                    defaultValue={formatDateHtmlInput(defaultEndDate)}
-                />
-            </FormElement>
-            <FormElement>
-                <FormLabel icon={{ src: CityIcon, alt: "" }} htmlFor="city">
-                    Municipality
-                </FormLabel>
-                <MultiSelect
-                    options={cityOptions}
-                    defaultValues={cityOptions.map((x) => x.value)}
-                    id="city"
-                    name="city"
-                />
-            </FormElement>
-            <div className="flex justify-center items-center gap-6">
-                <Button variant={ButtonVariant.Primary} type="submit">
-                    Search
-                </Button>
-            </div>
-        </form>
+    const formData = new FormData(evt.target as HTMLFormElement);
+    formData.set(
+      "startDate",
+      `${evalDate(formData.get("startDate") as string, "start")}`,
     );
+    formData.set(
+      "endDate",
+      `${evalDate(formData.get("endDate") as string, "end")}`,
+    );
+    const dataDict = Object.fromEntries(
+      formData.entries().map(([key, val]) => {
+        return [key, val as string];
+      }),
+    );
+    if (loadStatus !== "loading") {
+      mapDataActor.send({
+        type: "request",
+        params: {
+          city: dataDict["city"]?.split(",") ?? [],
+          endDate: dataDict["endDate"]!,
+          startDate: dataDict["startDate"]!,
+        },
+      });
+    }
+  };
+
+  useEffect(() => {
+    const subscription = mapDataActor.subscribe((snapshot) => {
+      console.log(snapshot.toJSON());
+    });
+    return () => subscription.unsubscribe();
+  }, [mapDataActor]);
+
+  return (
+    <form className="panel container *:w-full" onSubmit={onSubmit}>
+      <FormElement>
+        <FormLabel icon={{ src: CalendarIcon, alt: "" }} htmlFor="startDate">
+          Start Date
+        </FormLabel>
+        <InputText
+          style={{ width: "100%" }}
+          id="startDate"
+          name="startDate"
+          type="date"
+          defaultValue={formatDateHtmlInput(defaultStartDate)}
+        />
+      </FormElement>
+      <FormElement>
+        <FormLabel icon={{ src: CalendarIcon, alt: "" }} htmlFor="endDate">
+          End Date
+        </FormLabel>
+        <InputText
+          style={{ width: "100%" }}
+          id="endDate"
+          name="endDate"
+          type="date"
+          defaultValue={formatDateHtmlInput(defaultEndDate)}
+        />
+      </FormElement>
+      <FormElement>
+        <FormLabel icon={{ src: CityIcon, alt: "" }} htmlFor="city">
+          Municipality
+        </FormLabel>
+        <MultiSelect
+          options={cityOptions}
+          defaultValues={cityOptions.map((x) => x.value)}
+          id="city"
+          name="city"
+        />
+      </FormElement>
+      <div className="flex items-center justify-center gap-6">
+        <Button variant={ButtonVariant.Primary} type="submit">
+          Search
+        </Button>
+      </div>
+    </form>
+  );
 }
