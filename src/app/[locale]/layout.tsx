@@ -13,7 +13,12 @@ const poppins = Poppins({
   subsets: ["latin"],
 });
 
-export const generateMetadata = async ({ locale }: { locale: string }) => {
+export const generateMetadata = async ({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) => {
+  const { locale } = await params;
   const { t } = await initTranslations(locale, i18nNamespaces);
   return {
     title: t("AppName"),
@@ -26,10 +31,10 @@ const i18nNamespaces = ["translations", "staticValues"];
 export default async function RootLayout(
   props: Readonly<{
     children: React.ReactNode;
-    params: { locale: string };
+    params: Promise<{ locale: string }>;
   }>,
 ) {
-  const params = props.params;
+  const params = await props.params;
 
   const { locale } = params;
 

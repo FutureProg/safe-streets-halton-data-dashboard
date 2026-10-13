@@ -14,7 +14,7 @@ const baseURL = `http://localhost:${PORT}/`;
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: ".",
+  testDir: "./e2e",
   testMatch: /.*\.spec\.(js|ts)x?$/,
   /* Run tests in files in parallel */
   fullyParallel: true,
