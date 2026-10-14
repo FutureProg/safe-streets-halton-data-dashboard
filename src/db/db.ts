@@ -41,6 +41,9 @@ export const findInfo = async () => {
     .where(isNotNull(hrpsData.city));
   return Promise.allSettled([descriptionUniqueInfo, citiesUniqueInfo]).then(
     ([incidentTypes, cities]) => {
+      [incidentTypes, cities].forEach((result) => {
+        if (result.status === "rejected") console.error(result.reason);
+      });
       return {
         incidents:
           incidentTypes.status == "fulfilled"
@@ -51,9 +54,6 @@ export const findInfo = async () => {
             ? cities.value.map((x) => x.value!)
             : undefined,
       };
-    },
-    (error: any) => {
-      console.log(error);
     },
   );
 };
