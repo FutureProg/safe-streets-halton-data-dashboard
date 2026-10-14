@@ -79,6 +79,7 @@ const MultiSelect = ({
             <Button
               variant="ghost"
               size="icon-xs"
+              slot={null}
               aria-label={`Remove ${item.label}`}
               className="opacity-50 hover:opacity-100"
               onPress={() => update(selected.filter((id) => id !== item.id))}
