@@ -25,6 +25,10 @@ process.env.DB_USER = container.getUsername();
 process.env.DB_PASS = container.getPassword();
 process.env.DB_NAME = container.getDatabase();
 process.env.DB_ORM_URL = container.getConnectionUri();
+// Override anything a developer's .env.local would otherwise supply: the
+// container has no TLS, and DB_URL takes precedence over the DB_* fields.
+process.env.DB_URL = process.env.DB_ORM_URL;
+process.env.DB_CA_CERT = "";
 
 console.log(
   `[testcontainers] Postgres ready at ${process.env.DB_HOST}:${process.env.DB_PORT}`,
