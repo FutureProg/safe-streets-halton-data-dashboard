@@ -35,6 +35,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# varlock
+env.d.ts
+
 # drizzle
 /drizzle/
 node_modules/
