@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode, useState } from "react";
+import { useFilter } from "react-aria-components";
 import type { HTMLInputOption } from "@/app/common";
 import {
   Combobox,
@@ -34,12 +35,15 @@ const MultiSelect = ({
 }: MultiSelectProps) => {
   const [internalValue, setInternalValue] = useState(defaultValues);
   const selected = value ?? internalValue;
+  const { contains } = useFilter({ sensitivity: "base" });
   const items = options.map(({ value, label }) => ({ id: value, label }));
 
   return (
     <Combobox
       selectionMode="multiple"
-      items={items}
+      allowsEmptyCollection
+      defaultItems={items}
+      defaultFilter={contains}
       value={selected}
       menuTrigger="focus"
       onChange={(keys) => {
@@ -59,8 +63,11 @@ const MultiSelect = ({
         <ComboboxChipsInput />
       </ComboboxChips>
       <ComboboxContent>
-        <ComboboxEmpty>No results</ComboboxEmpty>
-        <ComboboxList>
+        <ComboboxList
+          renderEmptyState={() => (
+            <ComboboxEmpty className="flex">No results</ComboboxEmpty>
+          )}
+        >
           {(item: { id: string; label: string }) => (
             <ComboboxItem id={item.id}>{item.label}</ComboboxItem>
           )}

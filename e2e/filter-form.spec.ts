@@ -60,6 +60,34 @@ test.describe("Given the filter form", () => {
     expect(url.searchParams.get("endDate")).toBeTruthy();
   });
 
+  test("When the start date is cleared, then no request is sent and the field is flagged invalid", async ({
+    page,
+  }) => {
+    let requests = 0;
+    await page.route("**/api/data?**", (route) => {
+      requests++;
+      return route.abort();
+    });
+
+    const startDate = page.getByRole("group", { name: "Start Date" });
+    for (const segment of [/^month/, /^day/, /^year/]) {
+      await startDate.getByRole("spinbutton", { name: segment }).click();
+      for (let i = 0; i < 4; i++) await page.keyboard.press("Backspace");
+    }
+    await page.getByRole("button", { name: "Search" }).click();
+
+    await expect(startDate).toHaveAttribute("data-invalid");
+    expect(requests).toBe(0);
+  });
+
+  test("When the municipality search matches nothing, then a 'No results' message is shown", async ({
+    page,
+  }) => {
+    await page.getByLabel("Municipality").fill("zzzzzz");
+
+    await expect(page.getByText("No results")).toBeVisible();
+  });
+
   test("When the user removes a municipality before submitting, then the request omits it", async ({
     page,
   }) => {
