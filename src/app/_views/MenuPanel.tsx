@@ -1,58 +1,36 @@
-import Panel from "@/components/Panel";
-import ToggleButton from "@/components/ToggleButton";
-import React, { PropsWithChildren, useState } from "react";
-import styles from "./MenuPanel.module.scss";
-import MenuToggleIcon from "@/img/bars.svg";
-import Image from "next/image";
-import Link from "next/link";
+import { MenuIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-const MenuPanel: React.FC<PropsWithChildren> = () => {
-  const [isOpen, setIsOpen] = useState(false);
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+const MenuPanel = () => {
   const { t: translate } = useTranslation();
 
-  const menuIcon = (
-    <Image
-      priority
-      src={MenuToggleIcon}
-      alt="Menu button"
-      width="18"
-      height="18"
-    />
-  );
-
   return (
-    <div className="relative w-fit">
-      <div className="panel flex-row items-center justify-start gap-4">
-        <span className="hidden font-sans text-base font-normal lg:inline">
-          {translate("AppTitle")}
-        </span>
-        <ToggleButton
-          onToggle={setIsOpen}
-          icon={menuIcon}
-          id="menu-panel-toggle-button"
-          alt="Menu button"
-          aria-haspopup="menu"
-          aria-controls="menu-popup"
-          aria-expanded={isOpen}
-        ></ToggleButton>
-      </div>
-      <div id="menu-popup" className={styles.popup} data-open={isOpen}>
-        <Panel>
-          <ul role="menu" aria-labelledby="menu-panel-toggle-button">
-            <li role="menuitem">
-              <Link href="/">Item 1</Link>
-            </li>
-            <li role="menuitem">
-              <Link href="/">Item 2</Link>
-            </li>
-            <li role="menuitem">
-              <Link href="/">Item 3</Link>
-            </li>
-          </ul>
-        </Panel>
-      </div>
-    </div>
+    <Card
+      size="sm"
+      className="w-fit flex-row items-center justify-start gap-4 px-3"
+    >
+      <span className="hidden font-sans text-base font-normal lg:inline">
+        {translate("AppTitle")}
+      </span>
+      <DropdownMenuTrigger>
+        <Button variant="ghost" size="icon" aria-label="Menu button">
+          <MenuIcon />
+        </Button>
+        <DropdownMenu className="w-40">
+          <DropdownMenuItem href="/">Item 1</DropdownMenuItem>
+          <DropdownMenuItem href="/">Item 2</DropdownMenuItem>
+          <DropdownMenuItem href="/">Item 3</DropdownMenuItem>
+        </DropdownMenu>
+      </DropdownMenuTrigger>
+    </Card>
   );
 };
 

@@ -1,116 +1,117 @@
-import Button, { ButtonVariant } from "@/components/Button";
-import FormElement from "@/components/FormElement";
-import FormLabel from "@/components/FormLabel";
-import InputText from "@/components/InputText";
+import { FormEventHandler, useContext, useState } from "react";
+import { CalendarDate, getLocalTimeZone, today } from "@internationalized/date";
+import { MapPinIcon } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { FieldGroup } from "@/components/ui/field";
+import { Spinner } from "@/components/ui/spinner";
+import { DatePicker } from "@/components/ui/date-picker";
 import MultiSelect from "@/components/MultiSelect";
 
-import CityIcon from "@/img/icon-city.svg";
-import CalendarIcon from "@/img/icon-calendar.svg";
-
-import { FormEventHandler, useContext, useEffect } from "react";
 import { MapDataContext } from "../_state/MapDataState";
-import { formatDateHtmlInput } from "@/util";
 import { StaticValuesContext } from "../StaticValuesContext";
 
-export default function FilterForm() {
+export type FilterFormValues = {
+  startDate: CalendarDate;
+  endDate: CalendarDate;
+  cities: string[];
+};
+
+export const useFilterFormValues = (): [
+  FilterFormValues,
+  (values: Partial<FilterFormValues>) => void,
+] => {
+  const { cities } = useContext(StaticValuesContext);
+  const [values, setValues] = useState<FilterFormValues>(() => {
+    const endDate = today(getLocalTimeZone());
+    return {
+      startDate: endDate.subtract({ days: 7 }),
+      endDate,
+      cities: cities.map(({ value }) => value),
+    };
+  });
+  return [values, (patch) => setValues((prev) => ({ ...prev, ...patch }))];
+};
+
+export type FilterFormProps = {
+  values: FilterFormValues;
+  onValuesChange: (values: Partial<FilterFormValues>) => void;
+  /** Render without the surrounding card, e.g. inside a sheet. */
+  embedded?: boolean;
+  onSearch?: () => void;
+};
+
+const evalDate = (dateStr: string, boundary: "start" | "end") => {
+  let newDate = Date.parse(dateStr);
+  if (boundary == "end") {
+    let baseDate = new Date(newDate);
+    newDate = new Date(newDate).setDate(baseDate.getDate() + 1);
+    newDate = new Date(newDate).setMilliseconds(baseDate.getMilliseconds() - 1);
+  }
+  return newDate;
+};
+
+export default function FilterForm({
+  values,
+  onValuesChange,
+  embedded = false,
+  onSearch,
+}: FilterFormProps) {
   const mapDataActor = MapDataContext.useActorRef();
   const loadStatus = MapDataContext.useSelector((snapshot) => snapshot.value);
   const { cities: cityOptions } = useContext(StaticValuesContext);
-
-  const defaultEndDate = new Date(Date.now());
-  const defaultStartDate = new Date(Date.now());
-  defaultStartDate.setDate(defaultStartDate.getDate() - 7);
+  const isLoading = loadStatus === "loading";
 
   const onSubmit: FormEventHandler<HTMLFormElement> = (evt) => {
     evt.preventDefault();
-
-    const evalDate = (dateStr: string, boundary: "start" | "end") => {
-      let newDate = Date.parse(dateStr);
-      if (boundary == "end") {
-        let baseDate = new Date(newDate);
-        newDate = new Date(newDate).setDate(baseDate.getDate() + 1);
-        newDate = new Date(newDate).setMilliseconds(
-          baseDate.getMilliseconds() - 1,
-        );
-      }
-      return newDate;
-    };
-
-    const formData = new FormData(evt.target as HTMLFormElement);
-    formData.set(
-      "startDate",
-      `${evalDate(formData.get("startDate") as string, "start")}`,
-    );
-    formData.set(
-      "endDate",
-      `${evalDate(formData.get("endDate") as string, "end")}`,
-    );
-    const dataDict = Object.fromEntries(
-      formData.entries().map(([key, val]) => {
-        return [key, val as string];
-      }),
-    );
-    if (loadStatus !== "loading") {
-      mapDataActor.send({
-        type: "request",
-        params: {
-          city: dataDict["city"]?.split(",") ?? [],
-          endDate: dataDict["endDate"]!,
-          startDate: dataDict["startDate"]!,
-        },
-      });
-    }
+    if (isLoading) return;
+    mapDataActor.send({
+      type: "request",
+      params: {
+        city: values.cities,
+        endDate: `${evalDate(values.endDate.toString(), "end")}`,
+        startDate: `${evalDate(values.startDate.toString(), "start")}`,
+      },
+    });
+    onSearch?.();
   };
 
-  useEffect(() => {
-    const subscription = mapDataActor.subscribe((snapshot) => {
-      console.log(snapshot.toJSON());
-    });
-    return () => subscription.unsubscribe();
-  }, [mapDataActor]);
-
+  const Container = embedded ? "div" : Card;
   return (
-    <form className="panel container *:w-full" onSubmit={onSubmit}>
-      <FormElement>
-        <FormLabel icon={{ src: CalendarIcon, alt: "" }} htmlFor="startDate">
-          Start Date
-        </FormLabel>
-        <InputText
-          style={{ width: "100%" }}
-          id="startDate"
-          name="startDate"
-          type="date"
-          defaultValue={formatDateHtmlInput(defaultStartDate)}
-        />
-      </FormElement>
-      <FormElement>
-        <FormLabel icon={{ src: CalendarIcon, alt: "" }} htmlFor="endDate">
-          End Date
-        </FormLabel>
-        <InputText
-          style={{ width: "100%" }}
-          id="endDate"
-          name="endDate"
-          type="date"
-          defaultValue={formatDateHtmlInput(defaultEndDate)}
-        />
-      </FormElement>
-      <FormElement>
-        <FormLabel icon={{ src: CityIcon, alt: "" }} htmlFor="city">
-          Municipality
-        </FormLabel>
-        <MultiSelect
-          options={cityOptions}
-          defaultValues={cityOptions.map((x) => x.value)}
-          id="city"
-          name="city"
-        />
-      </FormElement>
-      <div className="flex items-center justify-center gap-6">
-        <Button variant={ButtonVariant.Primary} type="submit">
-          Search
-        </Button>
-      </div>
-    </form>
+    <Container className={embedded ? undefined : "w-72 p-4"}>
+      <form onSubmit={onSubmit}>
+        <FieldGroup>
+          <DatePicker
+            label="Start Date"
+            name="startDate"
+            value={values.startDate}
+            onChange={(startDate) => startDate && onValuesChange({ startDate })}
+          />
+          <DatePicker
+            label="End Date"
+            name="endDate"
+            value={values.endDate}
+            onChange={(endDate) => endDate && onValuesChange({ endDate })}
+          />
+          <MultiSelect
+            label={
+              <>
+                <MapPinIcon aria-hidden className="size-3.5" />
+                Municipality
+              </>
+            }
+            options={cityOptions}
+            value={values.cities}
+            onChange={(cities) => onValuesChange({ cities })}
+            name="city"
+          />
+          <Button type="submit" className="w-full">
+            {isLoading ? <Spinner aria-hidden /> : null}
+            Search
+          </Button>
+        </FieldGroup>
+      </form>
+    </Container>
   );
 }

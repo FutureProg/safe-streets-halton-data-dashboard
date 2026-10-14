@@ -19,8 +19,8 @@ test.describe("Given a user visits the dashboard", () => {
       page.getByRole("button", { name: "Menu button" }),
     ).toBeVisible();
     await expect(page.getByLabel("Case Number")).toBeVisible();
-    await expect(page.getByLabel("Start Date")).toBeVisible();
-    await expect(page.getByLabel("End Date")).toBeVisible();
+    await expect(page.getByRole("group", { name: "Start Date" })).toBeVisible();
+    await expect(page.getByRole("group", { name: "End Date" })).toBeVisible();
     await expect(page.getByLabel("Municipality")).toBeVisible();
     await expect(page.getByRole("button", { name: "Search" })).toBeVisible();
   });
@@ -85,14 +85,14 @@ test.describe("Given the navigation menu", () => {
     await expect(page.getByRole("menuitem")).toHaveCount(3);
   });
 
-  test("When the user closes an open menu, then the menu popup is hidden", async ({
+  test("When the user presses Escape on an open menu, then the menu popup is hidden", async ({
     page,
   }) => {
     const toggle = page.getByRole("button", { name: "Menu button" });
     await toggle.click();
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
 
-    await toggle.click();
+    await page.keyboard.press("Escape");
 
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
   });
