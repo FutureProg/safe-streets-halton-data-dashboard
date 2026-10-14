@@ -99,6 +99,37 @@ test.describe("Given the filter form", () => {
     }
   });
 
+  test("When the user types a removed municipality and presses Enter, then it is re-selected and hidden from the options", async ({
+    page,
+  }) => {
+    const combobox = page.getByRole("combobox", { name: "Municipality" });
+    const chips = page.locator('[data-slot="combobox-chip"]');
+    await chips
+      .first()
+      .waitFor({ timeout: 5000 })
+      .catch(() => {});
+    test.skip(
+      (await chips.count()) === 0,
+      "No municipality options available from the database in this environment",
+    );
+    const chip = chips.first();
+    const label = ((await chip.innerText()) ?? "").trim();
+    await chip.getByRole("button").click();
+    await expect(
+      page.locator('[data-slot="combobox-chip"]', { hasText: label }),
+    ).toHaveCount(0);
+
+    await combobox.fill(label.slice(0, 3));
+    await expect(page.getByRole("option", { name: label })).toBeVisible();
+    await page.keyboard.press("Enter");
+
+    await expect(
+      page.locator('[data-slot="combobox-chip"]', { hasText: label }),
+    ).toHaveCount(1);
+    await combobox.fill(label.slice(0, 3));
+    await expect(page.getByRole("option", { name: label })).toHaveCount(0);
+  });
+
   test("When the form is submitted again while a search is already in flight, then only one request is sent", async ({
     page,
   }) => {
