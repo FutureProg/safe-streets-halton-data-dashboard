@@ -1,6 +1,6 @@
-import { drizzle } from "drizzle-orm/mysql2";
+import { drizzle } from "drizzle-orm/node-postgres";
 import { hrpsData } from "./schema";
-import mysql2 from "mysql2/promise.js";
+import { Pool } from "pg";
 import {
   and,
   between,
@@ -9,16 +9,20 @@ import {
   inArray,
   isNotNull,
 } from "drizzle-orm";
-import { MySqlColumn } from "drizzle-orm/mysql-core";
+import { PgColumn } from "drizzle-orm/pg-core";
 import { HRPSDataModel } from "./models";
 import "../../envConfig";
 
-const { DB_USER, DB_HOST, DB_PASS, DB_PORT, DB_NAME } = process.env;
-export const db = drizzle({
-  client: mysql2.createPool(
-    `mysql://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}`,
-  ),
-});
+const { DB_USER, DB_HOST, DB_PASS, DB_PORT, DB_NAME, DB_URL, DB_CA_CERT } =
+  process.env;
+export const db = drizzle(
+  new Pool({
+    connectionString:
+      DB_URL ??
+      `postgresql://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}`,
+    ssl: DB_CA_CERT ? { ca: DB_CA_CERT } : undefined,
+  }),
+);
 
 export type HRPSDataColumns = keyof HRPSDataModel;
 
@@ -32,6 +36,7 @@ export const findInfo = async () => {
     .where(isNotNull(hrpsData.city));
   return Promise.allSettled([descriptionUniqueInfo, citiesUniqueInfo]).then(
     ([incidentTypes, cities]) => {
+      console.log(incidentTypes, cities);
       return {
         incidents:
           incidentTypes.status == "fulfilled"
@@ -42,6 +47,9 @@ export const findInfo = async () => {
             ? cities.value.map((x) => x.value!)
             : undefined,
       };
+    },
+    (error: any) => {
+      console.log(error);
     },
   );
 };
@@ -63,7 +71,7 @@ export const findDataGroupBy = async (
     itemCount: options?.itemCount ?? 100,
     itemOffset: options?.itemOffset ?? 0,
   };
-  let selectFields: Partial<Record<HRPSDataColumns, MySqlColumn>> = {};
+  let selectFields: Partial<Record<HRPSDataColumns, PgColumn>> = {};
   groupby.forEach((value) => {
     selectFields[value] = hrpsData[value];
   });

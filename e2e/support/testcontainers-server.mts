@@ -1,4 +1,4 @@
-// Boots a throwaway MySQL container (via Testcontainers), migrates the
+// Boots a throwaway Postgres container (via Testcontainers), migrates the
 // schema, seeds a couple of fixture rows so the static dropdown values
 // (municipalities / incident types) aren't empty, then starts `next dev` as
 // a child process that inherits the resulting DB_* env vars.
@@ -7,27 +7,27 @@
 // starts it once, polls `baseURL` until it responds, then runs the suite;
 // killing this process (SIGTERM/SIGINT) tears down `next dev` and the
 // container together.
-import { MySqlContainer } from "@testcontainers/mysql";
+import { PostgreSqlContainer } from "@testcontainers/postgresql";
 import { spawn, execFileSync } from "node:child_process";
-import mysql from "mysql2/promise";
+import pg from "pg";
 
 const PORT = process.env.PORT || 3002;
 
-const container = await new MySqlContainer("mysql:8")
+const container = await new PostgreSqlContainer("postgres:17")
   .withDatabase("e2e")
   .withUsername("e2e")
-  .withUserPassword("e2e")
+  .withPassword("e2e")
   .start();
 
 process.env.DB_HOST = container.getHost();
 process.env.DB_PORT = String(container.getPort());
 process.env.DB_USER = container.getUsername();
-process.env.DB_PASS = container.getUserPassword();
+process.env.DB_PASS = container.getPassword();
 process.env.DB_NAME = container.getDatabase();
 process.env.DB_ORM_URL = container.getConnectionUri();
 
 console.log(
-  `[testcontainers] MySQL ready at ${process.env.DB_HOST}:${process.env.DB_PORT}`,
+  `[testcontainers] Postgres ready at ${process.env.DB_HOST}:${process.env.DB_PORT}`,
 );
 
 execFileSync(
@@ -39,11 +39,12 @@ execFileSync(
   },
 );
 
-const connection = await mysql.createConnection(process.env.DB_ORM_URL);
-await connection.execute(
-  `INSERT INTO hrps_data (case_no, date, description, location, city, latitude, longitude, globalId) VALUES
-   (?, NOW(), ?, ?, ?, ?, ?, ?),
-   (?, NOW(), ?, ?, ?, ?, ?, ?)`,
+const connection = new pg.Client({ connectionString: process.env.DB_ORM_URL });
+await connection.connect();
+await connection.query(
+  `INSERT INTO hrps_data (case_no, date, description, location, city, latitude, longitude, "globalId") VALUES
+   ($1, NOW(), $2, $3, $4, $5, $6, $7),
+   ($8, NOW(), $9, $10, $11, $12, $13, $14)`,
   [
     "SEED-0001",
     "Motor Vehicle Collision",
