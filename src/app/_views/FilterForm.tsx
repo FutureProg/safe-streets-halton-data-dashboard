@@ -13,8 +13,8 @@ import { MapDataContext } from "../_state/MapDataState";
 import { StaticValuesContext } from "../StaticValuesContext";
 
 export type FilterFormValues = {
-  startDate: CalendarDate;
-  endDate: CalendarDate;
+  startDate: CalendarDate | null;
+  endDate: CalendarDate | null;
   cities: string[];
 };
 
@@ -65,7 +65,7 @@ export default function FilterForm({
 
   const onSubmit: FormEventHandler<HTMLFormElement> = (evt) => {
     evt.preventDefault();
-    if (isLoading) return;
+    if (isLoading || !values.startDate || !values.endDate) return;
     mapDataActor.send({
       type: "request",
       params: {
@@ -86,13 +86,15 @@ export default function FilterForm({
             label="Start Date"
             name="startDate"
             value={values.startDate}
-            onChange={(startDate) => startDate && onValuesChange({ startDate })}
+            isInvalid={!values.startDate}
+            onChange={(startDate) => onValuesChange({ startDate })}
           />
           <DatePicker
             label="End Date"
             name="endDate"
             value={values.endDate}
-            onChange={(endDate) => endDate && onValuesChange({ endDate })}
+            isInvalid={!values.endDate}
+            onChange={(endDate) => onValuesChange({ endDate })}
           />
           <MultiSelect
             label={

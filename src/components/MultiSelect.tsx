@@ -42,6 +42,7 @@ const MultiSelect = ({
       items={items}
       value={selected}
       menuTrigger="focus"
+      allowsEmptyCollection
       onChange={(keys) => {
         const next = keys.map(String);
         setInternalValue(next);
@@ -59,8 +60,9 @@ const MultiSelect = ({
         <ComboboxChipsInput />
       </ComboboxChips>
       <ComboboxContent>
-        <ComboboxEmpty>No results</ComboboxEmpty>
-        <ComboboxList>
+        <ComboboxList
+          renderEmptyState={() => <ComboboxEmpty>No results</ComboboxEmpty>}
+        >
           {(item: { id: string; label: string }) => (
             <ComboboxItem id={item.id}>{item.label}</ComboboxItem>
           )}
