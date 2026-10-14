@@ -42,7 +42,7 @@ execFileSync(
 const connection = new pg.Client({ connectionString: process.env.DB_ORM_URL });
 await connection.connect();
 await connection.query(
-  `INSERT INTO hrps_data (case_no, date, description, location, city, latitude, longitude, "globalId") VALUES
+  `INSERT INTO safe_streets_halton.hrps_data (case_no, date, description, location, city, latitude, longitude, "globalId") VALUES
    ($1, NOW(), $2, $3, $4, $5, $6, $7),
    ($8, NOW(), $9, $10, $11, $12, $13, $14)`,
   [
