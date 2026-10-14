@@ -1,195 +1,75 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import styles from "./MultiSelect.module.scss";
-import { HTMLInputOption } from "@/app/common";
+import { ReactNode, useState } from "react";
+import type { HTMLInputOption } from "@/app/common";
+import {
+  Combobox,
+  ComboboxChip,
+  ComboboxChipList,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
+import { Label } from "@/components/ui/label";
 
 export interface MultiSelectProps {
+  label: ReactNode;
   options: HTMLInputOption[];
-  onChange?: (selectedOptions: HTMLInputOption[]) => void;
-  id?: string;
-  name?: string;
+  value?: string[];
   defaultValues?: string[];
+  onChange?: (selectedValues: string[]) => void;
+  name?: string;
 }
 
-const MultiSelect = ({ options, ...props }: MultiSelectProps) => {
-  let defaultSelection = props.defaultValues
-    ? options.filter(
-        (option) => props.defaultValues!.indexOf(option.value) >= 0,
-      )
-    : [];
-  const [selectedOptions, setSelectedOptions] =
-    useState<HTMLInputOption[]>(defaultSelection);
-  const [inputValue, setInputValue] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
-  const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const listRef = useRef<HTMLUListElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value);
-    setIsOpen(true);
-    setHighlightedIndex(null);
-  };
-
-  const handleOptionClick = (option: HTMLInputOption) => {
-    if (!selectedOptions.find((selected) => selected.value === option.value)) {
-      setSelectedOptions([...selectedOptions, option]);
-      props.onChange?.([...selectedOptions, option]);
-    } else {
-      const newOptions = selectedOptions.filter((value) => value !== option);
-      setSelectedOptions(newOptions);
-      props.onChange?.([...newOptions]);
-    }
-    setInputValue("");
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-    setHighlightedIndex(null);
-  };
-
-  const handleRemoveOption = (option: HTMLInputOption) => {
-    const newSelections = selectedOptions.filter(
-      (selected) => selected.value !== option.value,
-    );
-    setSelectedOptions(newSelections);
-    props.onChange?.([...newSelections]);
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === "ArrowDown") {
-      event.preventDefault();
-      setHighlightedIndex((prevIndex) => {
-        if (prevIndex === null) return 0;
-        return Math.min(prevIndex + 1, filteredOptions.length - 1);
-      });
-    } else if (event.key === "ArrowUp") {
-      event.preventDefault();
-      setHighlightedIndex((prevIndex) => {
-        if (prevIndex === null) return filteredOptions.length - 1;
-        return Math.max(prevIndex - 1, 0);
-      });
-    } else if (event.key === "Enter" && highlightedIndex !== null) {
-      event.preventDefault();
-      handleOptionClick(filteredOptions[highlightedIndex]);
-    } else if (event.key === "Escape") {
-      setIsOpen(false);
-      setHighlightedIndex(null);
-    } else if (event.key === "Backspace" && inputValue === "") {
-      setSelectedOptions(selectedOptions.slice(0, -1));
-    }
-  };
-
-  const filteredOptions = options.filter((option) =>
-    option.label.toLowerCase().includes(inputValue.toLowerCase()),
-  );
-
-  useEffect(() => {
-    if (highlightedIndex !== null && listRef.current) {
-      const listItem = listRef.current.children[
-        highlightedIndex
-      ] as HTMLElement;
-      listItem.scrollIntoView({ block: "nearest" });
-    }
-  }, [highlightedIndex]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-        setHighlightedIndex(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+const MultiSelect = ({
+  label,
+  options,
+  value,
+  defaultValues = [],
+  onChange,
+  name,
+}: MultiSelectProps) => {
+  const [internalValue, setInternalValue] = useState(defaultValues);
+  const selected = value ?? internalValue;
+  const items = options.map(({ value, label }) => ({ id: value, label }));
 
   return (
-    <div className={styles.view} ref={containerRef}>
-      <div
-        className={styles.inputContainer}
-        onClick={() => inputRef.current?.focus()}
-      >
-        {selectedOptions.map((option) => (
-          <span
-            key={option.value}
-            className={styles.selectedOption}
-            onClick={() => handleRemoveOption(option)}
-          >
-            <button
-              type="button"
-              onClick={() => handleRemoveOption(option)}
-              aria-label={`Remove ${option.label}`}
-            >
-              &times;
-            </button>
-            {option.label}
-          </span>
-        ))}
-        <input
-          id={props.id}
-          type="text"
-          role="combobox"
-          value={inputValue}
-          onChange={handleInputChange}
-          onFocus={() => setIsOpen(true)}
-          onBlur={() => setIsOpen(false)}
-          onKeyDown={handleKeyDown}
-          aria-expanded={isOpen}
-          aria-haspopup="listbox"
-          aria-autocomplete="list"
-          aria-activedescendant={
-            highlightedIndex ? `option-${highlightedIndex}` : undefined
-          }
-          ref={inputRef}
-        />
-      </div>
-
-      <ul
-        className={styles.optionsList}
-        style={{ display: isOpen ? "block" : "none" }}
-        id="options-list"
-        role="listbox"
-        ref={listRef}
-      >
-        {filteredOptions.map((option, index) => (
-          <li
-            key={option.value}
-            id={`option-${index}`}
-            onMouseDown={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-            }}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              handleOptionClick(option);
-            }}
-            role="option"
-            aria-selected={selectedOptions.includes(option)}
-            className={
-              highlightedIndex === index ? styles.highlightedOption : ""
-            }
-          >
-            {option.label}
-          </li>
-        ))}
-      </ul>
-      {props.name ? (
-        <input
-          type="hidden"
-          name={props.name}
-          value={selectedOptions.map((option) => option.value)}
-        />
+    <Combobox
+      selectionMode="multiple"
+      items={items}
+      value={selected}
+      menuTrigger="focus"
+      onChange={(keys) => {
+        const next = keys.map(String);
+        setInternalValue(next);
+        onChange?.(next);
+      }}
+      className="flex w-full flex-col gap-2"
+    >
+      <Label>{label}</Label>
+      <ComboboxChips>
+        <ComboboxChipList>
+          {(item: { id: string; label: string }) => (
+            <ComboboxChip id={item.id}>{item.label}</ComboboxChip>
+          )}
+        </ComboboxChipList>
+        <ComboboxChipsInput />
+      </ComboboxChips>
+      <ComboboxContent>
+        <ComboboxEmpty>No results</ComboboxEmpty>
+        <ComboboxList>
+          {(item: { id: string; label: string }) => (
+            <ComboboxItem id={item.id}>{item.label}</ComboboxItem>
+          )}
+        </ComboboxList>
+      </ComboboxContent>
+      {name ? (
+        <input type="hidden" name={name} value={selected.join(",")} />
       ) : null}
-    </div>
+    </Combobox>
   );
 };
 
