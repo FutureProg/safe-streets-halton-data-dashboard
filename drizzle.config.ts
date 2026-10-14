@@ -15,5 +15,6 @@ export default defineConfig({
         ssl: { ca: process.env.DB_CA_CERT },
       }
     : { url: process.env.DB_ORM_URL! },
+  schemaFilter: ["safe_streets_halton"],
   verbose: true,
 });
