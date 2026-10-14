@@ -61,7 +61,11 @@ export default function FilterPanels({
 
   const Container = embedded ? "div" : Card;
   return (
-    <div className="flex flex-col items-end gap-3">
+    <div
+      className={
+        embedded ? "flex flex-col gap-6" : "flex flex-col items-end gap-3"
+      }
+    >
       <FilterForm
         values={values}
         onValuesChange={onValuesChange}

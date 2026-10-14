@@ -121,3 +121,59 @@ test.describe("Given the case number lookup field", () => {
     await expect(page.getByLabel("Case Number")).toBeHidden();
   });
 });
+
+test.describe("Given the mobile filter sheet", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto("/en");
+  });
+
+  test("When the viewport is mobile-sized, then the filters are behind a Filters button", async ({
+    page,
+  }) => {
+    await expect(page.getByRole("button", { name: "Filters" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Search" })).toBeHidden();
+  });
+
+  test("When the user opens the Filters button, then the filter form is shown in a dialog", async ({
+    page,
+  }) => {
+    await page.getByRole("button", { name: "Filters" }).click();
+
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    await expect(
+      dialog.getByRole("group", { name: "Start Date" }),
+    ).toBeVisible();
+    await expect(dialog.getByRole("button", { name: "Search" })).toBeVisible();
+    // Let the enter transition finish so axe sees the final colours.
+    await expect(page.locator('[data-slot="sheet-overlay"]')).toHaveCSS(
+      "opacity",
+      "1",
+    );
+    await expect(page.locator('[data-slot="sheet-content"]')).toHaveCSS(
+      "opacity",
+      "1",
+    );
+    await assertNoA11yViolations(page);
+  });
+
+  test("When the user searches from the sheet, then the sheet closes", async ({
+    page,
+  }) => {
+    await page.route("**/api/data?**", (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ data: [], nextCursor: null, hasMore: false }),
+      }),
+    );
+    await page.getByRole("button", { name: "Filters" }).click();
+    await page
+      .getByRole("dialog")
+      .getByRole("button", { name: "Search" })
+      .click();
+
+    await expect(page.getByRole("dialog")).toBeHidden();
+  });
+});
