@@ -1,7 +1,6 @@
 import { Poppins } from "next/font/google";
 import "../globals.css";
 import Head from "next/head";
-import { LayoutContextProvider } from "@/contexts/LayoutContextProvider";
 import TranslationProvider from "../TranslationProvider";
 import initTranslations from "../i18n";
 import Providers from "../Providers";
@@ -57,20 +56,18 @@ export default async function RootLayout(
         />
       </Head>
       <body className={poppins.className}>
-        <LayoutContextProvider>
-          <TranslationProvider
-            namespaces={i18nNamespaces}
-            locale={locale}
-            resources={resources}
-          >
-            <StaticValuesProvider staticValues={staticValues}>
-              <Providers>{children}</Providers>
-            </StaticValuesProvider>
-          </TranslationProvider>
-          {/* <span style={{marginLeft: '8px'}}>
+        <TranslationProvider
+          namespaces={i18nNamespaces}
+          locale={locale}
+          resources={resources}
+        >
+          <StaticValuesProvider staticValues={staticValues}>
+            <Providers>{children}</Providers>
+          </StaticValuesProvider>
+        </TranslationProvider>
+        {/* <span style={{marginLeft: '8px'}}>
               <b>Note:</b> HRPS data does duplicate cases, and often provides inaccurate & different locations. Map markers indicate the incident occured in the general vicinity.
             </span> */}
-        </LayoutContextProvider>
       </body>
     </html>
   );
