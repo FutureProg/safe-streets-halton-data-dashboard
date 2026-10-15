@@ -30,6 +30,8 @@ export default async function initTranslations(
     fallbackNS: namespaces[0],
     ns: namespaces,
     preload: resources ? [] : i18nConfig.locales,
+    // React already escapes rendered values and attributes.
+    interpolation: { escapeValue: false },
   });
 
   return {

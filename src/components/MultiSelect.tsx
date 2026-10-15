@@ -3,6 +3,7 @@
 import { ReactNode, useContext, useEffect, useState } from "react";
 import { ComboBoxStateContext } from "react-aria-components";
 import { XIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { HTMLInputOption } from "@/app/common";
 import {
   Combobox,
@@ -46,6 +47,7 @@ const MultiSelect = ({
   onChange,
   name,
 }: MultiSelectProps) => {
+  const { t: translate } = useTranslation();
   const [internalValue, setInternalValue] = useState(defaultValues);
   const selected = value ?? internalValue;
   const items = options.map(({ value, label }) => ({ id: value, label }));
@@ -80,7 +82,7 @@ const MultiSelect = ({
               variant="ghost"
               size="icon-xs"
               slot={null}
-              aria-label={`Remove ${item.label}`}
+              aria-label={translate("RemoveItem", { label: item.label })}
               className="opacity-50 hover:opacity-100"
               onPress={() => update(selected.filter((id) => id !== item.id))}
             >
@@ -92,7 +94,9 @@ const MultiSelect = ({
       </ComboboxChips>
       <ComboboxContent>
         <ComboboxList
-          renderEmptyState={() => <ComboboxEmpty>No results</ComboboxEmpty>}
+          renderEmptyState={() => (
+            <ComboboxEmpty>{translate("NoResults")}</ComboboxEmpty>
+          )}
         >
           {availableItems.map((item) => (
             <ComboboxItem key={item.id} id={item.id}>

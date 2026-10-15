@@ -13,7 +13,8 @@ export interface MarkerPopupContentProps {
 }
 
 export const MarkerPopupContents = (props: MarkerPopupContentProps) => {
-  let { t: tStaticValues } = useTranslation("staticValues");
+  const { t: translate, i18n } = useTranslation();
+  const { t: tStaticValues } = useTranslation("staticValues");
   const onPageButtonClick = (delta: number) => () => {
     let nPageNum = pageNumber + delta;
     if (nPageNum >= props.data.length) {
@@ -35,12 +36,18 @@ export const MarkerPopupContents = (props: MarkerPopupContentProps) => {
   }
 
   const details: [string, string][] = [
-    ["Case #", caseData.case_no],
-    ["Municipality", caseData.city],
-    ["Date", caseData.date.toDateString()],
-    ["Time", caseData.date.toTimeString()],
-    ["Incident Code", caseData.description],
-    ["Description", tStaticValues(caseData.description)],
+    [translate("CaseNumberShort"), caseData.case_no],
+    [translate("Municipality"), caseData.city],
+    [
+      translate("Date"),
+      caseData.date.toLocaleDateString(i18n.language, { dateStyle: "full" }),
+    ],
+    [
+      translate("Time"),
+      caseData.date.toLocaleTimeString(i18n.language, { timeStyle: "short" }),
+    ],
+    [translate("IncidentCode"), caseData.description],
+    [translate("Description"), tStaticValues(caseData.description)],
   ];
 
   return (
@@ -51,18 +58,21 @@ export const MarkerPopupContents = (props: MarkerPopupContentProps) => {
             <Button
               variant="outline"
               size="icon-sm"
-              aria-label="Previous incident"
+              aria-label={translate("PreviousIncident")}
               onPress={onPageButtonClick(-1)}
             >
               <ChevronLeftIcon />
             </Button>
             <Badge variant="secondary">
-              Incident {pageNumber + 1} / {props.data.length}
+              {translate("IncidentCounter", {
+                current: pageNumber + 1,
+                total: props.data.length,
+              })}
             </Badge>
             <Button
               variant="outline"
               size="icon-sm"
-              aria-label="Next incident"
+              aria-label={translate("NextIncident")}
               onPress={onPageButtonClick(1)}
             >
               <ChevronRightIcon />

@@ -21,13 +21,23 @@ const MenuPanel = () => {
         {translate("AppTitle")}
       </span>
       <DropdownMenuTrigger>
-        <Button variant="ghost" size="icon" aria-label="Menu button">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label={translate("MenuButton")}
+        >
           <MenuIcon />
         </Button>
         <DropdownMenu className="w-40">
-          <DropdownMenuItem href="/">Item 1</DropdownMenuItem>
-          <DropdownMenuItem href="/">Item 2</DropdownMenuItem>
-          <DropdownMenuItem href="/">Item 3</DropdownMenuItem>
+          <DropdownMenuItem href="/">
+            {translate("MenuItem", { number: 1 })}
+          </DropdownMenuItem>
+          <DropdownMenuItem href="/">
+            {translate("MenuItem", { number: 2 })}
+          </DropdownMenuItem>
+          <DropdownMenuItem href="/">
+            {translate("MenuItem", { number: 3 })}
+          </DropdownMenuItem>
         </DropdownMenu>
       </DropdownMenuTrigger>
     </Card>

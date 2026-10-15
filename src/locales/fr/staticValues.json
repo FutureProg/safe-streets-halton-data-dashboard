@@ -1,11 +1,11 @@
 {
-  "MVC - PI": "Injury",
-  "MVC - FATALITY": "Fatality",
-  "ROADSIDE TEST": "Roadside Test",
-  "MVC - HIT & RUN": "Hit & Run",
-  "IMPAIRED DRIVING": "Impaired Driving",
-  "DANGEROUS OPERATION - TRAFFIC": "Dangerous Operation of Vehicle",
-  "THEFT OF BICYCLE": "Bicycle Theft",
+  "MVC - PI": "Blessure",
+  "MVC - FATALITY": "Décès",
+  "ROADSIDE TEST": "Test routier",
+  "MVC - HIT & RUN": "Délit de fuite",
+  "IMPAIRED DRIVING": "Conduite avec facultés affaiblies",
+  "DANGEROUS OPERATION - TRAFFIC": "Conduite dangereuse d'un véhicule",
+  "THEFT OF BICYCLE": "Vol de vélo",
 
   "BURLINGTON": "Burlington",
   "GEORGETOWN": "Georgetown",

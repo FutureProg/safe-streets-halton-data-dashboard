@@ -23,17 +23,18 @@ type FilterPanelsProps = {
 };
 
 export function CaseLookup() {
+  const { t: translate } = useTranslation();
   return (
     <Card className="w-72 p-4">
       <form>
         <Field>
           <FieldLabel htmlFor="caseNumber">
             <SearchIcon aria-hidden className="size-3.5" />
-            Case Number
+            {translate("CaseNumber")}
           </FieldLabel>
           <Input id="caseNumber" name="caseNumber" />
           <Button type="submit" size="sm">
-            Submit
+            {translate("Submit")}
           </Button>
         </Field>
       </form>
