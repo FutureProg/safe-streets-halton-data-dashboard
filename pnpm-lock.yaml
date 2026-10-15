@@ -214,9 +214,6 @@ importers:
       postcss:
         specifier: ^8.5.28
         version: 8.5.28
-      sass:
-        specifier: ^1.104.0
-        version: 1.104.0
       storybook:
         specifier: ^10.6.0
         version: 10.6.0(@types/react@19.2.7)(prettier@3.4.2)(react@19.3.0)(vite-plus@1.1.0(@types/node@20.19.43)(@vitest/browser-playwright@5.0.3)(@vitest/coverage-istanbul@5.0.3)(@vitest/coverage-v8@5.0.3)(@vitest/ui@5.0.3)(esbuild@0.28.2)(jiti@2.7.0)(playwright@1.63.0)(sass@1.104.0)(tsx@4.23.13)(typescript@5.9.3)(yaml@2.9.1))
@@ -10092,6 +10089,7 @@ snapshots:
   chokidar@5.0.0:
     dependencies:
       readdirp: 5.1.1
+    optional: true
 
   chownr@1.1.4: {}
 
@@ -11576,7 +11574,8 @@ snapshots:
 
   ignore@7.0.9: {}
 
-  immutable@5.1.9: {}
+  immutable@5.1.9:
+    optional: true
 
   import-fresh@3.3.1:
     dependencies:
@@ -13002,7 +13001,8 @@ snapshots:
     dependencies:
       minimatch: 5.1.9
 
-  readdirp@5.1.1: {}
+  readdirp@5.1.1:
+    optional: true
 
   recast@0.23.21:
     dependencies:
@@ -13211,6 +13211,7 @@ snapshots:
       source-map-js: 1.2.1
     optionalDependencies:
       '@parcel/watcher': 2.6.0
+    optional: true
 
   sax@1.6.1: {}
 
