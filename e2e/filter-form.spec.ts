@@ -121,6 +121,9 @@ test.describe("Given the filter form", () => {
 
     await combobox.fill(label.slice(0, 3));
     await expect(page.getByRole("option", { name: label })).toBeVisible();
+    // The first match is highlighted after render; wait for it so Enter
+    // doesn't race the highlight.
+    await expect(combobox).toHaveAttribute("aria-activedescendant", /.+/);
     await page.keyboard.press("Enter");
 
     await expect(
