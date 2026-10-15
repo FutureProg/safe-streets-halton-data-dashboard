@@ -13,3 +13,13 @@ By keeping records locally, we are able to perform long-term time-series analysi
 1. A separate pipeline (`HRPS_Pipeline`, a private Deno/TypeScript service) pulls incident data from the Halton Regional Police [ArcGIS REST API](https://developers.arcgis.com/rest/) `Crime_Map` FeatureServer once a day via `Deno.cron` (and exposes an admin-triggered `Deno.serve` endpoint for manual/backfill runs). It validates each record with Valibot and upserts it into the database, keyed on the ArcGIS `GlobalID`.
 2. This NextJS app has no separate backend server - its own `src/app/api/*` route handlers query the database directly using [Drizzle ORM](https://orm.drizzle.team/). The database is Postgres.
 3. The NextJS React web application fetches from its own API routes (via SWR, coordinated by an XState state machine and Redux Toolkit) and displays the results on a map using [Plotly](https://plotly.com/javascript/react/) and [Leaflet](https://leafletjs.com/).
+
+## Offline development (local database)
+
+Requires Docker.
+
+```bash
+pnpm local-db:sync   # while online: copies the last 180 days into local Postgres (`pnpm local-db:sync 365` for a year)
+pnpm dev-local       # offline: starts the container, migrates, runs next dev against it
+pnpm local-db:down   # stop the container (data persists in a docker volume)
+```
