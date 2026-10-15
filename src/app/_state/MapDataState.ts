@@ -35,7 +35,12 @@ const fetchData = async (params: FetchDataParams) => {
     );
     const tempResult: DataResponseBody = await fetch(baseURL + urlParams, {
       cache: "no-cache",
-    }).then((response) => response.json());
+    }).then((response) => {
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+      return response.json();
+    });
     if (!result) {
       result = tempResult;
     } else {
@@ -165,7 +170,13 @@ const mapDataMachine = setup({
         },
       },
     },
-    failure: {},
+    failure: {
+      on: {
+        request: {
+          target: "loading",
+        },
+      },
+    },
   },
 });
 

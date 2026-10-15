@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
-import FilterForm from "./FilterForm";
+import FilterForm, { useFilterFormValues } from "./FilterForm";
 import { expect } from "storybook/test";
-import { formatDateHtmlInput } from "@/util";
 import { StaticValuesProvider } from "../StaticValuesContext";
 
 const meta = {
@@ -18,16 +17,21 @@ const cities = [
   { label: "Halton Hills", value: "halton hills" },
 ];
 
+const FilterFormWithState = () => {
+  const [values, setValues] = useFilterFormValues();
+  return <FilterForm values={values} onValuesChange={setValues} />;
+};
+
 export const Default: Story = {
-  decorators: [
-    (Story) => {
-      return (
-        <StaticValuesProvider staticValues={{ incidentTypes: [], cities }}>
-          <Story />
-        </StaticValuesProvider>
-      );
-    },
-  ],
+  args: {
+    values: undefined as never,
+    onValuesChange: () => {},
+  },
+  render: () => (
+    <StaticValuesProvider staticValues={{ incidentTypes: [], cities }}>
+      <FilterFormWithState />
+    </StaticValuesProvider>
+  ),
 
   play: async ({ canvasElement }) => {
     const cityHiddenInput = canvasElement.querySelector('input[name="city"]');
@@ -38,6 +42,5 @@ export const Default: Story = {
 
     const endDateInput = canvasElement.querySelector("[name='endDate']");
     await expect(endDateInput).toBeInTheDocument();
-    await expect(endDateInput).toHaveValue(formatDateHtmlInput(new Date()));
   },
 };

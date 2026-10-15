@@ -1,23 +1,23 @@
 "use client";
 import BaseMap from "@/components/BaseMap";
-import styles from "./page.module.scss";
 import MenuPanel from "@/app/_views/MenuPanel";
-import SimpleForm from "@/components/SimpleForm";
-import FormLabel from "@/components/FormLabel";
-
-import LookupIcon from "@/img/icon-lookup.svg";
-import Panel from "@/components/Panel";
-import InputText from "@/components/InputText";
-import FormElement from "@/components/FormElement";
-import MultiSelect from "@/components/MultiSelect";
-import FilterForm from "../_views/FilterForm";
-import CarCrashIcon from "@/img/icon-car-crash.svg";
-import { useTranslation } from "react-i18next";
+import FilterPanels, { CaseLookup, FilterValues } from "../_views/FilterPanels";
+import { useFilterFormValues } from "../_views/FilterForm";
+import SearchFeedback from "../_views/SearchFeedback";
+import { SlidersHorizontalIcon } from "lucide-react";
 import dynamic from "next/dynamic";
-import { HTMLInputOption } from "../common";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { StaticValuesContext } from "../StaticValuesContext";
 import { MapDataContext } from "../_state/MapDataState";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { Button } from "@/components/ui/button";
+import {
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 const MapMakerCluster = dynamic(
   () => import("@/components/map/MapMarkerCluster"),
@@ -25,26 +25,29 @@ const MapMakerCluster = dynamic(
 );
 
 export default function Home() {
-  let { t: translate } = useTranslation();
-  let staticValues = useContext(StaticValuesContext);
-  let mapDataActor = MapDataContext.useActorRef();
+  const staticValues = useContext(StaticValuesContext);
+  const mapDataActor = MapDataContext.useActorRef();
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
-  const incidentTypes = staticValues.incidentTypes;
-
-  const onIncidentTypeChange = (options: HTMLInputOption[]) => {
-    mapDataActor.send({
-      type: "filterClient",
-      filters: {
-        incidentTypes: options.map((option) => option.value),
-      },
-    });
+  const [formValues, setFormValues] = useFilterFormValues();
+  const [incidentTypes, setIncidentTypes] = useState(() =>
+    staticValues.incidentTypes.map(({ value }) => value),
+  );
+  const filters: FilterValues = { ...formValues, incidentTypes };
+  const onFiltersChange = ({
+    incidentTypes,
+    ...formPatch
+  }: Partial<FilterValues>) => {
+    if (incidentTypes) setIncidentTypes(incidentTypes);
+    setFormValues(formPatch);
   };
 
   useEffect(() => {
     mapDataActor.send({
       type: "filterClient",
       filters: {
-        incidentTypes: incidentTypes.map(({ value }) => value),
+        incidentTypes: staticValues.incidentTypes.map(({ value }) => value),
       },
     });
   }, []);
@@ -60,43 +63,39 @@ export default function Home() {
         <div className="absolute left-0 flex flex-col gap-3 *:pointer-events-auto">
           <MenuPanel />
         </div>
-        <div></div>
-        <div className="absolute right-0 hidden flex-col items-end gap-3 *:pointer-events-auto lg:flex">
-          {/* Lookup by Case ID */}
-          <Panel>
-            <SimpleForm>
-              <FormElement>
-                <FormLabel
-                  icon={{ src: LookupIcon, alt: "" }}
-                  htmlFor="caseNumber"
-                >
-                  Case Number
-                </FormLabel>
-                <InputText id="caseNumber" name="caseNumber" />
-              </FormElement>
-            </SimpleForm>
-          </Panel>
-          <FilterForm />
-          <div className={styles.divider}></div>
-          <Panel>
-            <FormElement>
-              <FormLabel
-                icon={{ src: CarCrashIcon, alt: "" }}
-                htmlFor="incidentType"
-              >
-                {translate("IncidentType")}
-              </FormLabel>
-              <MultiSelect
-                onChange={onIncidentTypeChange}
-                options={incidentTypes}
-                defaultValues={incidentTypes.map(({ value }) => value)}
-                name="incidentType"
-                id="incidentType"
-              />
-            </FormElement>
-          </Panel>
-        </div>
+        {isDesktop ? (
+          <div className="absolute right-0 flex flex-col items-end gap-3 *:pointer-events-auto">
+            <CaseLookup />
+            <FilterPanels values={filters} onValuesChange={onFiltersChange} />
+          </div>
+        ) : (
+          <div className="pointer-events-auto absolute right-0">
+            <SheetTrigger isOpen={isSheetOpen} onOpenChange={setIsSheetOpen}>
+              <Button variant="secondary" size="lg">
+                <SlidersHorizontalIcon />
+                Filters
+              </Button>
+              <SheetContent side="bottom" className="max-h-[85dvh]">
+                <SheetHeader>
+                  <SheetTitle>Filters</SheetTitle>
+                  <SheetDescription>
+                    Narrow the incidents shown on the map.
+                  </SheetDescription>
+                </SheetHeader>
+                <div className="overflow-y-auto px-6 pb-6">
+                  <FilterPanels
+                    embedded
+                    values={filters}
+                    onValuesChange={onFiltersChange}
+                    onSearch={() => setIsSheetOpen(false)}
+                  />
+                </div>
+              </SheetContent>
+            </SheetTrigger>
+          </div>
+        )}
       </div>
+      <SearchFeedback />
     </main>
   );
 }

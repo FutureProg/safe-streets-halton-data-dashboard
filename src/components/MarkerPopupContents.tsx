@@ -1,9 +1,11 @@
 import { CaseData } from "@/common";
 import { useState } from "react";
 import { Popup } from "react-leaflet";
-
-import styles from "@/components/MapPlot.module.css";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export interface MarkerPopupContentProps {
   key: string;
@@ -31,56 +33,50 @@ export const MarkerPopupContents = (props: MarkerPopupContentProps) => {
   } else if (!caseData || props.data.length == 0) {
     return <></>;
   }
+
+  const details: [string, string][] = [
+    ["Case #", caseData.case_no],
+    ["Municipality", caseData.city],
+    ["Date", caseData.date.toDateString()],
+    ["Time", caseData.date.toTimeString()],
+    ["Incident Code", caseData.description],
+    ["Description", tStaticValues(caseData.description)],
+  ];
+
   return (
     <Popup>
-      <div className={styles.mapPopupContent}>
+      <div className="flex min-w-56 flex-col gap-3">
         {props.data.length > 1 ? (
-          <>
-            <div style={{ textAlign: "center" }}>
-              Incident {pageNumber + 1} / {props.data.length}
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-evenly",
-              }}
+          <div className="flex items-center justify-between gap-2">
+            <Button
+              variant="outline"
+              size="icon-sm"
+              aria-label="Previous incident"
+              onPress={onPageButtonClick(-1)}
             >
-              <button onClick={onPageButtonClick(-1)}>Previous</button>
-              <button onClick={onPageButtonClick(1)}>Next</button>
+              <ChevronLeftIcon />
+            </Button>
+            <Badge variant="secondary">
+              Incident {pageNumber + 1} / {props.data.length}
+            </Badge>
+            <Button
+              variant="outline"
+              size="icon-sm"
+              aria-label="Next incident"
+              onPress={onPageButtonClick(1)}
+            >
+              <ChevronRightIcon />
+            </Button>
+          </div>
+        ) : null}
+        <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-xs">
+          {details.map(([term, description]) => (
+            <div key={term} className="contents">
+              <dt className="text-muted-foreground font-medium">{term}</dt>
+              <dd>{description}</dd>
             </div>
-          </>
-        ) : (
-          <></>
-        )}
-        <table>
-          <tbody>
-            <tr>
-              <th>Case #</th>
-              <td>{caseData.case_no}</td>
-            </tr>
-            <tr>
-              <th>Municipality</th>
-              <td>{caseData.city}</td>
-            </tr>
-            <tr>
-              <th>Date</th>
-              <td>{caseData.date.toDateString()}</td>
-            </tr>
-            <tr>
-              <th>Time</th>
-              <td>{caseData.date.toTimeString()}</td>
-            </tr>
-            <tr>
-              <th>Incident Code</th>
-              <td>{caseData.description}</td>
-            </tr>
-            <tr>
-              <th>Description</th>
-              <td>{tStaticValues(caseData.description)}</td>
-            </tr>
-          </tbody>
-        </table>
+          ))}
+        </dl>
       </div>
     </Popup>
   );
