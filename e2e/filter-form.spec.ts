@@ -211,3 +211,49 @@ test.describe("Given the incident type filter", () => {
     expect(requestFired).toBe(false);
   });
 });
+
+test.describe("Given the search feedback", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/en");
+  });
+
+  test("When a search returns no incidents, then the user is told", async ({
+    page,
+  }) => {
+    await mockIncidentData(page, []);
+    await page.getByRole("button", { name: "Search" }).click();
+
+    await expect(page.getByText("No incidents found")).toBeVisible();
+  });
+
+  test("When a search fails, then the user is told and can search again", async ({
+    page,
+  }) => {
+    let failNext = true;
+    await page.route("**/api/data?**", async (route) => {
+      if (failNext) {
+        failNext = false;
+        await route.fulfill({ status: 500, body: "{}" });
+        return;
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          data: [buildIncident()],
+          nextCursor: null,
+          hasMore: false,
+        }),
+      });
+    });
+
+    await page.getByRole("button", { name: "Search" }).click();
+    await expect(page.getByText("Couldn't load incidents")).toBeVisible();
+
+    const [retry] = await Promise.all([
+      page.waitForResponse("**/api/data?**"),
+      page.getByRole("button", { name: "Search" }).click(),
+    ]);
+    expect(retry.status()).toBe(200);
+  });
+});

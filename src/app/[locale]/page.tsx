@@ -3,6 +3,7 @@ import BaseMap from "@/components/BaseMap";
 import MenuPanel from "@/app/_views/MenuPanel";
 import FilterPanels, { CaseLookup, FilterValues } from "../_views/FilterPanels";
 import { useFilterFormValues } from "../_views/FilterForm";
+import SearchFeedback from "../_views/SearchFeedback";
 import { SlidersHorizontalIcon } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useContext, useEffect, useState } from "react";
@@ -94,6 +95,7 @@ export default function Home() {
           </div>
         )}
       </div>
+      <SearchFeedback />
     </main>
   );
 }
