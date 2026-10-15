@@ -19,8 +19,8 @@ test.describe("Given a user visits the dashboard", () => {
       page.getByRole("button", { name: "Menu button" }),
     ).toBeVisible();
     await expect(page.getByLabel("Case Number")).toBeVisible();
-    await expect(page.getByLabel("Start Date")).toBeVisible();
-    await expect(page.getByLabel("End Date")).toBeVisible();
+    await expect(page.getByRole("group", { name: "Start Date" })).toBeVisible();
+    await expect(page.getByRole("group", { name: "End Date" })).toBeVisible();
     await expect(page.getByLabel("Municipality")).toBeVisible();
     await expect(page.getByRole("button", { name: "Search" })).toBeVisible();
   });
@@ -85,14 +85,14 @@ test.describe("Given the navigation menu", () => {
     await expect(page.getByRole("menuitem")).toHaveCount(3);
   });
 
-  test("When the user closes an open menu, then the menu popup is hidden", async ({
+  test("When the user presses Escape on an open menu, then the menu popup is hidden", async ({
     page,
   }) => {
     const toggle = page.getByRole("button", { name: "Menu button" });
     await toggle.click();
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
 
-    await toggle.click();
+    await page.keyboard.press("Escape");
 
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
   });
@@ -119,5 +119,61 @@ test.describe("Given the case number lookup field", () => {
     await page.goto("/en");
 
     await expect(page.getByLabel("Case Number")).toBeHidden();
+  });
+});
+
+test.describe("Given the mobile filter sheet", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto("/en");
+  });
+
+  test("When the viewport is mobile-sized, then the filters are behind a Filters button", async ({
+    page,
+  }) => {
+    await expect(page.getByRole("button", { name: "Filters" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Search" })).toBeHidden();
+  });
+
+  test("When the user opens the Filters button, then the filter form is shown in a dialog", async ({
+    page,
+  }) => {
+    await page.getByRole("button", { name: "Filters" }).click();
+
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    await expect(
+      dialog.getByRole("group", { name: "Start Date" }),
+    ).toBeVisible();
+    await expect(dialog.getByRole("button", { name: "Search" })).toBeVisible();
+    // Let the enter transition finish so axe sees the final colours.
+    await expect(page.locator('[data-slot="sheet-overlay"]')).toHaveCSS(
+      "opacity",
+      "1",
+    );
+    await expect(page.locator('[data-slot="sheet-content"]')).toHaveCSS(
+      "opacity",
+      "1",
+    );
+    await assertNoA11yViolations(page);
+  });
+
+  test("When the user searches from the sheet, then the sheet closes", async ({
+    page,
+  }) => {
+    await page.route("**/api/data?**", (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ data: [], nextCursor: null, hasMore: false }),
+      }),
+    );
+    await page.getByRole("button", { name: "Filters" }).click();
+    await page
+      .getByRole("dialog")
+      .getByRole("button", { name: "Search" })
+      .click();
+
+    await expect(page.getByRole("dialog")).toBeHidden();
   });
 });

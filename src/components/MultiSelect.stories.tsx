@@ -11,16 +11,8 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  decorators: [
-    (Story) => (
-      <>
-        <label htmlFor="multi-select">Test</label>
-        <Story />
-      </>
-    ),
-  ],
   args: {
-    id: "multi-select",
+    label: "Test",
     name: "multi-select",
     options: [
       { value: "1", label: "Option 1" },
