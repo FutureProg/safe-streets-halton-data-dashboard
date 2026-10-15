@@ -1,4 +1,4 @@
-import { CarFrontIcon, SearchIcon } from "lucide-react";
+import { SirenIcon, SearchIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useContext } from "react";
 
@@ -77,7 +77,7 @@ export default function FilterPanels({
         <MultiSelect
           label={
             <>
-              <CarFrontIcon aria-hidden className="size-3.5" />
+              <SirenIcon aria-hidden className="size-3.5" />
               {translate("IncidentType")}
             </>
           }
