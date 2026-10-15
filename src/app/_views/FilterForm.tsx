@@ -1,6 +1,10 @@
 import { FormEventHandler, useContext, useState } from "react";
 import { CalendarDate, getLocalTimeZone, today } from "@internationalized/date";
-import { MapPinIcon } from "lucide-react";
+import {
+  MapPinIcon,
+  CalendarChevronsRight,
+  CalendarChevronsLeft,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
@@ -84,20 +88,32 @@ export default function FilterForm({
     <Container className={embedded ? undefined : "w-72 p-4"}>
       <form onSubmit={onSubmit}>
         <FieldGroup>
-          <DatePicker
-            label={translate("StartDate")}
-            name="startDate"
-            value={values.startDate}
-            isInvalid={!values.startDate}
-            onChange={(startDate) => onValuesChange({ startDate })}
-          />
-          <DatePicker
-            label={translate("EndDate")}
-            name="endDate"
-            value={values.endDate}
-            isInvalid={!values.endDate}
-            onChange={(endDate) => onValuesChange({ endDate })}
-          />
+          <div className="grid grid-cols-2 gap-2">
+            <DatePicker
+              label={
+                <>
+                  <CalendarChevronsRight aria-hidden className="size-3.5" />
+                  {translate("StartDate")}
+                </>
+              }
+              name="startDate"
+              value={values.startDate}
+              isInvalid={!values.startDate}
+              onChange={(startDate) => onValuesChange({ startDate })}
+            />
+            <DatePicker
+              label={
+                <>
+                  <CalendarChevronsLeft aria-hidden className="size-3.5" />
+                  {translate("EndDate")}
+                </>
+              }
+              name="endDate"
+              value={values.endDate}
+              isInvalid={!values.endDate}
+              onChange={(endDate) => onValuesChange({ endDate })}
+            />
+          </div>
           <MultiSelect
             label={
               <>
