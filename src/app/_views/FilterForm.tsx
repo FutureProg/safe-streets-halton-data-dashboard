@@ -1,6 +1,7 @@
 import { FormEventHandler, useContext, useState } from "react";
 import { CalendarDate, getLocalTimeZone, today } from "@internationalized/date";
 import { MapPinIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -58,6 +59,7 @@ export default function FilterForm({
   embedded = false,
   onSearch,
 }: FilterFormProps) {
+  const { t: translate } = useTranslation();
   const mapDataActor = MapDataContext.useActorRef();
   const loadStatus = MapDataContext.useSelector((snapshot) => snapshot.value);
   const { cities: cityOptions } = useContext(StaticValuesContext);
@@ -83,14 +85,14 @@ export default function FilterForm({
       <form onSubmit={onSubmit}>
         <FieldGroup>
           <DatePicker
-            label="Start Date"
+            label={translate("StartDate")}
             name="startDate"
             value={values.startDate}
             isInvalid={!values.startDate}
             onChange={(startDate) => onValuesChange({ startDate })}
           />
           <DatePicker
-            label="End Date"
+            label={translate("EndDate")}
             name="endDate"
             value={values.endDate}
             isInvalid={!values.endDate}
@@ -100,7 +102,7 @@ export default function FilterForm({
             label={
               <>
                 <MapPinIcon aria-hidden className="size-3.5" />
-                Municipality
+                {translate("Municipality")}
               </>
             }
             options={cityOptions}
@@ -110,7 +112,7 @@ export default function FilterForm({
           />
           <Button type="submit" className="w-full">
             {isLoading ? <Spinner aria-hidden /> : null}
-            Search
+            {translate("Search")}
           </Button>
         </FieldGroup>
       </form>

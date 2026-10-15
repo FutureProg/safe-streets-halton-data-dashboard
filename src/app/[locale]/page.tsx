@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import { useContext, useEffect, useState } from "react";
 import { StaticValuesContext } from "../StaticValuesContext";
 import { MapDataContext } from "../_state/MapDataState";
+import { useTranslation } from "react-i18next";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +26,7 @@ const MapMakerCluster = dynamic(
 );
 
 export default function Home() {
+  const { t: translate } = useTranslation();
   const staticValues = useContext(StaticValuesContext);
   const mapDataActor = MapDataContext.useActorRef();
   const isDesktop = useMediaQuery("(min-width: 1024px)");
@@ -73,13 +75,13 @@ export default function Home() {
             <SheetTrigger isOpen={isSheetOpen} onOpenChange={setIsSheetOpen}>
               <Button variant="secondary" size="lg">
                 <SlidersHorizontalIcon />
-                Filters
+                {translate("Filters")}
               </Button>
               <SheetContent side="bottom" className="max-h-[85dvh]">
                 <SheetHeader>
-                  <SheetTitle>Filters</SheetTitle>
+                  <SheetTitle>{translate("Filters")}</SheetTitle>
                   <SheetDescription>
-                    Narrow the incidents shown on the map.
+                    {translate("FiltersDescription")}
                   </SheetDescription>
                 </SheetHeader>
                 <div className="overflow-y-auto px-6 pb-6">

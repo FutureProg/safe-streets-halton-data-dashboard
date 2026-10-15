@@ -43,12 +43,6 @@ test.describe("Given a user visits the dashboard", () => {
 });
 
 test.describe("Given a user visits a locale-specific URL", () => {
-  // NOTE: most of the dashboard's copy ("Search", "Start Date", "Case
-  // Number", etc.) is currently hardcoded English in JSX rather than routed
-  // through react-i18next, and src/locales/fr/translations.json only has an
-  // "AppTitle" key. So this deliberately checks locale routing/<html lang>
-  // and that the route renders, not that copy differs between locales -
-  // there isn't real fr copy to assert on yet.
   test('When the URL is /en, then <html lang="en"> and the dashboard renders', async ({
     page,
   }) => {
@@ -63,6 +57,27 @@ test.describe("Given a user visits a locale-specific URL", () => {
     await page.goto("/fr");
     await expect(page.locator("html")).toHaveAttribute("lang", "fr");
     await expect(page.locator(".leaflet-container")).toBeVisible();
+  });
+
+  test("When the URL is /fr, then the controls are shown in French", async ({
+    page,
+  }) => {
+    await page.goto("/fr");
+
+    await expect(
+      page.getByRole("group", { name: "Date de début" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("group", { name: "Date de fin" }),
+    ).toBeVisible();
+    await expect(page.getByLabel("Municipalité")).toBeVisible();
+    await expect(page.getByLabel("Numéro de dossier")).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Rechercher" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Bouton du menu" }),
+    ).toBeVisible();
   });
 });
 
