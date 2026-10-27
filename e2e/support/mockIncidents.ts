@@ -14,6 +14,10 @@ export type MockIncident = {
   latitude: number;
   longitude: number;
   globalID: string;
+  intersectionId?: string | null;
+  intersectionLabel?: string | null;
+  intersectionLatitude?: number | null;
+  intersectionLongitude?: number | null;
 };
 
 export const buildIncident = (

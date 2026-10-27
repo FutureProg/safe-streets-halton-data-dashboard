@@ -4,8 +4,23 @@ import { db } from "@/db/db";
 import { NextRequest } from "next/server";
 import { decodeCursor, encodeCursor } from "../pagination";
 import { hrpsData } from "@/db/schema";
-import { and, between, desc, eq, inArray, lt, or } from "drizzle-orm";
-import { PaginationParams } from "@/app/common";
+import {
+  incidentLocations,
+  intersections,
+  isMissingCuratedData,
+} from "@/db/external";
+import {
+  and,
+  between,
+  desc,
+  eq,
+  getTableColumns,
+  inArray,
+  lt,
+  or,
+  sql,
+} from "drizzle-orm";
+import { DataRecord, PaginationParams } from "@/app/common";
 
 const findData = async (
   startDate: Date,
@@ -16,13 +31,6 @@ const findData = async (
 ) => {
   const limit = Math.min(options?.limit ?? 100, 100);
   const includedCities = options?.includedCities ?? [];
-
-  const query = db
-    .select()
-    .from(hrpsData)
-    .orderBy(desc(hrpsData.date), desc(hrpsData.globalId))
-    .limit(limit + 1)
-    .$dynamic();
 
   const conditions = [
     and(
@@ -41,9 +49,47 @@ const findData = async (
       ),
     );
   }
-  query.where(and(...conditions));
 
-  const results = await query;
+  const baseQuery = () =>
+    db
+      .select(getTableColumns(hrpsData))
+      .from(hrpsData)
+      .where(and(...conditions))
+      .orderBy(desc(hrpsData.date), desc(hrpsData.globalId))
+      .limit(limit + 1);
+
+  // Tag each incident with its nearest intersection when the curated data
+  // from open-data-sync is available; otherwise fall back to the bare rows
+  // and let the client group by coordinates.
+  const withIntersections = () =>
+    db
+      .select({
+        ...getTableColumns(hrpsData),
+        intersectionId: intersections.intersectionId,
+        intersectionLabel: intersections.label,
+        intersectionLatitude: sql<number | null>`ST_Y(${intersections.geom})`,
+        intersectionLongitude: sql<number | null>`ST_X(${intersections.geom})`,
+      })
+      .from(hrpsData)
+      .leftJoin(
+        incidentLocations,
+        eq(incidentLocations.globalId, hrpsData.globalId),
+      )
+      .leftJoin(
+        intersections,
+        eq(intersections.intersectionId, incidentLocations.intersectionId),
+      )
+      .where(and(...conditions))
+      .orderBy(desc(hrpsData.date), desc(hrpsData.globalId))
+      .limit(limit + 1);
+
+  let results: DataRecord[];
+  try {
+    results = await withIntersections();
+  } catch (error) {
+    if (!isMissingCuratedData(error)) throw error;
+    results = await baseQuery();
+  }
   const hasMore = results.length > limit;
   const data = hasMore ? results.slice(0, limit) : results;
 

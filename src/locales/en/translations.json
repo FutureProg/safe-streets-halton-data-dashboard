@@ -25,5 +25,18 @@
   "Description": "Description",
   "IncidentCounter": "Incident {{current}} / {{total}}",
   "PreviousIncident": "Previous incident",
-  "NextIncident": "Next incident"
+  "NextIncident": "Next incident",
+  "Locations": "Locations",
+  "NoLocations": "No locations to show. Search for incidents first.",
+  "IncidentCount_one": "{{count}} incident",
+  "IncidentCount_other": "{{count}} incidents",
+  "Incident": "Incident",
+  "AllIncidents": "All incidents",
+  "AllLocations": "All locations",
+  "CloseLocation": "Close location",
+  "Street": "Street",
+  "Intersection": "Intersection",
+  "NoIntersection": "Not matched to an intersection",
+  "ApproximateLocationNote": "Locations are approximate. Police report incidents near, not exactly at, an intersection.",
+  "LocationsDescription": "Places in your search results, busiest first."
 }

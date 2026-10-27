@@ -1,80 +1,66 @@
 "use client";
 import "react-leaflet-cluster/dist/assets/MarkerCluster.css";
 import "react-leaflet-cluster/dist/assets/MarkerCluster.Default.css";
-import { CaseData } from "@/common";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { MarkerPopupContents } from "../MarkerPopupContents";
-import { MapDataContext, MarkerData } from "@/app/_state/MapDataState";
+import { MapDataContext } from "@/app/_state/MapDataState";
+import { useVisibleLocations } from "@/app/_state/useVisibleLocations";
 
 import mvcCrashIcon from "@/img/mvc-crash-icon.png";
 import L from "leaflet";
 import dynamic from "next/dynamic";
 import { useMemo } from "react";
-import { ClientSideFilters } from "@/app/common";
 
 const Marker = dynamic(
   () => import("react-leaflet").then((mod) => mod.Marker),
   { ssr: false },
 );
 
+const PIN_SIZE: [number, number] = [32, 45];
+const SELECTED_PIN_SIZE: [number, number] = [40, 56];
+
+const createIcon = (selected: boolean) => {
+  const [width, height] = selected ? SELECTED_PIN_SIZE : PIN_SIZE;
+  return new L.Icon({
+    iconUrl: mvcCrashIcon.src,
+    iconRetinaUrl: mvcCrashIcon.src,
+    iconSize: [width, height],
+    iconAnchor: [width / 2, height],
+    popupAnchor: [0, -height],
+    className: selected ? "location-pin-selected" : undefined,
+  });
+};
+
 export default () => {
-  const data: MarkerData[] = MapDataContext.useSelector((snapshot) => {
-    if (snapshot.matches("success")) {
-      return snapshot.context.markerData ?? [];
-    }
-    return [];
-  });
+  const locations = useVisibleLocations();
+  const selectedKey = MapDataContext.useSelector(
+    (snapshot) => snapshot.context.selectedLocationKey,
+  );
 
-  const filters: ClientSideFilters = MapDataContext.useSelector((snapshot) => {
-    if (snapshot.matches("idle") || snapshot.matches("success")) {
-      return snapshot.context.clientFilters ?? { incidentTypes: [] };
-    }
-    return { incidentTypes: [] };
-  });
-
-  const markerIcon = useMemo(
-    () =>
-      new L.Icon({
-        iconUrl: mvcCrashIcon.src,
-        iconRetinaUrl: mvcCrashIcon.src,
-        iconSize: [32, 45],
-        iconAnchor: [16, 45],
-        popupAnchor: [0, -45],
-      }),
+  const icons = useMemo(
+    () => ({ normal: createIcon(false), selected: createIcon(true) }),
     [],
   );
 
   const items = useMemo(
     () =>
-      data
-        .map((markerData: MarkerData) => {
-          // apply local filters
-          let re = { ...markerData, caseData: [] as CaseData[] };
-          re.caseData =
-            markerData.caseData.filter(
-              (value) => filters.incidentTypes.indexOf(value.description) >= 0,
-            ) ?? [];
-          return re;
-        })
-        .filter((val: MarkerData) => val.caseData.length > 0)
-        .map((markerData: MarkerData) => (
-          // create marker
+      locations.map((location) => {
+        const isSelected = location.key === selectedKey;
+        return (
           <Marker
-            position={markerData.position}
-            key={`Marker-${JSON.stringify(markerData.position)}`}
-            icon={markerIcon}
+            position={location.position}
+            key={`Marker-${location.key}-${isSelected}`}
+            icon={isSelected ? icons.selected : icons.normal}
+            zIndexOffset={isSelected ? 1000 : 0}
           >
-            {markerData.popupText ? (
-              <MarkerPopupContents
-                key={`Popup-${JSON.stringify(markerData.position)}`}
-                data={markerData.caseData}
-              />
-            ) : (
-              <></>
-            )}
+            <MarkerPopupContents
+              key={`Popup-${location.key}`}
+              data={location.incidents}
+            />
           </Marker>
-        )),
-    [data, filters, markerIcon],
+        );
+      }),
+    [locations, selectedKey, icons],
   );
 
   return (

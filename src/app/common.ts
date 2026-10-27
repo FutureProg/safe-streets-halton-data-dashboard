@@ -25,4 +25,12 @@ export interface PaginationParams {
   cursor?: string;
 }
 
-export type DataResponseBody = PagingResponseBody<HRPSDataModel>;
+/** An HRPS incident, plus its nearest intersection when one was matched. */
+export type DataRecord = HRPSDataModel & {
+  intersectionId?: string | null;
+  intersectionLabel?: string | null;
+  intersectionLatitude?: number | null;
+  intersectionLongitude?: number | null;
+};
+
+export type DataResponseBody = PagingResponseBody<DataRecord>;

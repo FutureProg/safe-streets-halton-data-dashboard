@@ -25,5 +25,19 @@
   "Description": "Description",
   "IncidentCounter": "Incident {{current}} / {{total}}",
   "PreviousIncident": "Incident précédent",
-  "NextIncident": "Incident suivant"
+  "NextIncident": "Incident suivant",
+  "Locations": "Lieux",
+  "NoLocations": "Aucun lieu à afficher. Lancez d'abord une recherche.",
+  "IncidentCount_one": "{{count}} incident",
+  "IncidentCount_many": "{{count}} d'incidents",
+  "IncidentCount_other": "{{count}} incidents",
+  "Incident": "Incident",
+  "AllIncidents": "Tous les incidents",
+  "AllLocations": "Tous les lieux",
+  "CloseLocation": "Fermer le lieu",
+  "Street": "Rue",
+  "Intersection": "Intersection",
+  "NoIntersection": "Non associé à une intersection",
+  "ApproximateLocationNote": "Les emplacements sont approximatifs. La police signale les incidents près d'une intersection, pas exactement à celle-ci.",
+  "LocationsDescription": "Les lieux de vos résultats, du plus fréquent au moins fréquent."
 }

@@ -31,7 +31,7 @@ export default function SearchFeedback() {
         });
       } else if (
         snapshot.matches("success") &&
-        snapshot.context.markerData?.length === 0
+        snapshot.context.locations?.length === 0
       ) {
         toast.info(translateRef.current("NoIncidentsFound"), {
           description: translateRef.current("NoIncidentsFoundDescription"),
