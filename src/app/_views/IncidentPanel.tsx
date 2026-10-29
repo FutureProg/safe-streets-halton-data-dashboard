@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ClassAttributes, CSSProperties, useState } from "react";
 
 import { transitionView } from "@/lib/viewTransition";
 import {
@@ -295,6 +295,7 @@ function SelectedLocation({
     <Card
       role="region"
       aria-label={location.name || translate("UnknownLocation")}
+      style={{ "--card-spacing": "0" } as CSSProperties}
       className={
         isSheet
           ? "incident-panel pointer-events-auto fixed inset-x-0 bottom-0 z-20 h-1/2 rounded-b-none py-0 shadow-lg"
