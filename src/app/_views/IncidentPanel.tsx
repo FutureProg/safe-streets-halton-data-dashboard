@@ -281,6 +281,8 @@ function SelectedLocation({
   const { t: translate } = useTranslation();
   const format = useFormatters();
   const [detailIndex, setDetailIndex] = useState<number | null>(null);
+  // The list only slides back in after leaving a detail, not when first opened.
+  const [cameBack, setCameBack] = useState(false);
   const [first, last] = dateRange(location.incidents);
   const isSheet = variant === "sheet";
   const incidentCount = translate("IncidentCount", { count: location.count });
@@ -326,20 +328,31 @@ function SelectedLocation({
           <XIcon />
         </Button>
       </div>
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
         {detailIndex === null ? (
-          <IncidentTable
-            incidents={location.incidents}
-            onOpen={setDetailIndex}
-            stacked={isSheet}
-          />
+          <div
+            className={
+              cameBack
+                ? "animate-in fade-in slide-in-from-left-8 duration-200 motion-reduce:animate-none"
+                : undefined
+            }
+          >
+            <IncidentTable
+              incidents={location.incidents}
+              onOpen={setDetailIndex}
+              stacked={isSheet}
+            />
+          </div>
         ) : (
-          <div className="pt-3">
+          <div className="animate-in fade-in slide-in-from-right-8 pt-3 duration-200 motion-reduce:animate-none">
             <IncidentDetail
               location={location}
               index={detailIndex}
               onIndexChange={setDetailIndex}
-              onBack={() => setDetailIndex(null)}
+              onBack={() => {
+                setCameBack(true);
+                setDetailIndex(null);
+              }}
             />
           </div>
         )}
