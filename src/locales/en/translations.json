@@ -38,5 +38,6 @@
   "Intersection": "Intersection",
   "NoIntersection": "Not matched to an intersection",
   "ApproximateLocationNote": "Locations are approximate. Police report incidents near, not exactly at, an intersection.",
-  "LocationsDescription": "Places in your search results, busiest first."
+  "LocationsDescription": "Places in your search results, busiest first.",
+  "ViewIncident": "View incident"
 }

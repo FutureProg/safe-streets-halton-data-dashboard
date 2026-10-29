@@ -52,19 +52,25 @@ function IncidentTable({
             <button
               type="button"
               onClick={() => onOpen(index)}
-              className="hover:bg-muted focus-visible:ring-ring flex w-full flex-col px-4 py-2 text-left outline-none focus-visible:ring-2"
+              className="hover:bg-muted focus-visible:ring-ring flex w-full items-center justify-between gap-3 px-4 py-2 text-left outline-none focus-visible:ring-2"
             >
-              <span className="text-sm font-medium">
-                {format.description(incident.description)}
-                <span className="text-muted-foreground font-normal">
-                  {" "}
-                  · {incident.description}
+              <span className="flex min-w-0 flex-col">
+                <span className="text-sm font-medium">
+                  {format.description(incident.description)}
+                  <span className="text-muted-foreground font-normal">
+                    {" "}
+                    · {incident.description}
+                  </span>
+                </span>
+                <span className="text-muted-foreground">
+                  {format.date(incident.date)} · {format.time(incident.date)} ·{" "}
+                  {incident.case_no}
                 </span>
               </span>
-              <span className="text-muted-foreground">
-                {format.date(incident.date)} · {format.time(incident.date)} ·{" "}
-                {incident.case_no}
-              </span>
+              <ChevronRightIcon
+                aria-hidden
+                className="text-muted-foreground size-4 shrink-0"
+              />
             </button>
           </li>
         ))}
@@ -84,14 +90,21 @@ function IncidentTable({
           <th scope="col" className="px-2 py-1.5 font-medium">
             {translate("Incident")}
           </th>
-          <th scope="col" className="px-4 py-1.5 font-medium">
+          <th scope="col" className="px-2 py-1.5 font-medium">
             {translate("CaseNumberShort")}
+          </th>
+          <th scope="col" className="w-8 px-2 py-1.5">
+            <span className="sr-only">{translate("ViewIncident")}</span>
           </th>
         </tr>
       </thead>
       <tbody>
         {incidents.map((incident, index) => (
-          <tr key={incident.globalID} className="hover:bg-muted border-t">
+          <tr
+            key={incident.globalID}
+            onClick={() => onOpen(index)}
+            className="hover:bg-muted cursor-pointer border-t"
+          >
             <td className="px-4 py-1.5 whitespace-nowrap">
               {format.date(incident.date)}
             </td>
@@ -99,10 +112,10 @@ function IncidentTable({
               {format.time(incident.date)}
             </td>
             <td className="px-2 py-1.5">
+              {/* The row handles the click; the button gives keyboard users a stop. */}
               <button
                 type="button"
-                onClick={() => onOpen(index)}
-                className="focus-visible:ring-ring rounded text-left underline-offset-2 outline-none hover:underline focus-visible:ring-2"
+                className="focus-visible:ring-ring rounded text-left outline-none focus-visible:ring-2"
               >
                 {format.description(incident.description)}
                 <span className="text-muted-foreground">
@@ -111,8 +124,14 @@ function IncidentTable({
                 </span>
               </button>
             </td>
-            <td className="px-4 py-1.5 whitespace-nowrap">
+            <td className="px-2 py-1.5 whitespace-nowrap">
               {incident.case_no}
+            </td>
+            <td className="px-2 py-1.5">
+              <ChevronRightIcon
+                aria-hidden
+                className="text-muted-foreground size-4"
+              />
             </td>
           </tr>
         ))}

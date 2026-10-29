@@ -39,5 +39,6 @@
   "Intersection": "Intersection",
   "NoIntersection": "Non associé à une intersection",
   "ApproximateLocationNote": "Les emplacements sont approximatifs. La police signale les incidents près d'une intersection, pas exactement à celle-ci.",
-  "LocationsDescription": "Les lieux de vos résultats, du plus fréquent au moins fréquent."
+  "LocationsDescription": "Les lieux de vos résultats, du plus fréquent au moins fréquent.",
+  "ViewIncident": "Voir l'incident"
 }

@@ -84,10 +84,8 @@ test.describe("Given a desktop search with results", () => {
       name: "Walkers Line & Dundas St",
     });
 
-    await panel
-      .getByRole("button", { name: /Motor Vehicle Collision/ })
-      .first()
-      .click();
+    // Clicking anywhere on the row (here the Case # cell) opens the detail.
+    await panel.getByRole("cell", { name: "CASE-A" }).click();
     await expect(panel).toContainText("Incident 1 / 2");
     await expect(panel).toContainText("Locations are approximate");
     await panel.getByRole("button", { name: "Next incident" }).click();
