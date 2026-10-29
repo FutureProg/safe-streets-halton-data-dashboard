@@ -1,4 +1,6 @@
 import { useState } from "react";
+
+import { transitionView } from "@/lib/viewTransition";
 import {
   ArrowLeftIcon,
   ChevronLeftIcon,
@@ -281,8 +283,6 @@ function SelectedLocation({
   const { t: translate } = useTranslation();
   const format = useFormatters();
   const [detailIndex, setDetailIndex] = useState<number | null>(null);
-  // The list only slides back in after leaving a detail, not when first opened.
-  const [cameBack, setCameBack] = useState(false);
   const [first, last] = dateRange(location.incidents);
   const isSheet = variant === "sheet";
   const incidentCount = translate("IncidentCount", { count: location.count });
@@ -297,8 +297,8 @@ function SelectedLocation({
       aria-label={location.name}
       className={
         isSheet
-          ? "pointer-events-auto fixed inset-x-0 bottom-0 z-20 h-1/2 rounded-b-none py-0 shadow-lg"
-          : "pointer-events-auto absolute bottom-0 left-1/2 max-h-[40dvh] w-[40rem] max-w-[calc(100vw-40rem)] min-w-96 -translate-x-1/2 py-0"
+          ? "incident-panel pointer-events-auto fixed inset-x-0 bottom-0 z-20 h-1/2 rounded-b-none py-0 shadow-lg"
+          : "incident-panel pointer-events-auto absolute bottom-0 left-1/2 max-h-[40dvh] w-[40rem] max-w-[calc(100vw-40rem)] min-w-96 -translate-x-1/2 py-0"
       }
     >
       <div className="flex items-start justify-between gap-3 border-b px-4 py-3">
@@ -328,31 +328,24 @@ function SelectedLocation({
           <XIcon />
         </Button>
       </div>
-      <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
+      <div className="incident-panel-body min-h-0 flex-1 overflow-y-auto">
         {detailIndex === null ? (
-          <div
-            className={
-              cameBack
-                ? "animate-in fade-in slide-in-from-left-8 duration-200 motion-reduce:animate-none"
-                : undefined
+          <IncidentTable
+            incidents={location.incidents}
+            onOpen={(index) =>
+              transitionView(() => setDetailIndex(index), "forward")
             }
-          >
-            <IncidentTable
-              incidents={location.incidents}
-              onOpen={setDetailIndex}
-              stacked={isSheet}
-            />
-          </div>
+            stacked={isSheet}
+          />
         ) : (
-          <div className="animate-in fade-in slide-in-from-right-8 pt-3 duration-200 motion-reduce:animate-none">
+          <div className="pt-3">
             <IncidentDetail
               location={location}
               index={detailIndex}
               onIndexChange={setDetailIndex}
-              onBack={() => {
-                setCameBack(true);
-                setDetailIndex(null);
-              }}
+              onBack={() =>
+                transitionView(() => setDetailIndex(null), "backward")
+              }
             />
           </div>
         )}

@@ -195,3 +195,93 @@ main {
 .location-pin-selected {
   filter: drop-shadow(0 0 6px var(--color-primary));
 }
+
+/*
+  Pushing an incident's detail into the panel (or popping back to the list)
+  slides just the panel body. The location title and the rest of the page stay
+  still. See src/lib/viewTransition.ts.
+*/
+.incident-panel {
+  view-transition-name: incident-panel;
+}
+
+.incident-panel-body {
+  view-transition-name: incident-panel-body;
+}
+
+/*
+  The panel is named so it resizes smoothly when the detail is shorter or
+  taller than the list; the rest of the page doesn't cross-fade.
+*/
+html:active-view-transition-type(
+    forward, backward
+  )::view-transition-group(root),
+html:active-view-transition-type(forward, backward)::view-transition-old(root),
+html:active-view-transition-type(forward, backward)::view-transition-new(root) {
+  animation: none;
+}
+
+::view-transition-group(incident-panel-body) {
+  overflow: clip;
+  animation-duration: 0.25s;
+  animation-timing-function: ease-in-out;
+}
+
+::view-transition-old(incident-panel-body),
+::view-transition-new(incident-panel-body) {
+  mix-blend-mode: normal;
+  animation-duration: 0.25s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+}
+
+@keyframes incident-slide-to-left {
+  to {
+    transform: translateX(-100%);
+  }
+}
+@keyframes incident-slide-from-right {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes incident-slide-to-right {
+  to {
+    transform: translateX(100%);
+  }
+}
+@keyframes incident-slide-from-left {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+html:active-view-transition-type(
+    forward
+  )::view-transition-old(incident-panel-body) {
+  animation-name: incident-slide-to-left;
+}
+html:active-view-transition-type(
+    forward
+  )::view-transition-new(incident-panel-body) {
+  animation-name: incident-slide-from-right;
+}
+html:active-view-transition-type(
+    backward
+  )::view-transition-old(incident-panel-body) {
+  animation-name: incident-slide-to-right;
+}
+html:active-view-transition-type(
+    backward
+  )::view-transition-new(incident-panel-body) {
+  animation-name: incident-slide-from-left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(incident-panel),
+  ::view-transition-group(incident-panel-body),
+  ::view-transition-old(incident-panel-body),
+  ::view-transition-new(incident-panel-body) {
+    animation: none !important;
+  }
+}
