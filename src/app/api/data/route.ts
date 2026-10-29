@@ -22,6 +22,8 @@ import {
 } from "drizzle-orm";
 import { DataRecord, PaginationParams } from "@/app/common";
 
+let warnedMissingCuratedData = false;
+
 const findData = async (
   startDate: Date,
   endDate: Date,
@@ -88,6 +90,13 @@ const findData = async (
     results = await withIntersections();
   } catch (error) {
     if (!isMissingCuratedData(error)) throw error;
+    if (!warnedMissingCuratedData) {
+      warnedMissingCuratedData = true;
+      console.warn(
+        "Curated intersection data unavailable; serving incidents without intersections.",
+        error,
+      );
+    }
     results = await baseQuery();
   }
   const hasMore = results.length > limit;

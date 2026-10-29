@@ -18,6 +18,10 @@ export default function MapFocus() {
     (snapshot) => snapshot.context.selectedLocationKey,
   );
 
+  const focusRequest = MapDataContext.useSelector(
+    (snapshot) => snapshot.context.focusRequest,
+  );
+
   useEffect(() => {
     const location = locations.find((item) => item.key === selectedKey);
     if (!location) return;
@@ -31,9 +35,9 @@ export default function MapFocus() {
       .project(location.position, zoom)
       .add([0, height * (0.5 - anchor)]);
     map.flyTo(map.unproject(centre, zoom), zoom, { duration: 0.6 });
-    // Only re-centre when the selection changes, not when filters re-sort the list.
+    // Only re-centre on a selection (even of the same row), not when filters re-sort the list.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedKey, map]);
+  }, [selectedKey, focusRequest, map]);
 
   return null;
 }

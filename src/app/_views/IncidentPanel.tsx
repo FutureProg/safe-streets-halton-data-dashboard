@@ -294,7 +294,7 @@ function SelectedLocation({
   return (
     <Card
       role="region"
-      aria-label={location.name}
+      aria-label={location.name || translate("UnknownLocation")}
       className={
         isSheet
           ? "incident-panel pointer-events-auto fixed inset-x-0 bottom-0 z-20 h-1/2 rounded-b-none py-0 shadow-lg"
@@ -314,7 +314,9 @@ function SelectedLocation({
               {translate("AllLocations")}
             </Button>
           ) : null}
-          <h2 className="truncate text-sm font-medium">{location.name}</h2>
+          <h2 className="truncate text-sm font-medium">
+            {location.name || translate("UnknownLocation")}
+          </h2>
           <p className="text-muted-foreground">
             {cityLabel} · {incidentCount} · {range}
           </p>
@@ -341,7 +343,7 @@ function SelectedLocation({
           <div className="pt-3">
             <IncidentDetail
               location={location}
-              index={detailIndex}
+              index={Math.min(detailIndex, location.incidents.length - 1)}
               onIndexChange={setDetailIndex}
               onBack={() =>
                 transitionView(() => setDetailIndex(null), "backward")

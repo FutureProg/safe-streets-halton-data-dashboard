@@ -49,7 +49,7 @@ export default () => {
         return (
           <Marker
             position={location.position}
-            key={`Marker-${location.key}-${isSelected}`}
+            key={`Marker-${location.key}`}
             icon={isSelected ? icons.selected : icons.normal}
             zIndexOffset={isSelected ? 1000 : 0}
           >

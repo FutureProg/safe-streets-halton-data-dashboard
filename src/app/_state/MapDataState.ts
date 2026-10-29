@@ -63,6 +63,8 @@ const mapDataMachine = setup({
       error?: any;
       locations?: Location[];
       selectedLocationKey?: string | null;
+      /** Bumped on every selection so the map re-centres even on the same row. */
+      focusRequest?: number;
       clientFilters?: ClientSideFilters;
     },
     events: {} as
@@ -85,7 +87,10 @@ const mapDataMachine = setup({
       actions: [assign({ clientFilters: ({ event }) => event.filters })],
     },
     selectLocation: {
-      actions: assign({ selectedLocationKey: ({ event }) => event.key }),
+      actions: assign({
+        selectedLocationKey: ({ event }) => event.key,
+        focusRequest: ({ context }) => (context.focusRequest ?? 0) + 1,
+      }),
     },
     clearLocation: {
       actions: assign({ selectedLocationKey: null }),

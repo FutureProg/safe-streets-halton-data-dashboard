@@ -65,7 +65,7 @@ export default function LocationList({
             >
               <span className="flex min-w-0 flex-col">
                 <span className="truncate text-sm font-medium">
-                  {location.name}
+                  {location.name || translate("UnknownLocation")}
                 </span>
                 <span className="text-foreground/70 truncate">
                   {cityLabel(location.city)}
