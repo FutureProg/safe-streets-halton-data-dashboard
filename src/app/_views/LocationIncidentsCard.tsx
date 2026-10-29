@@ -2,7 +2,6 @@ import { CSSProperties, useState } from "react";
 
 import { transitionView } from "@/lib/viewTransition";
 import { ArrowLeftIcon, XIcon } from "lucide-react";
-import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -11,6 +10,7 @@ import { dateRange } from "../_state/locations";
 import { VisibleLocation } from "../_state/useVisibleLocations";
 import IncidentDetail from "./IncidentDetail";
 import IncidentTable from "./IncidentTable";
+import { useCityLabel } from "./LocationList";
 import { useLocaleFormatters } from "../../hooks/useLocaleFormatters";
 
 /**
@@ -20,20 +20,17 @@ import { useLocaleFormatters } from "../../hooks/useLocaleFormatters";
 export default function LocationIncidentsCard({
   location,
   variant,
-  cityLabel,
   onClose,
   onBack,
-  closeLabel,
 }: {
   location: VisibleLocation;
   variant: "card" | "sheet";
-  cityLabel: string;
   onClose: () => void;
   onBack?: () => void;
-  closeLabel: string;
 }) {
-  const { t: translate } = useTranslation();
   const format = useLocaleFormatters();
+  const { translate } = format;
+  const cityLabel = useCityLabel();
   const [detailIndex, setDetailIndex] = useState<number | null>(null);
   const [first, last] = dateRange(location.incidents);
   const isSheet = variant === "sheet";
@@ -71,13 +68,13 @@ export default function LocationIncidentsCard({
             {location.name || translate("UnknownLocation")}
           </h2>
           <p className="text-muted-foreground">
-            {cityLabel} · {incidentCount} · {range}
+            {cityLabel(location.city)} ·{incidentCount} · {range}
           </p>
         </div>
         <Button
           variant="ghost"
           size="icon-sm"
-          aria-label={closeLabel}
+          aria-label={translate("CloseLocation")}
           onPress={onClose}
         >
           <XIcon />
