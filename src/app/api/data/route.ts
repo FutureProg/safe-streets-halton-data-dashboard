@@ -4,11 +4,9 @@ import { db } from "@/db/db";
 import { NextRequest } from "next/server";
 import { decodeCursor, encodeCursor } from "../pagination";
 import { hrpsData } from "@/db/schema";
-import {
-  incidentLocations,
-  intersections,
-  isMissingCuratedData,
-} from "@/db/external";
+import { isMissingRelation } from "@/db/common";
+import { intersections } from "@/db/geo";
+import { incidentLocations } from "@/db/incidents";
 import {
   and,
   between,
@@ -89,7 +87,7 @@ const findData = async (
   try {
     results = await withIntersections();
   } catch (error) {
-    if (!isMissingCuratedData(error)) throw error;
+    if (!isMissingRelation(error)) throw error;
     if (!warnedMissingCuratedData) {
       warnedMissingCuratedData = true;
       console.warn(

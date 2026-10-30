@@ -13,6 +13,7 @@ import { useContext, useEffect, useState } from "react";
 import { StaticValuesContext } from "../StaticValuesContext";
 import { MapDataContext } from "../_state/MapDataState";
 import { useTranslation } from "react-i18next";
+import { useDeviceConfig } from "@/hooks/useDeviceConfig";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,7 +37,10 @@ export default function Home() {
   const { t: translate } = useTranslation();
   const staticValues = useContext(StaticValuesContext);
   const mapDataActor = MapDataContext.useActorRef();
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const { isTouchDevice } = useDeviceConfig();
+  // Phones and tablets get the sheet layout whatever their width.
+  const isSmallerScreen =
+    !useMediaQuery("(min-width: 1024px)") || isTouchDevice;
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isLocationsOpen, setIsLocationsOpen] = useState(false);
   const totalIncidents = useTotalIncidents();
@@ -75,13 +79,7 @@ export default function Home() {
         <div className="absolute left-0 flex flex-col gap-3 *:pointer-events-auto">
           <MenuPanel />
         </div>
-        {isDesktop ? (
-          <div className="absolute inset-y-0 right-0 flex flex-col items-end gap-3 *:pointer-events-auto">
-            <CaseLookup />
-            <FilterPanels values={filters} onValuesChange={onFiltersChange} />
-            <LocationsCard />
-          </div>
-        ) : (
+        {isSmallerScreen ? (
           <div className="pointer-events-auto absolute right-0 flex gap-2">
             <SheetTrigger
               isOpen={isLocationsOpen}
@@ -128,17 +126,23 @@ export default function Home() {
               </SheetContent>
             </SheetTrigger>
           </div>
+        ) : (
+          <div className="absolute inset-y-0 right-0 flex flex-col items-end gap-3 *:pointer-events-auto">
+            <CaseLookup />
+            <FilterPanels values={filters} onValuesChange={onFiltersChange} />
+            <LocationsCard />
+          </div>
         )}
       </div>
-      {isDesktop ? (
-        <div className="pointer-events-none absolute inset-x-3 bottom-5 z-10">
-          <IncidentPanel variant="card" />
-        </div>
-      ) : (
+      {isSmallerScreen ? (
         <IncidentPanel
           variant="sheet"
           onBack={() => setIsLocationsOpen(true)}
         />
+      ) : (
+        <div className="pointer-events-none absolute inset-x-3 bottom-5 z-10">
+          <IncidentPanel variant="card" />
+        </div>
       )}
       <SearchFeedback />
     </main>
