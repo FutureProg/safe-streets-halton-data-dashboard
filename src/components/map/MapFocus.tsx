@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useMap } from "react-leaflet";
 
 import { MapDataContext } from "@/app/_state/MapDataState";
-import { useFilteredLocations } from "@/app/_state/useVisibleLocations";
+import { useFilteredLocations } from "@/app/_state/useFilteredLocations";
 
 const FOCUS_ZOOM = 17;
 /** Where the selected location sits, as a fraction of the map's height. */

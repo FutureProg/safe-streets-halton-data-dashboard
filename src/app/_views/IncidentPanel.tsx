@@ -1,5 +1,5 @@
 import { MapDataContext } from "../_state/MapDataState";
-import { useFilteredLocations } from "../_state/useVisibleLocations";
+import { useFilteredLocations } from "../_state/useFilteredLocations";
 import LocationIncidentsCard from "./LocationIncidentsCard";
 
 /**

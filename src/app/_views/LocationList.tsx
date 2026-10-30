@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { cn } from "cn";
 
 import { MapDataContext } from "../_state/MapDataState";
-import { useFilteredLocations } from "../_state/useVisibleLocations";
+import { useFilteredLocations } from "../_state/useFilteredLocations";
 import { StaticValuesContext } from "../StaticValuesContext";
 
 /** The municipality as the user's language writes it (HRPS sends it in capitals). */

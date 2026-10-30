@@ -3,7 +3,7 @@ import { ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-import { FilteredLocation } from "../_state/useVisibleLocations";
+import { FilteredLocation } from "../_state/useFilteredLocations";
 import { useCityLabel } from "./LocationList";
 import { useLocaleFormatters } from "../../hooks/useLocaleFormatters";
 

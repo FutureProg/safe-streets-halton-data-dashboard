@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 import { dateRange } from "../_state/locations";
-import { FilteredLocation } from "../_state/useVisibleLocations";
+import { FilteredLocation } from "../_state/useFilteredLocations";
 import IncidentDetail from "./IncidentDetail";
 import IncidentTable from "./IncidentTable";
 import { useCityLabel } from "./LocationList";
