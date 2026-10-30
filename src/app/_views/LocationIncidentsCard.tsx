@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 import { dateRange } from "../_state/locations";
-import { VisibleLocation } from "../_state/useVisibleLocations";
+import { FilteredLocation } from "../_state/useVisibleLocations";
 import IncidentDetail from "./IncidentDetail";
 import IncidentTable from "./IncidentTable";
 import { useCityLabel } from "./LocationList";
@@ -23,7 +23,7 @@ export default function LocationIncidentsCard({
   onClose,
   onBack,
 }: {
-  location: VisibleLocation;
+  location: FilteredLocation;
   variant: "card" | "sheet";
   onClose: () => void;
   onBack?: () => void;

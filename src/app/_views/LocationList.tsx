@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { cn } from "cn";
 
 import { MapDataContext } from "../_state/MapDataState";
-import { useVisibleLocations } from "../_state/useVisibleLocations";
+import { useFilteredLocations } from "../_state/useVisibleLocations";
 import { StaticValuesContext } from "../StaticValuesContext";
 
 /** The municipality as the user's language writes it (HRPS sends it in capitals). */
@@ -14,7 +14,7 @@ export function useCityLabel() {
 }
 
 export function useTotalIncidents() {
-  return useVisibleLocations().reduce(
+  return useFilteredLocations().reduce(
     (sum, location) => sum + location.count,
     0,
   );
@@ -27,7 +27,7 @@ export default function LocationList({
   onSelect?: (key: string) => void;
 }) {
   const { t: translate } = useTranslation();
-  const locations = useVisibleLocations();
+  const locations = useFilteredLocations();
   const cityLabel = useCityLabel();
   const mapDataActor = MapDataContext.useActorRef();
   const selectedKey = MapDataContext.useSelector(

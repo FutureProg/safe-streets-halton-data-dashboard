@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useMap } from "react-leaflet";
 
 import { MapDataContext } from "@/app/_state/MapDataState";
-import { useVisibleLocations } from "@/app/_state/useVisibleLocations";
+import { useFilteredLocations } from "@/app/_state/useVisibleLocations";
 
 const FOCUS_ZOOM = 17;
 /** Where the selected location sits, as a fraction of the map's height. */
@@ -13,7 +13,7 @@ const PHONE_ANCHOR = 1 / 6; // centre of the top third, above the half sheet
 /** Centres the map on the selected location, leaving room for its incident list. */
 export default function MapFocus() {
   const map = useMap();
-  const locations = useVisibleLocations();
+  const locations = useFilteredLocations();
   const selectedKey = MapDataContext.useSelector(
     (snapshot) => snapshot.context.selectedLocationKey,
   );

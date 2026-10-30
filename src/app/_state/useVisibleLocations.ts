@@ -3,14 +3,14 @@ import { useMemo } from "react";
 import { MapDataContext } from "./MapDataState";
 import { Location, sortLocations } from "./locations";
 
-export type VisibleLocation = Location & { count: number };
+export type FilteredLocation = Location & { count: number };
 
 /**
  * The locations of the current search after the client-side filters (so far
  * only incident type), highest incident count first. The map pins and the
  * Locations list both read this, so they never disagree.
  */
-export function useVisibleLocations(): VisibleLocation[] {
+export function useFilteredLocations(): FilteredLocation[] {
   const locations = MapDataContext.useSelector(
     (snapshot) => snapshot.context.locations,
   );

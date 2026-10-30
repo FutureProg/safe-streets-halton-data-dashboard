@@ -1,5 +1,5 @@
 import { MapDataContext } from "../_state/MapDataState";
-import { useVisibleLocations } from "../_state/useVisibleLocations";
+import { useFilteredLocations } from "../_state/useVisibleLocations";
 import LocationIncidentsCard from "./LocationIncidentsCard";
 
 /**
@@ -15,7 +15,7 @@ export default function IncidentPanel({
   /** Sheet only: return to the list of locations. */
   onBack?: () => void;
 }) {
-  const locations = useVisibleLocations();
+  const locations = useFilteredLocations();
   const mapDataActor = MapDataContext.useActorRef();
   const selectedKey = MapDataContext.useSelector(
     (snapshot) => snapshot.context.selectedLocationKey,

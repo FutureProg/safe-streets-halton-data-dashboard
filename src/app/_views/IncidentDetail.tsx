@@ -3,7 +3,7 @@ import { ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-import { VisibleLocation } from "../_state/useVisibleLocations";
+import { FilteredLocation } from "../_state/useVisibleLocations";
 import { useCityLabel } from "./LocationList";
 import { useLocaleFormatters } from "../../hooks/useLocaleFormatters";
 
@@ -13,7 +13,7 @@ export default function IncidentDetail({
   onIndexChange,
   onBack,
 }: {
-  location: VisibleLocation;
+  location: FilteredLocation;
   index: number;
   onIndexChange: (index: number) => void;
   onBack: () => void;

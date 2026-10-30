@@ -4,7 +4,7 @@ import "react-leaflet-cluster/dist/assets/MarkerCluster.Default.css";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { MarkerPopupContents } from "../MarkerPopupContents";
 import { MapDataContext } from "@/app/_state/MapDataState";
-import { useVisibleLocations } from "@/app/_state/useVisibleLocations";
+import { useFilteredLocations } from "@/app/_state/useVisibleLocations";
 
 import mvcCrashIcon from "@/img/mvc-crash-icon.png";
 import L from "leaflet";
@@ -32,7 +32,7 @@ const createIcon = (selected: boolean) => {
 };
 
 export default () => {
-  const locations = useVisibleLocations();
+  const locations = useFilteredLocations();
   const selectedKey = MapDataContext.useSelector(
     (snapshot) => snapshot.context.selectedLocationKey,
   );
