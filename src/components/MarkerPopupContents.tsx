@@ -2,10 +2,10 @@ import { CaseData } from "@/common";
 import { useState } from "react";
 import { Popup } from "react-leaflet";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { useTranslation } from "react-i18next";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useLocaleFormatters } from "@/hooks/useLocaleFormatters";
 
 export interface MarkerPopupContentProps {
   key: string;
@@ -13,8 +13,8 @@ export interface MarkerPopupContentProps {
 }
 
 export const MarkerPopupContents = (props: MarkerPopupContentProps) => {
-  const { t: translate, i18n } = useTranslation();
-  const { t: tStaticValues } = useTranslation("staticValues");
+  const format = useLocaleFormatters();
+  const { translate } = format;
   const onPageButtonClick = (delta: number) => () => {
     let nPageNum = pageNumber + delta;
     if (nPageNum >= props.data.length) {
@@ -38,16 +38,10 @@ export const MarkerPopupContents = (props: MarkerPopupContentProps) => {
   const details: [string, string][] = [
     [translate("CaseNumberShort"), caseData.case_no],
     [translate("Municipality"), caseData.city],
-    [
-      translate("Date"),
-      caseData.date.toLocaleDateString(i18n.language, { dateStyle: "full" }),
-    ],
-    [
-      translate("Time"),
-      caseData.date.toLocaleTimeString(i18n.language, { timeStyle: "short" }),
-    ],
+    [translate("Date"), format.date(caseData.date, "full")],
+    [translate("Time"), format.time(caseData.date)],
     [translate("IncidentCode"), caseData.description],
-    [translate("Description"), tStaticValues(caseData.description)],
+    [translate("Description"), format.description(caseData.description)],
   ];
 
   return (

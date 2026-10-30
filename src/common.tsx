@@ -7,6 +7,8 @@ export interface CaseData {
   latitude: number;
   longitude: number;
   globalID: string;
+  intersectionId?: string | null;
+  intersectionLabel?: string | null;
 }
 
 export const caseDataToText = (data: CaseData) => {

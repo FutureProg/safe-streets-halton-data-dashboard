@@ -2,8 +2,7 @@
 
 import { assign, fromPromise, setup } from "xstate";
 import { createActorContext } from "@xstate/react";
-import { CaseData } from "@/common";
-import { LatLngExpression } from "leaflet";
+import { Location, groupLocations } from "./locations";
 import { ClientSideFilters, DataResponseBody } from "../common";
 
 export type FetchDataParams = {
@@ -56,65 +55,23 @@ const fetchData = async (params: FetchDataParams) => {
   return result!;
 };
 
-export interface MarkerData {
-  options: MarkerDataOptions;
-  position: LatLngExpression;
-  caseData: CaseData[];
-  popupText?: string;
-}
-
-export interface MarkerDataOptions {}
-
-function createMarkerData(data: Record<string, any>[]): MarkerData[] {
-  let re: MarkerData[] = [];
-  let tempData: Record<string, CaseData[]> = {};
-  const toKeyStr = (lat: number, lng: number) => `${lat},${lng}`;
-  for (let record of data) {
-    let lngShort = Number.parseFloat(
-      (record["longitude"] as number).toFixed(4),
-    );
-    let latShort = Number.parseFloat((record["latitude"] as number).toFixed(4));
-    let keyStr = toKeyStr(latShort, lngShort);
-    let caseData: CaseData = {
-      case_no: record["caseNo"],
-      city: record["city"],
-      date: new Date(record["date"]),
-      description: record["description"],
-      globalID: record["globalID"],
-      latitude: record["latitude"],
-      location: record["location"],
-      longitude: record["longitude"],
-    };
-    if (!(keyStr in tempData)) {
-      tempData[keyStr] = [];
-    }
-    tempData[keyStr].push(caseData);
-    // let popupText = caseDataToText(caseData);
-  }
-  for (const key in tempData) {
-    let [lat, lng] = key.split(",").map(Number.parseFloat);
-    re.push({
-      caseData: tempData[key],
-      position: [lat, lng],
-      options: {},
-      popupText: "test text",
-    });
-  }
-  return re;
-}
-
 const mapDataMachine = setup({
   types: {
     context: {} as {
       data?: any;
       params?: any;
       error?: any;
-      markerData?: MarkerData[];
+      locations?: Location[];
+      selectedLocationKey?: string | null;
+      /** Bumped on every selection so the map re-centres even on the same row. */
+      focusRequest?: number;
       clientFilters?: ClientSideFilters;
     },
     events: {} as
       | { type: "request"; params: FetchDataParams }
-      | { type: "filterClient"; filters: ClientSideFilters },
+      | { type: "filterClient"; filters: ClientSideFilters }
+      | { type: "selectLocation"; key: string }
+      | { type: "clearLocation" },
     input: {} as FetchDataParams,
   },
   actors: {
@@ -128,6 +85,15 @@ const mapDataMachine = setup({
   on: {
     filterClient: {
       actions: [assign({ clientFilters: ({ event }) => event.filters })],
+    },
+    selectLocation: {
+      actions: assign({
+        selectedLocationKey: ({ event }) => event.key,
+        focusRequest: ({ context }) => (context.focusRequest ?? 0) + 1,
+      }),
+    },
+    clearLocation: {
+      actions: assign({ selectedLocationKey: null }),
     },
   },
 
@@ -152,8 +118,9 @@ const mapDataMachine = setup({
           actions: [
             assign({ data: ({ event }) => event.output }),
             assign({
-              markerData: ({ event }) =>
-                createMarkerData((event.output as any).data),
+              locations: ({ event }) =>
+                groupLocations((event.output as any).data),
+              selectedLocationKey: null,
             }),
           ],
         },
