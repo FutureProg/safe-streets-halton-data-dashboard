@@ -1,5 +1,7 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { hrpsData } from "./schema";
+import { incidentsView } from "./incidents";
+import { isMissingRelation } from "./common";
 import { Pool } from "pg";
 import {
   and,
@@ -32,9 +34,15 @@ export const db = drizzle(
 export type HRPSDataColumns = keyof HRPSDataModel;
 
 export const findInfo = async () => {
+  // Same set of types as the de-duplicated view serves, so the filter list
+  // matches the incidents; raw rows when the view does not exist yet.
   const descriptionUniqueInfo = db
-    .selectDistinct({ value: hrpsData.description })
-    .from(hrpsData);
+    .selectDistinct({ value: incidentsView.description })
+    .from(incidentsView)
+    .catch((error) => {
+      if (!isMissingRelation(error)) throw error;
+      return db.selectDistinct({ value: hrpsData.description }).from(hrpsData);
+    });
   const citiesUniqueInfo = db
     .selectDistinct({ value: hrpsData.city })
     .from(hrpsData)

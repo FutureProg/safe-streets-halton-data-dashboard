@@ -6,7 +6,7 @@ import { decodeCursor, encodeCursor } from "../pagination";
 import { hrpsData } from "@/db/schema";
 import { isMissingRelation } from "@/db/common";
 import { intersections } from "@/db/geo";
-import { incidentLocations } from "@/db/incidents";
+import { incidentLocations, incidentsView } from "@/db/incidents";
 import {
   and,
   between,
@@ -50,6 +50,52 @@ const findData = async (
     );
   }
 
+  // Preferred: the de-duplicated view, one row per case, already tagged with
+  // its nearest intersection.
+  const viewConditions = [
+    and(
+      between(incidentsView.date, startDate, endDate),
+      inArray(incidentsView.city, includedCities),
+    ),
+  ];
+  if (options?.cursor) {
+    const cursor = decodeCursor(options.cursor);
+    const cursorDate = new Date(cursor.date);
+    viewConditions.push(
+      or(
+        lt(incidentsView.date, cursorDate),
+        and(
+          eq(incidentsView.date, cursorDate),
+          lt(incidentsView.globalId, cursor.id),
+        ),
+      ),
+    );
+  }
+  const fromView = () =>
+    db
+      .select({
+        caseNo: incidentsView.caseNo,
+        date: incidentsView.date,
+        description: incidentsView.description,
+        location: incidentsView.location,
+        city: incidentsView.city,
+        latitude: incidentsView.latitude,
+        longitude: incidentsView.longitude,
+        globalId: incidentsView.globalId,
+        intersectionId: incidentsView.intersectionId,
+        intersectionLabel: intersections.label,
+        intersectionLatitude: sql<number | null>`ST_Y(${intersections.geom})`,
+        intersectionLongitude: sql<number | null>`ST_X(${intersections.geom})`,
+      })
+      .from(incidentsView)
+      .leftJoin(
+        intersections,
+        eq(intersections.intersectionId, incidentsView.intersectionId),
+      )
+      .where(and(...viewConditions))
+      .orderBy(desc(incidentsView.date), desc(incidentsView.globalId))
+      .limit(limit + 1);
+
   const baseQuery = () =>
     db
       .select(getTableColumns(hrpsData))
@@ -83,19 +129,27 @@ const findData = async (
       .orderBy(desc(hrpsData.date), desc(hrpsData.globalId))
       .limit(limit + 1);
 
+  // Fall back one step at a time when the open-data-sync relations are
+  // missing (local and test databases): view, then raw rows with
+  // intersections, then bare raw rows.
   let results: DataRecord[];
   try {
-    results = await withIntersections();
+    results = await fromView();
   } catch (error) {
     if (!isMissingRelation(error)) throw error;
     if (!warnedMissingCuratedData) {
       warnedMissingCuratedData = true;
       console.warn(
-        "Curated intersection data unavailable; serving incidents without intersections.",
+        "De-duplicated incidents view unavailable; serving raw HRPS rows.",
         error,
       );
     }
-    results = await baseQuery();
+    try {
+      results = await withIntersections();
+    } catch (innerError) {
+      if (!isMissingRelation(innerError)) throw innerError;
+      results = await baseQuery();
+    }
   }
   const hasMore = results.length > limit;
   const data = hasMore ? results.slice(0, limit) : results;
