@@ -1,4 +1,5 @@
-import { MenuIcon } from "lucide-react";
+import { MenuIcon, SearchIcon } from "lucide-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
@@ -9,8 +10,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import CaseLookupDialog from "./CaseLookupDialog";
+
 const MenuPanel = () => {
   const { t: translate } = useTranslation();
+  const [isCaseLookupOpen, setIsCaseLookupOpen] = useState(false);
 
   return (
     <Card
@@ -28,7 +32,11 @@ const MenuPanel = () => {
         >
           <MenuIcon />
         </Button>
-        <DropdownMenu className="w-40">
+        <DropdownMenu className="w-48">
+          <DropdownMenuItem onAction={() => setIsCaseLookupOpen(true)}>
+            <SearchIcon aria-hidden />
+            {translate("GoToCaseNumber")}
+          </DropdownMenuItem>
           <DropdownMenuItem href="/">
             {translate("MenuItem", { number: 1 })}
           </DropdownMenuItem>
@@ -40,6 +48,10 @@ const MenuPanel = () => {
           </DropdownMenuItem>
         </DropdownMenu>
       </DropdownMenuTrigger>
+      <CaseLookupDialog
+        isOpen={isCaseLookupOpen}
+        onOpenChange={setIsCaseLookupOpen}
+      />
     </Card>
   );
 };

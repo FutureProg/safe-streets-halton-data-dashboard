@@ -34,3 +34,8 @@ export type DataRecord = HRPSDataModel & {
 };
 
 export type DataResponseBody = PagingResponseBody<DataRecord>;
+
+/** Response of `GET /api/data/case`: every incident with the requested case number. */
+export interface CaseResponseBody {
+  data: DataRecord[];
+}
