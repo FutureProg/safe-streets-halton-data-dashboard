@@ -23,6 +23,9 @@ export default defineConfig({
         invocationLogs: true,
         persist: true,
       },
+      issues: {
+        enabled: true,
+      },
     },
     env: {
       ASSETS: bindings.assets(),
