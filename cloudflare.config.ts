@@ -20,7 +20,7 @@ export default defineConfig({
     observability: {
       logs: {
         enabled: true,
-        invocation_logs: true,
+        invocationLogs: true,
         persist: true,
       },
     },
