@@ -8,6 +8,7 @@ allowBuilds:
   sharp: false
   ssh2: true
   unrs-resolver: false
+  workerd: false
 minimumReleaseAgeExclude:
   - esbuild@0.24.3
   - drizzle-orm@0.45.2
