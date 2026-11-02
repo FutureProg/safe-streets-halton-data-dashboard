@@ -1,6 +1,5 @@
 import { Poppins } from "next/font/google";
 import "../globals.css";
-import Head from "next/head";
 import TranslationProvider from "../TranslationProvider";
 import initTranslations from "../i18n";
 import Providers from "../Providers";
@@ -47,14 +46,14 @@ export default async function RootLayout(
 
   return (
     <html lang={locale}>
-      <Head>
+      <head>
         <link
           rel="stylesheet"
           href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossOrigin=""
         />
-      </Head>
+      </head>
       <body className={poppins.className}>
         <TranslationProvider
           namespaces={i18nNamespaces}
