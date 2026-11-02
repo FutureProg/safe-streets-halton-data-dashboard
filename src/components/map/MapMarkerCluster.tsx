@@ -36,7 +36,9 @@ const getIcon = (code: string | undefined, selected: boolean) => {
   const size = selected ? selectedIconSize(BADGE_SIZE) : BADGE_SIZE;
   const icon = L.divIcon({
     html: incidentIconSvg(code ?? "", { selected }),
-    className: "incident-marker",
+    className: selected
+      ? "incident-marker incident-marker-selected"
+      : "incident-marker",
     iconSize: [size, size],
     iconAnchor: [size / 2, size / 2],
     popupAnchor: [0, -BADGE_SIZE / 2],
