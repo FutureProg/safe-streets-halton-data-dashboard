@@ -5,13 +5,16 @@ import { bindings, defineConfig, defineWorker } from "cf/config";
 // so no account-specific values are committed.
 const hyperdriveId = process.env.HYPERDRIVE_ID;
 
+// Preview builds (`cf previews deploy`) evaluate this config with isPreview = true.
+// Previews must not claim the production custom domain, so it is left out for them.
+// Everything else, including the read-only Hyperdrive binding, stays the same.
 export default defineConfig({
-  worker: defineWorker({
+  worker: defineWorker(({ isPreview }) => ({
     name: "safe-streets-halton-dashboard",
     entrypoint: "vinext/server/fetch-handler",
     compatibilityDate: "2026-11-02",
     compatibilityFlags: ["nodejs_compat"],
-    domains: ["streetsdash.nickmorrison.me"],
+    ...(isPreview ? {} : { domains: ["streetsdash.nickmorrison.me"] }),
     assets: {
       htmlHandling: "none",
       notFoundHandling: "none",
@@ -33,5 +36,5 @@ export default defineConfig({
         ? { HYPERDRIVE: bindings.hyperdrive({ id: hyperdriveId }) }
         : {}),
     },
-  }),
+  })),
 });
