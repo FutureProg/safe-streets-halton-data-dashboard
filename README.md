@@ -31,15 +31,18 @@ The dashboard deploys as a Cloudflare Worker using [vinext](https://github.com/c
 ```bash
 pnpm run dev:vinext     # local dev server under vinext (port 3001)
 pnpm run build:vinext   # production Worker build
-pnpm run deploy:vinext  # build and deploy (CI does this on push to main)
+pnpm run deploy:vinext  # build and deploy (Workers Builds does this on push to main)
 ```
 
 The Worker reads Postgres through a [Hyperdrive](https://developers.cloudflare.com/hyperdrive/) binding named `HYPERDRIVE`. Hyperdrive holds the database host, credentials and CA certificate, so none of the `DB_*` variables are needed in production.
 
-Deploys are run by `.github/workflows/deploy.yml`. It needs these in the GitHub repository settings:
+Deploys are run by [Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/), Cloudflare's GitHub integration, on every push to `main`. In the Worker's build settings:
 
-| Kind     | Name                    | Notes                                          |
-| -------- | ----------------------- | ---------------------------------------------- |
-| Secret   | `CLOUDFLARE_API_TOKEN`  | Token that can edit Workers and Custom Domains |
-| Secret   | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account ID                          |
-| Variable | `HYPERDRIVE_ID`         | ID of the dashboard's Hyperdrive config        |
+| Setting         | Value                                                                        |
+| --------------- | ---------------------------------------------------------------------------- |
+| Build command   | _(empty; the deploy command builds the app)_                                 |
+| Deploy command  | `pnpm run deploy:vinext`                                                     |
+| Worker name     | `safe-streets-halton-dashboard` (must match `cloudflare.config.ts`)          |
+| Build variables | `HYPERDRIVE_ID` (the dashboard's Hyperdrive config ID), `CLOUDFLARE_BUILD=1` |
+
+Preview builds are off until they have been tried with this setup.
