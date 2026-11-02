@@ -1,7 +1,7 @@
 import { bindings, defineConfig, defineWorker } from "cf/config";
 
 // Hyperdrive config ID for the dashboard's read-only database user. It is
-// supplied by the deploy environment (GitHub Actions variable HYPERDRIVE_ID)
+// supplied by the deploy environment (the Workers Builds build variable HYPERDRIVE_ID)
 // so no account-specific values are committed.
 const hyperdriveId = process.env.HYPERDRIVE_ID;
 
