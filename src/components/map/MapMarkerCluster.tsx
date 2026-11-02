@@ -1,11 +1,11 @@
 "use client";
 import "react-leaflet-cluster/dist/assets/MarkerCluster.css";
-import "react-leaflet-cluster/dist/assets/MarkerCluster.Default.css";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { MarkerPopupContents } from "../MarkerPopupContents";
 import { MapDataContext } from "@/app/_state/MapDataState";
 import { useFilteredLocations } from "@/app/_state/useFilteredLocations";
 
+import { clusterIconHtml } from "@/lib/clusterStyle";
 import {
   incidentIconSvg,
   mostSevereCode,
@@ -21,6 +21,29 @@ const Marker = dynamic(
 );
 
 const BADGE_SIZE = 30;
+
+const CLUSTER_SIZE = 40;
+
+/** Incidents a marker stands for, kept on its options for the cluster badge. */
+type CountedMarker = L.Marker & { options: { incidentCount?: number } };
+
+/** The part of leaflet.markercluster's cluster this file uses (no typings ship). */
+type Cluster = { getAllChildMarkers: () => L.Marker[] };
+
+const createClusterIcon = (cluster: Cluster) => {
+  const incidentCount = cluster
+    .getAllChildMarkers()
+    .reduce(
+      (total, marker) =>
+        total + ((marker as CountedMarker).options.incidentCount ?? 1),
+      0,
+    );
+  return L.divIcon({
+    html: clusterIconHtml(incidentCount),
+    className: "incident-cluster",
+    iconSize: [CLUSTER_SIZE, CLUSTER_SIZE],
+  });
+};
 
 const iconCache = new Map<string, L.DivIcon>();
 
@@ -64,6 +87,7 @@ export default () => {
             icon={getIcon(mostSevereCode(location.incidents), isSelected)}
             zIndexOffset={isSelected ? 1000 : 0}
             title={location.name}
+            {...({ incidentCount: location.count } as object)}
           >
             <MarkerPopupContents
               key={`Popup-${location.key}`}
@@ -78,7 +102,12 @@ export default () => {
   return (
     <>
       {items.length > 0 ? (
-        <MarkerClusterGroup chunkedLoading>{items}</MarkerClusterGroup>
+        <MarkerClusterGroup
+          chunkedLoading
+          iconCreateFunction={createClusterIcon}
+        >
+          {items}
+        </MarkerClusterGroup>
       ) : null}
     </>
   );

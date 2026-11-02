@@ -204,6 +204,30 @@ main {
   border: 0;
 }
 
+/* Cluster badge: colours are set inline from the incident count. */
+.incident-cluster {
+  background: none;
+  border: 0;
+}
+.incident-cluster-halo {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+.incident-cluster-core {
+  display: grid;
+  place-items: center;
+  width: 72%;
+  height: 72%;
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  font-family: var(--font-sans);
+}
+
 /*
   Pushing an incident's detail into the panel (or popping back to the list)
   slides just the panel body. The location title and the rest of the page stay
