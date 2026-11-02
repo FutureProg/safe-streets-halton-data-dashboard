@@ -50,3 +50,6 @@ node_modules/
 
 .nyc_output/
 .vitest/
+/dist/
+.vinext/
+.cloudflare/

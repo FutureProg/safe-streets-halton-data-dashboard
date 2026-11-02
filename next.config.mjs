@@ -11,7 +11,8 @@ export default async (phase) => {
   /** @type {import('next').NextConfig} */
   const nextConfig = {
     env,
-    output: "standalone",
+    // The Cloudflare Worker build (vite.cloudflare.config.ts) must not emit a Node standalone bundle.
+    output: process.env.CLOUDFLARE_BUILD ? undefined : "standalone",
   };
 
   return nextConfig;

@@ -23,3 +23,23 @@ pnpm local-db:sync   # while online: copies the last 180 days into local Postgre
 pnpm dev-local       # offline: starts the container, migrates, runs next dev against it
 pnpm local-db:down   # stop the container (data persists in a docker volume)
 ```
+
+## Deploying to Cloudflare Workers
+
+The dashboard deploys as a Cloudflare Worker using [vinext](https://github.com/cloudflare/vinext), configured in `cloudflare.config.ts` and `vite.cloudflare.config.ts`. The regular Next.js scripts (`dev`, `build`, `start`) still work as before.
+
+```bash
+pnpm run dev:vinext     # local dev server under vinext (port 3001)
+pnpm run build:vinext   # production Worker build
+pnpm run deploy:vinext  # build and deploy (CI does this on push to main)
+```
+
+The Worker reads Postgres through a [Hyperdrive](https://developers.cloudflare.com/hyperdrive/) binding named `HYPERDRIVE`. Hyperdrive holds the database host, credentials and CA certificate, so none of the `DB_*` variables are needed in production.
+
+Deploys are run by `.github/workflows/deploy.yml`. It needs these in the GitHub repository settings:
+
+| Kind     | Name                    | Notes                                          |
+| -------- | ----------------------- | ---------------------------------------------- |
+| Secret   | `CLOUDFLARE_API_TOKEN`  | Token that can edit Workers and Custom Domains |
+| Secret   | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account ID                          |
+| Variable | `HYPERDRIVE_ID`         | ID of the dashboard's Hyperdrive config        |
