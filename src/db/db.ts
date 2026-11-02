@@ -13,7 +13,7 @@ import {
 } from "drizzle-orm";
 import { PgColumn } from "drizzle-orm/pg-core";
 import { HRPSDataModel } from "./models";
-import { getPoolConfig, isWorker } from "./connection";
+import { getPoolConfig, isWorker } from "@/db/connection";
 
 const createDb = () => drizzle(new Pool({ ...getPoolConfig(), max: 5 }));
 

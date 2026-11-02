@@ -10,7 +10,8 @@ export default defineConfig({
     alias: [
       {
         // Connect through the Hyperdrive binding instead of DB_* variables.
-        find: /^\.\/connection$/,
+        // Exact specifier only: pg has its own internal "./connection" module.
+        find: /^@\/db\/connection$/,
         replacement: path.resolve(
           import.meta.dirname,
           "src/db/connection.cloudflare.ts",
