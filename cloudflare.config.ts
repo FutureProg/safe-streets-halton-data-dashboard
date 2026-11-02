@@ -17,6 +17,13 @@ export default defineConfig({
       notFoundHandling: "none",
       runWorkerFirst: ["/*", "!/_next/static/*", "!/*/_next/static/*"],
     },
+    observability: {
+      logs: {
+        enabled: true,
+        invocation_logs: true,
+        persist: true,
+      },
+    },
     env: {
       ASSETS: bindings.assets(),
       ...(hyperdriveId
