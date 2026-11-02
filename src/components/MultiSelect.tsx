@@ -103,7 +103,7 @@ const MultiSelect = ({
           )}
         >
           {availableItems.map((item) => (
-            <ComboboxItem key={item.id} id={item.id}>
+            <ComboboxItem key={item.id} id={item.id} textValue={item.label}>
               <span className="flex items-center gap-2">
                 {renderIcon?.(item.id)}
                 {item.label}

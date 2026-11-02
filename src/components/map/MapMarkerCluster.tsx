@@ -61,6 +61,7 @@ export default () => {
             key={`Marker-${location.key}`}
             icon={getIcon(mostSevereCode(location.incidents), isSelected)}
             zIndexOffset={isSelected ? 1000 : 0}
+            title={location.name}
           >
             <MarkerPopupContents
               key={`Popup-${location.key}`}
