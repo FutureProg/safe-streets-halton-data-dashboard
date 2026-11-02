@@ -28,7 +28,7 @@ const openDialog = async (page: import("@playwright/test").Page) => {
   await mockCaseLookup(page, incidents);
   await page.getByRole("button", { name: "Menu button" }).click();
   await page.getByRole("menuitem", { name: "Find by case #" }).click();
-  return page.getByRole("dialog", { name: "Find by case #" });
+  return page.getByRole("dialog", { name: "Case lookup" });
 };
 
 test.describe("Given the dashboard", () => {
@@ -51,7 +51,7 @@ test.describe("Given the dashboard", () => {
   });
 });
 
-test.describe("Given the Find by case # dialog", () => {
+test.describe("Given the Case lookup dialog", () => {
   test("When a known case number is submitted, then its details show below the search field", async ({
     page,
   }) => {
