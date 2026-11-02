@@ -1,6 +1,7 @@
 import { ChevronRightIcon } from "lucide-react";
 
 import { CaseData } from "@/common";
+import { IncidentTypeIcon } from "@/components/IncidentTypeIcon";
 
 import { useLocaleFormatters } from "../../hooks/useLocaleFormatters";
 
@@ -25,17 +26,20 @@ export default function IncidentTable({
               onClick={() => onOpen(index)}
               className="hover:bg-muted focus-visible:ring-ring flex w-full items-center justify-between gap-3 px-4 py-2 text-left outline-none focus-visible:ring-2"
             >
-              <span className="flex min-w-0 flex-col">
-                <span className="text-sm font-medium">
-                  {format.description(incident.description)}
-                  <span className="text-muted-foreground font-normal">
-                    {" "}
-                    · {incident.description}
+              <span className="flex min-w-0 items-center gap-3">
+                <IncidentTypeIcon code={incident.description} size={24} />
+                <span className="flex min-w-0 flex-col">
+                  <span className="text-sm font-medium">
+                    {format.description(incident.description)}
+                    <span className="text-muted-foreground font-normal">
+                      {" "}
+                      · {incident.description}
+                    </span>
                   </span>
-                </span>
-                <span className="text-muted-foreground">
-                  {format.date(incident.date)} · {format.time(incident.date)} ·{" "}
-                  {incident.case_no}
+                  <span className="text-muted-foreground">
+                    {format.date(incident.date)} · {format.time(incident.date)}{" "}
+                    · {incident.case_no}
+                  </span>
                 </span>
               </span>
               <ChevronRightIcon
@@ -86,8 +90,9 @@ export default function IncidentTable({
               {/* The row handles the click; the button gives keyboard users a stop. */}
               <button
                 type="button"
-                className="focus-visible:ring-ring rounded text-left outline-none focus-visible:ring-2"
+                className="focus-visible:ring-ring inline-flex items-center gap-2 rounded text-left outline-none focus-visible:ring-2"
               >
+                <IncidentTypeIcon code={incident.description} size={18} />
                 {format.description(incident.description)}
                 <span className="text-muted-foreground">
                   {" "}

@@ -68,7 +68,7 @@ test.describe("Given a desktop search with results", () => {
     await expect(panel).toBeVisible();
     await expect(panel).toContainText("CASE-A");
     await expect(panel).toContainText("CASE-B");
-    await expect(page.locator(".location-pin-selected")).toHaveCount(1);
+    await expect(page.locator(".incident-marker-selected")).toHaveCount(1);
     await assertNoA11yViolations(page);
   });
 

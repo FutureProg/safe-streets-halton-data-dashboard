@@ -5,6 +5,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { IncidentTypeIcon } from "@/components/IncidentTypeIcon";
 import { useLocaleFormatters } from "@/hooks/useLocaleFormatters";
 
 export interface MarkerPopupContentProps {
@@ -73,6 +74,10 @@ export const MarkerPopupContents = (props: MarkerPopupContentProps) => {
             </Button>
           </div>
         ) : null}
+        <div className="flex items-center gap-2 text-sm font-medium">
+          <IncidentTypeIcon code={caseData.description} size={24} />
+          {format.description(caseData.description)}
+        </div>
         <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-xs">
           {details.map(([term, description]) => (
             <div key={term} className="contents">

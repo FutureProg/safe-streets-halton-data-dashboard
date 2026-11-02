@@ -1,5 +1,6 @@
 import { ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
+import { IncidentTypeIcon } from "@/components/IncidentTypeIcon";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -67,11 +68,14 @@ export default function IncidentDetail({
           </Button>
         </div>
       </div>
-      <div>
-        <p className="text-sm font-medium">
-          {format.description(incident.description)}
-        </p>
-        <p className="text-muted-foreground">{incident.description}</p>
+      <div className="flex items-center gap-3">
+        <IncidentTypeIcon code={incident.description} size={32} />
+        <div>
+          <p className="text-sm font-medium">
+            {format.description(incident.description)}
+          </p>
+          <p className="text-muted-foreground">{incident.description}</p>
+        </div>
       </div>
       <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
         {details.map(([term, description]) => (

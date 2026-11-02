@@ -198,9 +198,33 @@ main {
   --sidebar-ring: oklch(0.56 0.021 213.5);
 }
 
-.location-pin-selected {
-  /** To be adjusted later when the pin icons are updated **/
-  filter: drop-shadow(0 0 6px var(--color-primary));
+/* Leaflet's default divIcon paints a white box; the badge draws its own. */
+.incident-marker {
+  background: none;
+  border: 0;
+}
+
+/* Cluster badge: colours are set inline from the incident count. */
+.incident-cluster {
+  background: none;
+  border: 0;
+}
+.incident-cluster-halo {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+.incident-cluster-core {
+  display: grid;
+  place-items: center;
+  width: 72%;
+  height: 72%;
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 13px;
+  font-family: var(--font-sans);
 }
 
 /*
