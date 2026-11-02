@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { buildIncident, mockCaseLookup } from "./support/mockIncidents";
 import { assertNoA11yViolations } from "./support/a11y";
 
-// Feature: Go to case number
+// Feature: Find by case #
 // As a visitor with a specific case number, I want to open it from the menu
 // and see that incident's details without searching the map.
 
@@ -27,8 +27,8 @@ const openDialog = async (page: import("@playwright/test").Page) => {
   await page.goto("/en");
   await mockCaseLookup(page, incidents);
   await page.getByRole("button", { name: "Menu button" }).click();
-  await page.getByRole("menuitem", { name: "Go to case number" }).click();
-  return page.getByRole("dialog", { name: "Go to case number" });
+  await page.getByRole("menuitem", { name: "Find by case #" }).click();
+  return page.getByRole("dialog", { name: "Find by case #" });
 };
 
 test.describe("Given the dashboard", () => {
@@ -40,18 +40,18 @@ test.describe("Given the dashboard", () => {
     await expect(page.getByLabel("Case Number")).toBeHidden();
   });
 
-  test("When the menu opens, then it offers Go to case number", async ({
+  test("When the menu opens, then it offers Find by case #", async ({
     page,
   }) => {
     await page.goto("/en");
     await page.getByRole("button", { name: "Menu button" }).click();
     await expect(
-      page.getByRole("menuitem", { name: "Go to case number" }),
+      page.getByRole("menuitem", { name: "Find by case #" }),
     ).toBeVisible();
   });
 });
 
-test.describe("Given the Go to case number dialog", () => {
+test.describe("Given the Find by case # dialog", () => {
   test("When a known case number is submitted, then its details show below the search field", async ({
     page,
   }) => {

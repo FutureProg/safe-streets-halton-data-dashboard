@@ -42,11 +42,12 @@
   "LocationsDescription": "Les lieux de vos résultats, du plus fréquent au moins fréquent.",
   "ViewIncident": "Voir l'incident",
   "UnknownLocation": "Lieu inconnu",
-  "GoToCaseNumber": "Aller à un numéro de dossier",
+  "GoToCaseNumber": "Chercher par nº de dossier",
   "CaseLookupDescription": "Saisissez un numéro de dossier pour voir les détails de l’incident.",
   "CaseNotFound": "Aucun incident trouvé pour le dossier {{caseNo}}",
   "CaseNotFoundDescription": "Vérifiez le numéro de dossier et réessayez.",
   "CaseLookupFailed": "Impossible de rechercher ce dossier",
   "CaseLookupFailedDescription": "Une erreur s’est produite. Veuillez réessayer.",
-  "CloseDialog": "Fermer"
+  "CloseDialog": "Fermer",
+  "CaseLookupTitle": "Recherche de dossier"
 }

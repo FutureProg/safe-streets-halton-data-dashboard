@@ -49,7 +49,7 @@ function CaseLookupContent() {
   return (
     <>
       <DialogHeader>
-        <DialogTitle>{translate("GoToCaseNumber")}</DialogTitle>
+        <DialogTitle>{translate("CaseLookupTitle")}</DialogTitle>
         <DialogDescription>
           {translate("CaseLookupDescription")}
         </DialogDescription>
@@ -113,7 +113,7 @@ function CaseLookupContent() {
 }
 
 /**
- * "Go to case number": a dialog with a search field. The incident found shows
+ * "Case lookup": a dialog with a search field. The incident found shows
  * below the field, and the field stays editable for another lookup. Its state
  * machine is created when the dialog opens, so it holds nothing from the map.
  */
