@@ -30,7 +30,7 @@ type CountedMarker = L.Marker & { options: { incidentCount?: number } };
 /** The part of leaflet.markercluster's cluster this file uses (no typings ship). */
 type Cluster = { getAllChildMarkers: () => L.Marker[] };
 
-const createClusterIcon = (cluster: Cluster) => {
+const createClusterIcon = (cluster: Cluster, cap: number) => {
   const incidentCount = cluster
     .getAllChildMarkers()
     .reduce(
@@ -39,7 +39,7 @@ const createClusterIcon = (cluster: Cluster) => {
       0,
     );
   return L.divIcon({
-    html: clusterIconHtml(incidentCount),
+    html: clusterIconHtml(incidentCount, cap),
     className: "incident-cluster",
     iconSize: [CLUSTER_SIZE, CLUSTER_SIZE],
   });
@@ -72,6 +72,11 @@ const getIcon = (code: string | undefined, selected: boolean) => {
 
 export default () => {
   const locations = useFilteredLocations();
+  // The busiest a cluster can get: every incident in the current results.
+  const totalIncidents = useMemo(
+    () => locations.reduce((total, location) => total + location.count, 0),
+    [locations],
+  );
   const selectedKey = MapDataContext.useSelector(
     (snapshot) => snapshot.context.selectedLocationKey,
   );
@@ -103,8 +108,11 @@ export default () => {
     <>
       {items.length > 0 ? (
         <MarkerClusterGroup
+          key={totalIncidents}
           chunkedLoading
-          iconCreateFunction={createClusterIcon}
+          iconCreateFunction={(cluster: Cluster) =>
+            createClusterIcon(cluster, totalIncidents)
+          }
         >
           {items}
         </MarkerClusterGroup>
