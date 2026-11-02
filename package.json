@@ -22,6 +22,7 @@
     "dev:vinext": "CLOUDFLARE_BUILD=1 vp dev --config vite.cloudflare.config.ts --port 3001",
     "build:vinext": "CLOUDFLARE_BUILD=1 vp build --config vite.cloudflare.config.ts",
     "start:vinext": "CLOUDFLARE_BUILD=1 vp preview --config vite.cloudflare.config.ts",
+    "preview:deploy": "CLOUDFLARE_BUILD=1 cf previews deploy",
     "deploy:vinext": "CLOUDFLARE_BUILD=1 vinext-cloudflare deploy --vite-config vite.cloudflare.config.ts"
   },
   "dependencies": {

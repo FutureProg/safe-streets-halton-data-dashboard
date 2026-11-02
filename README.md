@@ -45,4 +45,16 @@ Deploys are run by [Workers Builds](https://developers.cloudflare.com/workers/ci
 | Worker name     | `safe-streets-halton-dashboard` (must match `cloudflare.config.ts`)          |
 | Build variables | `HYPERDRIVE_ID` (the dashboard's Hyperdrive config ID), `CLOUDFLARE_BUILD=1` |
 
-Preview builds are off until they have been tried with this setup.
+### Preview deployments
+
+Branches other than `main` get their own preview Worker through [Worker Previews](https://developers.cloudflare.com/workers/previews/). In the Worker's build settings (**Settings > Build**):
+
+| Setting               | Value                                                                     |
+| --------------------- | ------------------------------------------------------------------------- |
+| Enable Preview Builds | On (**Branch control**)                                                   |
+| Preview command       | `pnpm run preview:deploy`                                                 |
+| Build variables       | The same `HYPERDRIVE_ID` and `CLOUDFLARE_BUILD=1` apply to preview builds |
+
+If the dashboard shows a **Set up Worker Previews** banner, complete that one-time switch first (it cannot be undone).
+
+`cf previews deploy` builds the app itself with `isPreview` set, so the build command stays empty. `cloudflare.config.ts` leaves out the production custom domain for previews, so a preview never touches `streetsdash.nickmorrison.me`. Previews use the same read-only Hyperdrive config as production, so they show live production data. Preview URLs are public unless protected with [Cloudflare Access](https://developers.cloudflare.com/workers/previews/#access-control).
