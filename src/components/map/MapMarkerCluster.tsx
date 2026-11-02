@@ -6,7 +6,11 @@ import { MarkerPopupContents } from "../MarkerPopupContents";
 import { MapDataContext } from "@/app/_state/MapDataState";
 import { useFilteredLocations } from "@/app/_state/useFilteredLocations";
 
-import mvcCrashIcon from "@/img/mvc-crash-icon.png";
+import {
+  incidentIconSvg,
+  mostSevereCode,
+  selectedIconSize,
+} from "@/lib/incidentTypes";
 import L from "leaflet";
 import dynamic from "next/dynamic";
 import { useMemo } from "react";
@@ -16,30 +20,35 @@ const Marker = dynamic(
   { ssr: false },
 );
 
-const PIN_SIZE: [number, number] = [32, 45];
-const SELECTED_PIN_SIZE: [number, number] = [40, 56];
+const BADGE_SIZE = 30;
 
-const createIcon = (selected: boolean) => {
-  const [width, height] = selected ? SELECTED_PIN_SIZE : PIN_SIZE;
-  return new L.Icon({
-    iconUrl: mvcCrashIcon.src,
-    iconRetinaUrl: mvcCrashIcon.src,
-    iconSize: [width, height],
-    iconAnchor: [width / 2, height],
-    popupAnchor: [0, -height],
-    className: selected ? "location-pin-selected" : undefined,
+const iconCache = new Map<string, L.DivIcon>();
+
+/**
+ * A location shows the badge of its most serious incident type. Selecting it
+ * adds a ring around the badge, which grows the box but keeps the badge's
+ * centre where it was.
+ */
+const getIcon = (code: string | undefined, selected: boolean) => {
+  const key = `${code}|${selected}`;
+  const cached = iconCache.get(key);
+  if (cached) return cached;
+  const size = selected ? selectedIconSize(BADGE_SIZE) : BADGE_SIZE;
+  const icon = L.divIcon({
+    html: incidentIconSvg(code ?? "", { selected }),
+    className: "incident-marker",
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+    popupAnchor: [0, -BADGE_SIZE / 2],
   });
+  iconCache.set(key, icon);
+  return icon;
 };
 
 export default () => {
   const locations = useFilteredLocations();
   const selectedKey = MapDataContext.useSelector(
     (snapshot) => snapshot.context.selectedLocationKey,
-  );
-
-  const icons = useMemo(
-    () => ({ normal: createIcon(false), selected: createIcon(true) }),
-    [],
   );
 
   const items = useMemo(
@@ -50,7 +59,7 @@ export default () => {
           <Marker
             position={location.position}
             key={`Marker-${location.key}`}
-            icon={isSelected ? icons.selected : icons.normal}
+            icon={getIcon(mostSevereCode(location.incidents), isSelected)}
             zIndexOffset={isSelected ? 1000 : 0}
           >
             <MarkerPopupContents
@@ -60,7 +69,7 @@ export default () => {
           </Marker>
         );
       }),
-    [locations, selectedKey, icons],
+    [locations, selectedKey],
   );
 
   return (

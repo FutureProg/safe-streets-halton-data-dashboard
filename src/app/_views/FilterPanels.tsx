@@ -2,6 +2,7 @@ import { SirenIcon, SearchIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useContext } from "react";
 
+import { IncidentTypeIcon } from "@/components/IncidentTypeIcon";
 import MultiSelect from "@/components/MultiSelect";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -85,6 +86,7 @@ export default function FilterPanels({
           value={values.incidentTypes}
           onChange={onIncidentTypeChange}
           name="incidentType"
+          renderIcon={(code) => <IncidentTypeIcon code={code} size={16} />}
         />
       </Container>
     </div>

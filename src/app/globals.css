@@ -198,9 +198,10 @@ main {
   --sidebar-ring: oklch(0.56 0.021 213.5);
 }
 
-.location-pin-selected {
-  /** To be adjusted later when the pin icons are updated **/
-  filter: drop-shadow(0 0 6px var(--color-primary));
+/* Leaflet's default divIcon paints a white box; the badge draws its own. */
+.incident-marker {
+  background: none;
+  border: 0;
 }
 
 /*

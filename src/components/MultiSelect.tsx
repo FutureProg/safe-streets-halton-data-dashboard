@@ -24,6 +24,8 @@ export interface MultiSelectProps {
   defaultValues?: string[];
   onChange?: (selectedValues: string[]) => void;
   name?: string;
+  /** Draws a leading icon for an option, by its value. */
+  renderIcon?: (value: string) => ReactNode;
 }
 
 /** Highlights the first match while typing so Enter confirms it. */
@@ -46,6 +48,7 @@ const MultiSelect = ({
   defaultValues = [],
   onChange,
   name,
+  renderIcon,
 }: MultiSelectProps) => {
   const { t: translate } = useTranslation();
   const [internalValue, setInternalValue] = useState(defaultValues);
@@ -77,6 +80,7 @@ const MultiSelect = ({
             data-slot="combobox-chip"
             className="bg-muted-foreground/10 text-foreground flex h-[calc(--spacing(4.75))] w-fit items-center justify-center gap-1 rounded-[calc(var(--radius-sm)-2px)] pl-1.5 text-xs/relaxed font-medium whitespace-nowrap"
           >
+            {renderIcon?.(item.id)}
             {item.label}
             <Button
               variant="ghost"
@@ -100,7 +104,10 @@ const MultiSelect = ({
         >
           {availableItems.map((item) => (
             <ComboboxItem key={item.id} id={item.id}>
-              {item.label}
+              <span className="flex items-center gap-2">
+                {renderIcon?.(item.id)}
+                {item.label}
+              </span>
             </ComboboxItem>
           ))}
         </ComboboxList>
