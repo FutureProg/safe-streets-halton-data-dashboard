@@ -88,7 +88,7 @@ export default () => {
         return (
           <Marker
             position={location.position}
-            key={`Marker-${location.key}`}
+            key={`Marker-${location.key}-${location.count}`}
             icon={getIcon(mostSevereCode(location.incidents), isSelected)}
             zIndexOffset={isSelected ? 1000 : 0}
             title={location.name}
