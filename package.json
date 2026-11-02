@@ -2,6 +2,7 @@
   "name": "hrps-data-dashboard",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@12.16.1",
   "scripts": {
     "dev": "varlock run -- next dev --webpack",
     "build": "varlock run -- next build --webpack",
