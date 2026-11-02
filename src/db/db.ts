@@ -13,23 +13,26 @@ import {
 } from "drizzle-orm";
 import { PgColumn } from "drizzle-orm/pg-core";
 import { HRPSDataModel } from "./models";
-import "../../envConfig";
+import { getPoolConfig, isWorker } from "@/db/connection";
 
-const { DB_USER, DB_HOST, DB_PASS, DB_PORT, DB_NAME, DB_URL, DB_CA_CERT } =
-  process.env;
-const connectionString = new URL(
-  DB_URL ??
-    `postgresql://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}`,
-);
-// pg lets URL-derived ssl settings (from sslmode) override the `ssl` option,
-// which would discard the CA below, so drop it from the URL.
-if (DB_CA_CERT) connectionString.searchParams.delete("sslmode");
-export const db = drizzle(
-  new Pool({
-    connectionString: connectionString.toString(),
-    ssl: DB_CA_CERT ? { ca: DB_CA_CERT } : undefined,
-  }),
-);
+const createDb = () => drizzle(new Pool({ ...getPoolConfig(), max: 5 }));
+
+let sharedDb: ReturnType<typeof createDb> | undefined;
+
+/**
+ * Node keeps one pool for the process. A Worker cannot reuse a connection
+ * across requests, so it gets a small fresh pool each time (Hyperdrive does
+ * the real pooling).
+ */
+const getDb = () => (isWorker ? createDb() : (sharedDb ??= createDb()));
+
+export const db = new Proxy({} as ReturnType<typeof createDb>, {
+  get(_target, prop) {
+    const current = getDb();
+    const value = Reflect.get(current, prop, current);
+    return typeof value === "function" ? value.bind(current) : value;
+  },
+});
 
 export type HRPSDataColumns = keyof HRPSDataModel;
 

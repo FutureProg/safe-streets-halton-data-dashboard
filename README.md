@@ -23,3 +23,26 @@ pnpm local-db:sync   # while online: copies the last 180 days into local Postgre
 pnpm dev-local       # offline: starts the container, migrates, runs next dev against it
 pnpm local-db:down   # stop the container (data persists in a docker volume)
 ```
+
+## Deploying to Cloudflare Workers
+
+The dashboard deploys as a Cloudflare Worker using [vinext](https://github.com/cloudflare/vinext), configured in `cloudflare.config.ts` and `vite.cloudflare.config.ts`. The regular Next.js scripts (`dev`, `build`, `start`) still work as before.
+
+```bash
+pnpm run dev:vinext     # local dev server under vinext (port 3001)
+pnpm run build:vinext   # production Worker build
+pnpm run deploy:vinext  # build and deploy (Workers Builds does this on push to main)
+```
+
+The Worker reads Postgres through a [Hyperdrive](https://developers.cloudflare.com/hyperdrive/) binding named `HYPERDRIVE`. Hyperdrive holds the database host, credentials and CA certificate, so none of the `DB_*` variables are needed in production.
+
+Deploys are run by [Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/), Cloudflare's GitHub integration, on every push to `main`. In the Worker's build settings:
+
+| Setting         | Value                                                                        |
+| --------------- | ---------------------------------------------------------------------------- |
+| Build command   | _(empty; the deploy command builds the app)_                                 |
+| Deploy command  | `pnpm run deploy:vinext`                                                     |
+| Worker name     | `safe-streets-halton-dashboard` (must match `cloudflare.config.ts`)          |
+| Build variables | `HYPERDRIVE_ID` (the dashboard's Hyperdrive config ID), `CLOUDFLARE_BUILD=1` |
+
+Preview builds are off until they have been tried with this setup.
