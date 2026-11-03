@@ -16,9 +16,13 @@ export default defineConfig({
     entrypoint: "vinext/server/fetch-handler",
     compatibilityDate: "2026-11-02",
     compatibilityFlags: ["nodejs_compat"],
+    workersDev: true,
+    previewUrls: true,
     ...(isPreview
-      ? { workersDev: true, previewUrls: true }
-      : { domains: ["streetsdash.nickmorrison.me"] }),
+      ? {}
+      : {
+          domains: ["streetsdash.nickmorrison.me"],
+        }),
     assets: {
       htmlHandling: "none",
       notFoundHandling: "none",
