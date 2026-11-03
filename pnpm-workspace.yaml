@@ -36,11 +36,12 @@ minimumReleaseAgeExclude:
   - "@cloudflare/workerd-linux-arm64@1.20261102.1"
   - "@cloudflare/workerd-windows-64@1.20261102.1"
 catalog:
-  vite: npm:@voidzero-dev/vite-plus-core@1.1.0
-  vitest: 5.0.3
-  vite-plus: 1.1.0
-  "@vitest/browser-playwright": 5.0.3
-  "@vitest/coverage-v8": 5.0.3
+  vite: npm:@voidzero-dev/vite-plus-core@1.4.0
+  vitest: 5.0.5
+  vite-plus: 1.4.0
+  "@vitest/browser-playwright": 5.0.5
+  "@vitest/coverage-v8": 5.0.5
+  "@vitest/coverage-istanbul": 5.0.5
 overrides:
   vite@*: "catalog:"
   vitest@*: "catalog:"
