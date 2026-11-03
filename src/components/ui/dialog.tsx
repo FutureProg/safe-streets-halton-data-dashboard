@@ -34,7 +34,7 @@ function Dialog({
       <ModalPrimitive
         data-slot="dialog"
         className={cn(
-          "flex max-h-[85dvh] w-full max-w-md flex-col rounded-xl bg-popover text-xs/relaxed text-popover-foreground shadow-lg ring-1 ring-foreground/10 transition duration-150 data-entering:scale-95 data-entering:opacity-0 data-exiting:scale-95 data-exiting:opacity-0",
+          "relative flex max-h-[85dvh] w-full max-w-md flex-col rounded-xl bg-popover text-xs/relaxed text-popover-foreground shadow-lg ring-1 ring-foreground/10 transition duration-150 data-entering:scale-95 data-entering:opacity-0 data-exiting:scale-95 data-exiting:opacity-0",
           className,
         )}
       >

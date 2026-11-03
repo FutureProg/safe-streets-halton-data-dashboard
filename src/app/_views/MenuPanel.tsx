@@ -33,7 +33,10 @@ const MenuPanel = () => {
           <MenuIcon />
         </Button>
         <DropdownMenu className="w-48">
-          <DropdownMenuItem onAction={() => setIsCaseLookupOpen(true)}>
+          <DropdownMenuItem
+            textValue={translate("GoToCaseNumber")}
+            onAction={() => setIsCaseLookupOpen(true)}
+          >
             <SearchIcon aria-hidden />
             {translate("GoToCaseNumber")}
           </DropdownMenuItem>
