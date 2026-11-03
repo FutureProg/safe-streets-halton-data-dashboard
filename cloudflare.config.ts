@@ -18,11 +18,13 @@ export default defineConfig({
     compatibilityFlags: ["nodejs_compat"],
     workersDev: true,
     previewUrls: true,
-    ...(isPreview
-      ? {}
-      : {
-          domains: ["streetsdash.nickmorrison.me"],
-        }),
+    domains: [
+      {
+        hostname: "streetsdash.nickmorrison.me",
+        previews: false,
+        production: true,
+      },
+    ],
     assets: {
       htmlHandling: "none",
       notFoundHandling: "none",
