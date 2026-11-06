@@ -40,5 +40,13 @@
   "ApproximateLocationNote": "Locations are approximate. Police report incidents near, not exactly at, an intersection.",
   "LocationsDescription": "Places in your search results, busiest first.",
   "ViewIncident": "View incident",
-  "UnknownLocation": "Unknown location"
+  "UnknownLocation": "Unknown location",
+  "GoToCaseNumber": "Find by case #",
+  "CaseLookupDescription": "Enter a case number to see its incident details.",
+  "CaseNotFound": "No incident found for case {{caseNo}}",
+  "CaseNotFoundDescription": "Check the case number and try again.",
+  "CaseLookupFailed": "Couldn't look up that case",
+  "CaseLookupFailedDescription": "Something went wrong. Please try again.",
+  "CloseDialog": "Close",
+  "CaseLookupTitle": "Case lookup"
 }

@@ -1,7 +1,7 @@
 "use client";
 import BaseMap from "@/components/BaseMap";
 import MenuPanel from "@/app/_views/MenuPanel";
-import FilterPanels, { CaseLookup, FilterValues } from "../_views/FilterPanels";
+import FilterPanels, { FilterValues } from "../_views/FilterPanels";
 import { useFilterFormValues } from "../_views/FilterForm";
 import SearchFeedback from "../_views/SearchFeedback";
 import LocationsCard from "../_views/LocationsCard";
@@ -128,7 +128,6 @@ export default function Home() {
           </div>
         ) : (
           <div className="absolute inset-y-0 right-0 flex flex-col items-end gap-3 *:pointer-events-auto">
-            <CaseLookup />
             <FilterPanels values={filters} onValuesChange={onFiltersChange} />
             <LocationsCard />
           </div>
