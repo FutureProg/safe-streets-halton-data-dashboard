@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { Poppins } from "next/font/google";
 import "../globals.css";
 import TranslationProvider from "../TranslationProvider";
@@ -5,6 +6,7 @@ import initTranslations from "../i18n";
 import Providers from "../Providers";
 import { StaticValuesProvider } from "../StaticValuesContext";
 import { getStaticValues } from "../serverUtil";
+import i18nConfig from "@/i18nConfig";
 
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -17,6 +19,7 @@ export const generateMetadata = async ({
   params: Promise<{ locale: string }>;
 }) => {
   const { locale } = await params;
+  if (!i18nConfig.locales.includes(locale)) notFound();
   const { t } = await initTranslations(locale, i18nNamespaces);
   return {
     title: t("AppName"),
@@ -35,6 +38,8 @@ export default async function RootLayout(
   const params = await props.params;
 
   const { locale } = params;
+
+  if (!i18nConfig.locales.includes(locale)) notFound();
 
   const { children } = props;
 
