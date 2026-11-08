@@ -55,3 +55,20 @@ export const mockIncidentData = async (
     });
   });
 };
+
+/**
+ * Intercepts GET /api/data/case and answers with the fixture incidents whose
+ * case number matches the `caseNo` query parameter.
+ */
+export const mockCaseLookup = async (page: Page, incidents: MockIncident[]) => {
+  await page.route("**/api/data/case?**", async (route: Route) => {
+    const caseNo = new URL(route.request().url()).searchParams.get("caseNo");
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: incidents.filter((incident) => incident.caseNo === caseNo),
+      }),
+    });
+  });
+};

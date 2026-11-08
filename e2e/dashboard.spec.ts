@@ -18,7 +18,6 @@ test.describe("Given a user visits the dashboard", () => {
     await expect(
       page.getByRole("button", { name: "Menu button" }),
     ).toBeVisible();
-    await expect(page.getByLabel("Case Number")).toBeVisible();
     await expect(page.getByRole("group", { name: "Start Date" })).toBeVisible();
     await expect(page.getByRole("group", { name: "End Date" })).toBeVisible();
     await expect(page.getByLabel("Municipality")).toBeVisible();
@@ -71,7 +70,6 @@ test.describe("Given a user visits a locale-specific URL", () => {
       page.getByRole("group", { name: "Date de fin" }),
     ).toBeVisible();
     await expect(page.getByLabel("Municipalité")).toBeVisible();
-    await expect(page.getByLabel("Numéro de dossier")).toBeVisible();
     await expect(
       page.getByRole("button", { name: "Rechercher" }),
     ).toBeVisible();
@@ -97,7 +95,7 @@ test.describe("Given the navigation menu", () => {
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
     const menu = page.getByRole("menu");
     await expect(menu).toBeVisible();
-    await expect(page.getByRole("menuitem")).toHaveCount(3);
+    await expect(page.getByRole("menuitem")).toHaveCount(4);
   });
 
   test("When the user presses Escape on an open menu, then the menu popup is hidden", async ({
@@ -110,30 +108,6 @@ test.describe("Given the navigation menu", () => {
     await page.keyboard.press("Escape");
 
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
-  });
-});
-
-test.describe("Given the case number lookup field", () => {
-  test("When the viewport is desktop-sized, then the field is visible and editable", async ({
-    page,
-  }) => {
-    await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto("/en");
-
-    const caseNumberInput = page.getByLabel("Case Number");
-    await expect(caseNumberInput).toBeVisible();
-
-    await caseNumberInput.fill("HR-2024-0042");
-    await expect(caseNumberInput).toHaveValue("HR-2024-0042");
-  });
-
-  test("When the viewport is mobile-sized, then the field is hidden", async ({
-    page,
-  }) => {
-    await page.setViewportSize({ width: 375, height: 812 });
-    await page.goto("/en");
-
-    await expect(page.getByLabel("Case Number")).toBeHidden();
   });
 });
 

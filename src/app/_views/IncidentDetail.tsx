@@ -17,7 +17,8 @@ export default function IncidentDetail({
   location: FilteredLocation;
   index: number;
   onIndexChange: (index: number) => void;
-  onBack: () => void;
+  /** Omit when there is nothing to go back to, as in the case number dialog. */
+  onBack?: () => void;
 }) {
   const format = useLocaleFormatters();
   const { translate } = format;
@@ -41,12 +42,22 @@ export default function IncidentDetail({
 
   return (
     <div className="flex flex-col gap-3 px-4 pb-4">
-      <div className="flex items-center justify-between gap-2">
-        <Button variant="ghost" size="sm" onPress={onBack}>
-          <ArrowLeftIcon aria-hidden />
-          {translate("AllIncidents")}
-        </Button>
-        <div className="flex items-center gap-2">
+      <div
+        className={
+          onBack || total > 1
+            ? "flex items-center justify-between gap-2"
+            : "hidden"
+        }
+      >
+        {onBack ? (
+          <Button variant="ghost" size="sm" onPress={onBack}>
+            <ArrowLeftIcon aria-hidden />
+            {translate("AllIncidents")}
+          </Button>
+        ) : (
+          <span />
+        )}
+        <div className={total > 1 ? "flex items-center gap-2" : "hidden"}>
           <Button
             variant="outline"
             size="icon-sm"

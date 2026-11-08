@@ -1,13 +1,10 @@
-import { SirenIcon, SearchIcon } from "lucide-react";
+import { SirenIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useContext } from "react";
 
 import { IncidentTypeIcon } from "@/components/IncidentTypeIcon";
 import MultiSelect from "@/components/MultiSelect";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Field, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 
 import FilterForm, { FilterFormValues } from "./FilterForm";
 import { MapDataContext } from "../_state/MapDataState";
@@ -22,26 +19,6 @@ type FilterPanelsProps = {
   embedded?: boolean;
   onSearch?: () => void;
 };
-
-export function CaseLookup() {
-  const { t: translate } = useTranslation();
-  return (
-    <Card className="w-72 p-4">
-      <form>
-        <Field>
-          <FieldLabel htmlFor="caseNumber">
-            <SearchIcon aria-hidden className="size-3.5" />
-            {translate("CaseNumber")}
-          </FieldLabel>
-          <Input id="caseNumber" name="caseNumber" />
-          <Button type="submit" size="sm">
-            {translate("Submit")}
-          </Button>
-        </Field>
-      </form>
-    </Card>
-  );
-}
 
 export default function FilterPanels({
   values,
