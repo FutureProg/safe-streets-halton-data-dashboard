@@ -222,8 +222,11 @@ test.describe("Given the user presses Search", () => {
       });
     });
     await page.getByRole("button", { name: "Search" }).click();
+    // The button's own spinner is decorative (aria-hidden), so find it by slot.
     await expect(
-      page.getByRole("button", { name: "Search" }).getByRole("status"),
+      page
+        .getByRole("button", { name: "Search" })
+        .locator('[data-slot="spinner"]'),
     ).toBeVisible();
     await expect(page.getByText("Loading incidents…")).toHaveCount(0);
     release();
