@@ -1,15 +1,17 @@
 import { test, expect } from "@playwright/test";
-import { gotoDashboard } from "./support/mockIncidents";
+import { buildIncident, gotoDashboard } from "./support/mockIncidents";
 import { assertNoA11yViolations } from "./support/a11y";
 
 // Feature: Dashboard shell
 // As a visitor, when I open the dashboard, I should see the map and the
-// controls needed to search and filter incidents, before any search has
-// been performed.
+// controls needed to search and filter incidents, with incidents already
+// loaded using the default filters.
 
 test.describe("Given a user visits the dashboard", () => {
   test.beforeEach(async ({ page }) => {
-    await gotoDashboard(page);
+    // Results are returned so no "No incidents found" toast is animating in
+    // while the accessibility scan runs.
+    await gotoDashboard(page, [buildIncident()]);
   });
 
   test("When the page loads, then the map and its controls are visible", async ({
@@ -25,13 +27,13 @@ test.describe("Given a user visits the dashboard", () => {
     await expect(page.getByRole("button", { name: "Search" })).toBeVisible();
   });
 
-  test("When the page loads, then no incidents are shown until a search is submitted", async ({
+  test("When the page loads, then incidents are shown without a search being submitted", async ({
     page,
   }) => {
     await expect(page.locator(".leaflet-container")).toBeVisible();
     await expect(
       page.locator(".leaflet-marker-icon, .marker-cluster"),
-    ).toHaveCount(0);
+    ).not.toHaveCount(0);
   });
 
   test("When the page loads, then there are no accessibility violations", async ({
