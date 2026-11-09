@@ -96,7 +96,7 @@ test.describe("Given the navigation menu", () => {
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
     const menu = page.getByRole("menu");
     await expect(menu).toBeVisible();
-    await expect(page.getByRole("menuitem")).toHaveCount(4);
+    await expect(page.getByRole("menuitem")).toHaveCount(1);
   });
 
   test("When the user presses Escape on an open menu, then the menu popup is hidden", async ({

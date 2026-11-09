@@ -278,7 +278,8 @@ test.describe("Given the incident type filter", () => {
 
 test.describe("Given the search feedback", () => {
   test.beforeEach(async ({ page }) => {
-    await gotoDashboard(page);
+    // Start with results so the automatic first search leaves no toast behind.
+    await gotoDashboard(page, [buildIncident()]);
   });
 
   test("When a search returns no incidents, then the user is told", async ({
