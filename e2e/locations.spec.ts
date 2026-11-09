@@ -1,5 +1,9 @@
 import { test, expect, Page } from "@playwright/test";
-import { buildIncident, mockIncidentData } from "./support/mockIncidents";
+import {
+  buildIncident,
+  mockIncidentData,
+  gotoDashboard,
+} from "./support/mockIncidents";
 import { assertNoA11yViolations } from "./support/a11y";
 
 // Feature: Navigate the map by location (SSHD-4)
@@ -27,7 +31,7 @@ const incidents = [
 ];
 
 const search = async (page: Page, { phone = false } = {}) => {
-  await page.goto("/en");
+  await gotoDashboard(page);
   await mockIncidentData(page, incidents);
   // On a phone the search form lives in the Filters sheet.
   if (phone) await page.getByRole("button", { name: "Filters" }).click();

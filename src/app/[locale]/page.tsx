@@ -2,8 +2,9 @@
 import BaseMap from "@/components/BaseMap";
 import MenuPanel from "@/app/_views/MenuPanel";
 import FilterPanels, { FilterValues } from "../_views/FilterPanels";
-import { useFilterFormValues } from "../_views/FilterForm";
+import { toSearchRequest, useFilterFormValues } from "../_views/FilterForm";
 import SearchFeedback from "../_views/SearchFeedback";
+import LoadingIndicator from "../_views/LoadingIndicator";
 import LocationsCard from "../_views/LocationsCard";
 import LocationList, { useTotalIncidents } from "../_views/LocationList";
 import IncidentPanel from "../_views/IncidentPanel";
@@ -65,6 +66,11 @@ export default function Home() {
         incidentTypes: staticValues.incidentTypes.map(({ value }) => value),
       },
     });
+    // Show incidents straight away using the default filter values, instead
+    // of waiting for the first Search. (A repeat request while loading, such
+    // as from React strict mode, is ignored by the machine.)
+    const params = toSearchRequest(formValues);
+    if (params) mapDataActor.send({ type: "request", params });
   }, []);
 
   return (
@@ -143,6 +149,7 @@ export default function Home() {
           <IncidentPanel variant="card" />
         </div>
       )}
+      <LoadingIndicator />
       <SearchFeedback />
     </main>
   );

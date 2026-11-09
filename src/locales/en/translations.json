@@ -16,6 +16,7 @@
   "RemoveItem": "Remove {{label}}",
   "NoIncidentsFound": "No incidents found",
   "NoIncidentsFoundDescription": "Try a wider date range or more municipalities.",
+  "LoadingIncidents": "Loading incidents…",
   "LoadFailed": "Couldn't load incidents",
   "LoadFailedDescription": "Something went wrong. Please try searching again.",
   "CaseNumberShort": "Case #",

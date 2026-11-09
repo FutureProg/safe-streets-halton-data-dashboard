@@ -1,5 +1,9 @@
 import { test, expect } from "@playwright/test";
-import { buildIncident, mockIncidentData } from "./support/mockIncidents";
+import {
+  buildIncident,
+  mockIncidentData,
+  gotoDashboard,
+} from "./support/mockIncidents";
 import { assertNoA11yViolations } from "./support/a11y";
 
 // Feature: Marker popup
@@ -12,7 +16,7 @@ test.describe("Given a marker on the map", () => {
   test("When the user clicks it, then the incident details are shown", async ({
     page,
   }) => {
-    await page.goto("/en");
+    await gotoDashboard(page);
     await mockIncidentData(page, [buildIncident({ caseNo: "HR-2024-0001" })]);
     await page.getByRole("button", { name: "Search" }).click();
 
@@ -29,7 +33,7 @@ test.describe("Given a marker on the map", () => {
   test("When several incidents share a location, then the user can page through them", async ({
     page,
   }) => {
-    await page.goto("/en");
+    await gotoDashboard(page);
     await mockIncidentData(page, [
       buildIncident({ globalID: "G-1", caseNo: "CASE-A" }),
       buildIncident({ globalID: "G-2", caseNo: "CASE-B" }),

@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { gotoDashboard } from "./support/mockIncidents";
 import { assertNoA11yViolations } from "./support/a11y";
 
 // Feature: Dashboard shell
@@ -8,7 +9,7 @@ import { assertNoA11yViolations } from "./support/a11y";
 
 test.describe("Given a user visits the dashboard", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/en");
+    await gotoDashboard(page);
   });
 
   test("When the page loads, then the map and its controls are visible", async ({
@@ -45,7 +46,7 @@ test.describe("Given a user visits a locale-specific URL", () => {
   test('When the URL is /en, then <html lang="en"> and the dashboard renders', async ({
     page,
   }) => {
-    await page.goto("/en");
+    await gotoDashboard(page);
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
     await expect(page.locator(".leaflet-container")).toBeVisible();
   });
@@ -81,7 +82,7 @@ test.describe("Given a user visits a locale-specific URL", () => {
 
 test.describe("Given the navigation menu", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/en");
+    await gotoDashboard(page);
   });
 
   test("When the user opens the menu toggle, then the menu popup appears", async ({
@@ -114,7 +115,7 @@ test.describe("Given the navigation menu", () => {
 test.describe("Given the mobile filter sheet", () => {
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
-    await page.goto("/en");
+    await gotoDashboard(page);
   });
 
   test("When the viewport is mobile-sized, then the filters are behind a Filters button", async ({

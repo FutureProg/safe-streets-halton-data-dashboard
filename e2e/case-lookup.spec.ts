@@ -1,5 +1,9 @@
 import { test, expect } from "@playwright/test";
-import { buildIncident, mockCaseLookup } from "./support/mockIncidents";
+import {
+  buildIncident,
+  mockCaseLookup,
+  gotoDashboard,
+} from "./support/mockIncidents";
 import { assertNoA11yViolations } from "./support/a11y";
 
 // Feature: Find by case #
@@ -24,7 +28,7 @@ const incidents = [
 ];
 
 const openDialog = async (page: import("@playwright/test").Page) => {
-  await page.goto("/en");
+  await gotoDashboard(page);
   await mockCaseLookup(page, incidents);
   await page.getByRole("button", { name: "Menu button" }).click();
   await page.getByRole("menuitem", { name: "Find by case #" }).click();
@@ -36,14 +40,14 @@ test.describe("Given the dashboard", () => {
     page,
   }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto("/en");
+    await gotoDashboard(page);
     await expect(page.getByLabel("Case Number")).toBeHidden();
   });
 
   test("When the menu opens, then it offers Find by case #", async ({
     page,
   }) => {
-    await page.goto("/en");
+    await gotoDashboard(page);
     await page.getByRole("button", { name: "Menu button" }).click();
     await expect(
       page.getByRole("menuitem", { name: "Find by case #" }),
