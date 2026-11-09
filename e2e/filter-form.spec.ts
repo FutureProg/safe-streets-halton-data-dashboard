@@ -208,6 +208,28 @@ test.describe("Given the dashboard opens", () => {
   });
 });
 
+test.describe("Given the user presses Search", () => {
+  test("Then the top loading indicator does not show", async ({ page }) => {
+    await gotoDashboard(page);
+    let release: () => void = () => {};
+    const gate = new Promise<void>((resolve) => (release = resolve));
+    await page.route("**/api/data?**", async (route) => {
+      await gate;
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ data: [], nextCursor: null, hasMore: false }),
+      });
+    });
+    await page.getByRole("button", { name: "Search" }).click();
+    await expect(
+      page.getByRole("button", { name: "Search" }).getByRole("status"),
+    ).toBeVisible();
+    await expect(page.getByText("Loading incidents…")).toHaveCount(0);
+    release();
+  });
+});
+
 test.describe("Given the incident type filter", () => {
   test.beforeEach(async ({ page }) => {
     await gotoDashboard(page);

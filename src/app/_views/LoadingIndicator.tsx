@@ -7,12 +7,13 @@ import { MapDataContext } from "../_state/MapDataState";
 
 /**
  * A small pill at the top centre of the screen (the left stays clear) while
- * incidents are loading, so the map doesn't look broken before pins appear.
+ * the automatic first load runs (a Search press has its own button spinner), so the map doesn't look broken before pins appear.
  */
 export default function LoadingIndicator() {
   const { t: translate } = useTranslation();
-  const isLoading = MapDataContext.useSelector((snapshot) =>
-    snapshot.matches("loading"),
+  const isLoading = MapDataContext.useSelector(
+    (snapshot) =>
+      snapshot.matches("loading") && snapshot.context.loadSource === "auto",
   );
   if (!isLoading) return null;
   return (

@@ -70,7 +70,7 @@ export default function Home() {
     // of waiting for the first Search. (A repeat request while loading, such
     // as from React strict mode, is ignored by the machine.)
     const params = toSearchRequest(formValues);
-    if (params) mapDataActor.send({ type: "request", params });
+    if (params) mapDataActor.send({ type: "request", params, source: "auto" });
   }, []);
 
   return (

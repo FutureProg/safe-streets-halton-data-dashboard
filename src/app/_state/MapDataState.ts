@@ -66,13 +66,21 @@ const mapDataMachine = setup({
       /** Bumped on every selection so the map re-centres even on the same row. */
       focusRequest?: number;
       clientFilters?: ClientSideFilters;
+      /** "auto" for the search made on page open, "user" for a Search press. */
+      loadSource?: "auto" | "user";
     },
     events: {} as
-      | { type: "request"; params: FetchDataParams }
+      | { type: "request"; params: FetchDataParams; source?: "auto" | "user" }
       | { type: "filterClient"; filters: ClientSideFilters }
       | { type: "selectLocation"; key: string }
       | { type: "clearLocation" },
     input: {} as FetchDataParams,
+  },
+  actions: {
+    setLoadSource: assign({
+      loadSource: ({ event }) =>
+        event.type === "request" ? (event.source ?? "user") : "user",
+    }),
   },
   actors: {
     fetchData: fromPromise(async ({ input }) => {
@@ -100,9 +108,7 @@ const mapDataMachine = setup({
   states: {
     idle: {
       on: {
-        request: {
-          target: "loading",
-        },
+        request: { target: "loading", actions: "setLoadSource" },
       },
     },
     loading: {
@@ -132,16 +138,12 @@ const mapDataMachine = setup({
     },
     success: {
       on: {
-        request: {
-          target: "loading",
-        },
+        request: { target: "loading", actions: "setLoadSource" },
       },
     },
     failure: {
       on: {
-        request: {
-          target: "loading",
-        },
+        request: { target: "loading", actions: "setLoadSource" },
       },
     },
   },
