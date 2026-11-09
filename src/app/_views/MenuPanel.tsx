@@ -40,15 +40,6 @@ const MenuPanel = () => {
             <SearchIcon aria-hidden />
             {translate("GoToCaseNumber")}
           </DropdownMenuItem>
-          <DropdownMenuItem href="/">
-            {translate("MenuItem", { number: 1 })}
-          </DropdownMenuItem>
-          <DropdownMenuItem href="/">
-            {translate("MenuItem", { number: 2 })}
-          </DropdownMenuItem>
-          <DropdownMenuItem href="/">
-            {translate("MenuItem", { number: 3 })}
-          </DropdownMenuItem>
         </DropdownMenu>
       </DropdownMenuTrigger>
       <CaseLookupDialog
