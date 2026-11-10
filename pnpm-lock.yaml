@@ -226,7 +226,7 @@ importers:
         version: 0.31.10
       drizzle-orm:
         specifier: ^0.45.2
-        version: 0.45.2(@types/pg@8.23.1)(mysql2@3.24.4(@types/node@20.19.43))(pg@8.23.0)
+        version: 0.45.2(@cloudflare/workers-types@5.20261109.1)(@types/pg@8.23.1)(mysql2@3.24.4(@types/node@20.19.43))(pg@8.23.0)
       i18next:
         specifier: ^24.2.3
         version: 24.2.3(typescript@5.9.3)
@@ -297,6 +297,9 @@ importers:
       '@cloudflare/vite-plugin':
         specifier: 2.0.0-beta.v.10
         version: 2.0.0-beta.v.10(@types/node@20.19.43)(@voidzero-dev/vite-plus-core@1.4.0(@types/node@20.19.43)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.0)(terser@5.51.2)(tsx@4.23.13)(typescript@5.9.3)(yaml@2.9.1))(workerd@1.20261102.1)
+      '@cloudflare/workers-types':
+        specifier: ^5.20261109.1
+        version: 5.20261109.1
       '@eslint/eslintrc':
         specifier: ^3.3.7
         version: 3.3.7(supports-color@10.2.2)
@@ -737,6 +740,9 @@ packages:
   '@cloudflare/workers-response-store@1.1.4':
     resolution: {integrity: sha512-HQH+OSyQJkfSRXemrD904gfZQB7+EKdFW26MT7j7ObETSPNJd06EYsuGED9EZob7R23a6J5u1AgkAbDuFongAw==}
     engines: {node: '>=22'}
+
+  '@cloudflare/workers-types@5.20261109.1':
+    resolution: {integrity: sha512-TH937ZS17uWVSrIGFjBTA7L8NSpJzQIv5VKBcLBMg+TGs38ON+VBNVUghUWoHDvNmS3YWMwktd1MSWES/C0QnQ==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -7704,6 +7710,8 @@ snapshots:
 
   '@cloudflare/workers-response-store@1.1.4': {}
 
+  '@cloudflare/workers-types@5.20261109.1': {}
+
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
@@ -10563,8 +10571,9 @@ snapshots:
       esbuild: 0.25.12
       tsx: 4.23.13
 
-  drizzle-orm@0.45.2(@types/pg@8.23.1)(mysql2@3.24.4(@types/node@20.19.43))(pg@8.23.0):
+  drizzle-orm@0.45.2(@cloudflare/workers-types@5.20261109.1)(@types/pg@8.23.1)(mysql2@3.24.4(@types/node@20.19.43))(pg@8.23.0):
     optionalDependencies:
+      '@cloudflare/workers-types': 5.20261109.1
       '@types/pg': 8.23.1
       mysql2: 3.24.4(@types/node@20.19.43)
       pg: 8.23.0
