@@ -26,8 +26,11 @@
     "deploy:vinext": "CLOUDFLARE_BUILD=1 vinext-cloudflare deploy --vite-config vite.cloudflare.config.ts"
   },
   "dependencies": {
+    "@cloudflare/flagship": "^0.7.0",
     "@internationalized/date": "^3.12.4",
     "@next/env": "16.0.5",
+    "@openfeature/server-sdk": "^1.23.0",
+    "@openfeature/web-sdk": "^1.10.0",
     "@types/pg": "^8.23.1",
     "@vinext/cloudflare": "^1.3.1",
     "@xstate/react": "^5.0.5",
