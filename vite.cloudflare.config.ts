@@ -20,6 +20,14 @@ export default defineConfig({
           "src/db/connection.cloudflare.ts",
         ),
       },
+      {
+        // Read the Flagship binding from the Worker env.
+        find: /^@\/lib\/flags-binding$/,
+        replacement: path.resolve(
+          import.meta.dirname,
+          "src/lib/flags-binding.cloudflare.ts",
+        ),
+      },
     ],
   },
   plugins: [
