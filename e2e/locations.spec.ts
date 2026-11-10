@@ -1,5 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import { buildIncident, mockIncidentData } from "./support/mockIncidents";
+import { buildIncident, gotoDashboard } from "./support/mockIncidents";
 import { assertNoA11yViolations } from "./support/a11y";
 
 // Feature: Navigate the map by location (SSHD-4)
@@ -26,13 +26,9 @@ const incidents = [
   }),
 ];
 
-const search = async (page: Page, { phone = false } = {}) => {
-  await page.goto("/en");
-  await mockIncidentData(page, incidents);
-  // On a phone the search form lives in the Filters sheet.
-  if (phone) await page.getByRole("button", { name: "Filters" }).click();
-  await page.getByRole("button", { name: "Search" }).click();
-};
+// The dashboard searches on open, so the fixture incidents are already
+// loaded once the page has settled.
+const search = (page: Page) => gotoDashboard(page, incidents);
 
 test.describe("Given a desktop search with results", () => {
   test.beforeEach(async ({ page }) => {
@@ -108,7 +104,7 @@ test.describe("Given a desktop search with results", () => {
 test.describe("Given a phone search with results", () => {
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
-    await search(page, { phone: true });
+    await search(page);
   });
 
   test("When a location is picked, then the sheet closes and a half-height sheet shows its incidents", async ({

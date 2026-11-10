@@ -1,4 +1,4 @@
-import { Page, Route } from "@playwright/test";
+import { Page, Route, expect } from "@playwright/test";
 
 /**
  * Shape returned by GET /api/data (see src/app/common.ts PagingResponseBody /
@@ -71,4 +71,22 @@ export const mockCaseLookup = async (page: Page, incidents: MockIncident[]) => {
       }),
     });
   });
+};
+
+/**
+ * Opens the dashboard and waits for the automatic first search (which runs on
+ * load with the default filters) to finish, so a test can then interact with
+ * a settled page. The initial search is answered with `incidents`; a test can
+ * register its own `mockIncidentData` afterwards to answer later searches.
+ */
+export const gotoDashboard = async (
+  page: Page,
+  incidents: MockIncident[] = [],
+  path = "/en",
+) => {
+  await mockIncidentData(page, incidents);
+  const firstSearch = page.waitForResponse("**/api/data?**");
+  await page.goto(path);
+  await firstSearch;
+  await expect(page.getByText("Loading incidents…")).toHaveCount(0);
 };

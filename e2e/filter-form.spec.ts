@@ -1,5 +1,9 @@
 import { test, expect } from "@playwright/test";
-import { buildIncident, mockIncidentData } from "./support/mockIncidents";
+import {
+  buildIncident,
+  mockIncidentData,
+  gotoDashboard,
+} from "./support/mockIncidents";
 import { assertNoA11yViolations } from "./support/a11y";
 
 const MARKER_SELECTOR = ".leaflet-marker-icon, .marker-cluster";
@@ -11,7 +15,7 @@ const MARKER_SELECTOR = ".leaflet-marker-icon, .marker-cluster";
 
 test.describe("Given the filter form", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/en");
+    await gotoDashboard(page);
   });
 
   test("When submitted with default dates and matching incidents exist, then markers render on the map", async ({
@@ -169,9 +173,69 @@ test.describe("Given the filter form", () => {
   });
 });
 
+test.describe("Given the dashboard opens", () => {
+  test("Then incidents load straight away with the default filters", async ({
+    page,
+  }) => {
+    await mockIncidentData(page, [buildIncident()]);
+    const [request] = await Promise.all([
+      page.waitForRequest("**/api/data?**"),
+      page.goto("/en"),
+    ]);
+    const url = new URL(request.url());
+    expect(url.searchParams.get("startDate")).toBeTruthy();
+    expect(url.searchParams.get("endDate")).toBeTruthy();
+    await expect(page.locator(MARKER_SELECTOR)).not.toHaveCount(0);
+  });
+
+  test("Then a loading indicator shows until the incidents arrive", async ({
+    page,
+  }) => {
+    let release: () => void = () => {};
+    const gate = new Promise<void>((resolve) => (release = resolve));
+    await page.route("**/api/data?**", async (route) => {
+      await gate;
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ data: [], nextCursor: null, hasMore: false }),
+      });
+    });
+    await page.goto("/en");
+    await expect(page.getByText("Loading incidents…")).toBeVisible();
+    release();
+    await expect(page.getByText("Loading incidents…")).toBeHidden();
+  });
+});
+
+test.describe("Given the user presses Search", () => {
+  test("Then the top loading indicator does not show", async ({ page }) => {
+    await gotoDashboard(page);
+    let release: () => void = () => {};
+    const gate = new Promise<void>((resolve) => (release = resolve));
+    await page.route("**/api/data?**", async (route) => {
+      await gate;
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ data: [], nextCursor: null, hasMore: false }),
+      });
+    });
+    await page.getByRole("button", { name: "Search" }).click();
+    // The button's own spinner is decorative (aria-hidden), so find it by slot.
+    await expect(
+      page
+        .getByRole("button", { name: "Search" })
+        .locator('[data-slot="spinner"]'),
+    ).toBeVisible();
+    await expect(page.getByText("Loading incidents…")).toHaveCount(0);
+    release();
+  });
+});
+
 test.describe("Given the incident type filter", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/en");
+    await gotoDashboard(page);
     await mockIncidentData(page, [
       buildIncident({
         globalID: "GLOBAL-0001",
@@ -217,7 +281,8 @@ test.describe("Given the incident type filter", () => {
 
 test.describe("Given the search feedback", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/en");
+    // Start with results so the automatic first search leaves no toast behind.
+    await gotoDashboard(page, [buildIncident()]);
   });
 
   test("When a search returns no incidents, then the user is told", async ({

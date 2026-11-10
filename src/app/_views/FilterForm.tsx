@@ -14,7 +14,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { DatePicker } from "@/components/ui/date-picker";
 import MultiSelect from "@/components/MultiSelect";
 
-import { MapDataContext } from "../_state/MapDataState";
+import { FetchDataParams, MapDataContext } from "../_state/MapDataState";
 import { StaticValuesContext } from "../StaticValuesContext";
 
 export type FilterFormValues = {
@@ -57,6 +57,18 @@ const evalDate = (dateStr: string, boundary: "start" | "end") => {
   return newDate;
 };
 
+/** The request the map machine needs to search with these filter values. */
+export const toSearchRequest = (
+  values: FilterFormValues,
+): FetchDataParams | null => {
+  if (!values.startDate || !values.endDate) return null;
+  return {
+    city: values.cities,
+    endDate: `${evalDate(values.endDate.toString(), "end")}`,
+    startDate: `${evalDate(values.startDate.toString(), "start")}`,
+  };
+};
+
 export default function FilterForm({
   values,
   onValuesChange,
@@ -71,15 +83,9 @@ export default function FilterForm({
 
   const onSubmit: FormEventHandler<HTMLFormElement> = (evt) => {
     evt.preventDefault();
-    if (isLoading || !values.startDate || !values.endDate) return;
-    mapDataActor.send({
-      type: "request",
-      params: {
-        city: values.cities,
-        endDate: `${evalDate(values.endDate.toString(), "end")}`,
-        startDate: `${evalDate(values.startDate.toString(), "start")}`,
-      },
-    });
+    const params = toSearchRequest(values);
+    if (isLoading || !params) return;
+    mapDataActor.send({ type: "request", params });
     onSearch?.();
   };
 

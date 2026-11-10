@@ -1,14 +1,17 @@
 import { test, expect } from "@playwright/test";
+import { buildIncident, gotoDashboard } from "./support/mockIncidents";
 import { assertNoA11yViolations } from "./support/a11y";
 
 // Feature: Dashboard shell
 // As a visitor, when I open the dashboard, I should see the map and the
-// controls needed to search and filter incidents, before any search has
-// been performed.
+// controls needed to search and filter incidents, with incidents already
+// loaded using the default filters.
 
 test.describe("Given a user visits the dashboard", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/en");
+    // Results are returned so no "No incidents found" toast is animating in
+    // while the accessibility scan runs.
+    await gotoDashboard(page, [buildIncident()]);
   });
 
   test("When the page loads, then the map and its controls are visible", async ({
@@ -24,13 +27,13 @@ test.describe("Given a user visits the dashboard", () => {
     await expect(page.getByRole("button", { name: "Search" })).toBeVisible();
   });
 
-  test("When the page loads, then no incidents are shown until a search is submitted", async ({
+  test("When the page loads, then incidents are shown without a search being submitted", async ({
     page,
   }) => {
     await expect(page.locator(".leaflet-container")).toBeVisible();
     await expect(
       page.locator(".leaflet-marker-icon, .marker-cluster"),
-    ).toHaveCount(0);
+    ).not.toHaveCount(0);
   });
 
   test("When the page loads, then there are no accessibility violations", async ({
@@ -45,7 +48,7 @@ test.describe("Given a user visits a locale-specific URL", () => {
   test('When the URL is /en, then <html lang="en"> and the dashboard renders', async ({
     page,
   }) => {
-    await page.goto("/en");
+    await gotoDashboard(page);
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
     await expect(page.locator(".leaflet-container")).toBeVisible();
   });
@@ -81,7 +84,7 @@ test.describe("Given a user visits a locale-specific URL", () => {
 
 test.describe("Given the navigation menu", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/en");
+    await gotoDashboard(page);
   });
 
   test("When the user opens the menu toggle, then the menu popup appears", async ({
@@ -95,7 +98,7 @@ test.describe("Given the navigation menu", () => {
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
     const menu = page.getByRole("menu");
     await expect(menu).toBeVisible();
-    await expect(page.getByRole("menuitem")).toHaveCount(4);
+    await expect(page.getByRole("menuitem")).toHaveCount(1);
   });
 
   test("When the user presses Escape on an open menu, then the menu popup is hidden", async ({
@@ -114,7 +117,7 @@ test.describe("Given the navigation menu", () => {
 test.describe("Given the mobile filter sheet", () => {
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
-    await page.goto("/en");
+    await gotoDashboard(page);
   });
 
   test("When the viewport is mobile-sized, then the filters are behind a Filters button", async ({
