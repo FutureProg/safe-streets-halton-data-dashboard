@@ -7,7 +7,7 @@ import {
   LoggingHook,
 } from "@cloudflare/flagship/server";
 
-import { getFlagshipBinding } from "@/lib/flags-binding";
+import { getFlagshipBinding } from "@/lib/flags/flags-binding";
 
 /**
  * Feature flags. Every read goes through `getFlag` / `getObjectFlag`, which:

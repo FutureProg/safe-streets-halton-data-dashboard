@@ -22,7 +22,7 @@ export default defineConfig({
       },
       {
         // Read the Flagship binding from the Worker env.
-        find: /^@\/lib\/flags-binding$/,
+        find: /^@\/lib\/flags\/flags-binding$/,
         replacement: path.resolve(
           import.meta.dirname,
           "src/lib/flags-binding.cloudflare.ts",
