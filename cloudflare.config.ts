@@ -4,6 +4,8 @@ import { bindings, defineConfig, defineWorker } from "cf/config";
 // supplied by the deploy environment (the Workers Builds build variable HYPERDRIVE_ID)
 // so no account-specific values are committed.
 const hyperdriveId = process.env.HYPERDRIVE_ID;
+// Flagship feature-flag app ID, supplied the same way (build variable FLAGSHIP_APP_ID).
+const flagshipAppId = process.env.FLAGSHIP_APP_ID;
 
 // Preview builds (`cf previews deploy`) evaluate this config with isPreview = true.
 // Previews must not claim the production custom domain, so it is left out for them.
@@ -44,6 +46,9 @@ export default defineConfig({
       ASSETS: bindings.assets(),
       ...(hyperdriveId
         ? { HYPERDRIVE: bindings.hyperdrive({ id: hyperdriveId }) }
+        : {}),
+      ...(flagshipAppId
+        ? { FLAGS: bindings.flagship({ id: flagshipAppId }) }
         : {}),
     },
   })),
