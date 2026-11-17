@@ -2,7 +2,9 @@ export const dynamic = "force-dynamic";
 
 import { db } from "@/db/db";
 import { NextRequest } from "next/server";
+import * as v from "valibot";
 import { decodeCursor, encodeCursor } from "../pagination";
+import { DataQuerySchema, invalidRequest, paramsToObject } from "../schemas";
 import { hrpsData } from "@/db/schema";
 import { isMissingRelation } from "@/db/common";
 import { intersections } from "@/db/geo";
@@ -170,20 +172,19 @@ const findData = async (
 };
 
 export const GET = async (request: NextRequest) => {
-  const searchParams = request.nextUrl.searchParams;
-  const limit = parseInt(searchParams.get("limit") ?? "100");
-  const cursor = searchParams.get("cursor") ?? undefined;
-  const endDate = new Date(
-    Number.parseInt(searchParams.get("endDate") ?? Date.now().toString()),
+  const parsed = v.safeParse(
+    DataQuerySchema,
+    paramsToObject(request.nextUrl.searchParams, [
+      "limit",
+      "cursor",
+      "endDate",
+      "startDate",
+      "city",
+    ]),
   );
-  const defaultStartDate = new Date(endDate);
-  defaultStartDate.setDate(endDate.getDate() - 30);
-  const startDate = new Date(
-    Number.parseInt(
-      searchParams.get("startDate") ?? defaultStartDate.getTime().toString(),
-    ),
-  );
-  const cities = searchParams.get("city")?.split(",");
+  if (!parsed.success) return invalidRequest(parsed.issues);
+
+  const { startDate, endDate, cities, limit, cursor } = parsed.output;
   const body = await findData(startDate, endDate, {
     includedCities: cities,
     limit,
