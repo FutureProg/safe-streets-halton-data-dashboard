@@ -78,7 +78,6 @@ export default defineConfig({
             DB_PASS: "test_pass",
             DB_PORT: "3306",
             DB_NAME: "test_db",
-            dataAPI: "http://localhost:3000/api",
           },
         },
       },
