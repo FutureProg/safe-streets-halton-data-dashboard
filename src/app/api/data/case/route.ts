@@ -3,9 +3,8 @@ export const dynamic = "force-dynamic";
 import { NextRequest } from "next/server";
 
 import { findByCaseNo } from "@/db/cases";
+import { CaseQuerySchema, invalidRequest, paramsToObject } from "../../schemas";
 import type { CaseResponseBody } from "@/app/common";
-
-const MAX_CASE_NO_LENGTH = 64;
 
 /**
  * GET /api/data/case?caseNo=...
@@ -15,13 +14,11 @@ const MAX_CASE_NO_LENGTH = 64;
  * returning an array keeps the response stable if that ever changes.
  */
 export const GET = async (request: NextRequest) => {
-  const caseNo = request.nextUrl.searchParams.get("caseNo")?.trim() ?? "";
-  if (!caseNo || caseNo.length > MAX_CASE_NO_LENGTH) {
-    return Response.json(
-      { error: "caseNo is required and must be 64 characters or fewer." },
-      { status: 400 },
-    );
-  }
-  const data = await findByCaseNo(caseNo);
+  const parsed = CaseQuerySchema.safeParse(
+    paramsToObject(request.nextUrl.searchParams, ["caseNo"]),
+  );
+  if (!parsed.success) return invalidRequest(parsed.error);
+
+  const data = await findByCaseNo(parsed.data.caseNo);
   return Response.json({ data } satisfies CaseResponseBody);
 };
