@@ -1,8 +1,13 @@
 import { test, expect } from "@playwright/test";
 import {
   buildIncident,
-  mockIncidentData,
+  failAction,
+  fulfillAction,
   gotoDashboard,
+  isSearchRequest,
+  mockIncidentData,
+  routeSearch,
+  searchInput,
 } from "./support/mockIncidents";
 import { assertNoA11yViolations } from "./support/a11y";
 
@@ -10,7 +15,7 @@ const MARKER_SELECTOR = ".leaflet-marker-icon, .marker-cluster";
 
 // Feature: Filter form search
 // As a visitor, I fill in the date range / municipality filters and submit,
-// which fetches incidents from /api/data (mocked here) and renders them as
+// which fetches incidents with the search server action (mocked here) and renders them as
 // markers on the map.
 
 test.describe("Given the filter form", () => {
@@ -55,13 +60,13 @@ test.describe("Given the filter form", () => {
     await mockIncidentData(page, []);
 
     const [request] = await Promise.all([
-      page.waitForRequest("**/api/data?**"),
+      page.waitForRequest(isSearchRequest),
       page.getByRole("button", { name: "Search" }).click(),
     ]);
 
-    const url = new URL(request.url());
-    expect(url.searchParams.get("startDate")).toBeTruthy();
-    expect(url.searchParams.get("endDate")).toBeTruthy();
+    const { startDate, endDate } = searchInput(request);
+    expect(startDate).toBeTruthy();
+    expect(endDate).toBeTruthy();
   });
 
   test("When the user removes a municipality before submitting, then the request omits it", async ({
@@ -88,14 +93,11 @@ test.describe("Given the filter form", () => {
     await page.keyboard.press("Escape");
 
     const [request] = await Promise.all([
-      page.waitForRequest("**/api/data?**"),
+      page.waitForRequest(isSearchRequest),
       page.getByRole("button", { name: "Search" }).click(),
     ]);
 
-    const url = new URL(request.url());
-    const requestedCities = (url.searchParams.get("city") ?? "")
-      .split(",")
-      .filter(Boolean);
+    const requestedCities = searchInput(request).city;
     const removedCity = firstChipLabel?.replace(/^Remove /, "");
     expect(requestedCities.length).toBe(Math.max(chipCountBefore - 1, 0));
     if (removedCity) {
@@ -141,15 +143,15 @@ test.describe("Given the filter form", () => {
     page,
   }) => {
     let requestCount = 0;
-    await page.route("**/api/data?**", async (route) => {
+    await routeSearch(page, async (route) => {
       requestCount += 1;
       // Hold the response open briefly so a second click lands while
       // MapDataState is still in its "loading" state.
       await new Promise((resolve) => setTimeout(resolve, 500));
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({ data: [], nextCursor: null, hasMore: false }),
+      await fulfillAction(route, {
+        data: [],
+        nextCursor: null,
+        hasMore: false,
       });
     });
 
@@ -179,12 +181,12 @@ test.describe("Given the dashboard opens", () => {
   }) => {
     await mockIncidentData(page, [buildIncident()]);
     const [request] = await Promise.all([
-      page.waitForRequest("**/api/data?**"),
+      page.waitForRequest(isSearchRequest),
       page.goto("/en"),
     ]);
-    const url = new URL(request.url());
-    expect(url.searchParams.get("startDate")).toBeTruthy();
-    expect(url.searchParams.get("endDate")).toBeTruthy();
+    const { startDate, endDate } = searchInput(request);
+    expect(startDate).toBeTruthy();
+    expect(endDate).toBeTruthy();
     await expect(page.locator(MARKER_SELECTOR)).not.toHaveCount(0);
   });
 
@@ -193,12 +195,12 @@ test.describe("Given the dashboard opens", () => {
   }) => {
     let release: () => void = () => {};
     const gate = new Promise<void>((resolve) => (release = resolve));
-    await page.route("**/api/data?**", async (route) => {
+    await routeSearch(page, async (route) => {
       await gate;
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({ data: [], nextCursor: null, hasMore: false }),
+      await fulfillAction(route, {
+        data: [],
+        nextCursor: null,
+        hasMore: false,
       });
     });
     await page.goto("/en");
@@ -213,12 +215,12 @@ test.describe("Given the user presses Search", () => {
     await gotoDashboard(page);
     let release: () => void = () => {};
     const gate = new Promise<void>((resolve) => (release = resolve));
-    await page.route("**/api/data?**", async (route) => {
+    await routeSearch(page, async (route) => {
       await gate;
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({ data: [], nextCursor: null, hasMore: false }),
+      await fulfillAction(route, {
+        data: [],
+        nextCursor: null,
+        hasMore: false,
       });
     });
     await page.getByRole("button", { name: "Search" }).click();
@@ -268,9 +270,9 @@ test.describe("Given the incident type filter", () => {
     );
 
     let requestFired = false;
-    await page.route("**/api/data?**", async (route) => {
+    await routeSearch(page, async (route) => {
       requestFired = true;
-      await route.continue();
+      await route.fallback();
     });
 
     await removeButtons.first().click();
@@ -298,20 +300,16 @@ test.describe("Given the search feedback", () => {
     page,
   }) => {
     let failNext = true;
-    await page.route("**/api/data?**", async (route) => {
+    await routeSearch(page, async (route) => {
       if (failNext) {
         failNext = false;
-        await route.fulfill({ status: 500, body: "{}" });
+        await failAction(route);
         return;
       }
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({
-          data: [buildIncident()],
-          nextCursor: null,
-          hasMore: false,
-        }),
+      await fulfillAction(route, {
+        data: [buildIncident()],
+        nextCursor: null,
+        hasMore: false,
       });
     });
 
@@ -319,7 +317,7 @@ test.describe("Given the search feedback", () => {
     await expect(page.getByText("Couldn't load incidents")).toBeVisible();
 
     const [retry] = await Promise.all([
-      page.waitForResponse("**/api/data?**"),
+      page.waitForResponse((response) => isSearchRequest(response.request())),
       page.getByRole("button", { name: "Search" }).click(),
     ]);
     expect(retry.status()).toBe(200);

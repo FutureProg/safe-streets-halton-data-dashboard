@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { decodeCursor } from "./pagination";
+import { decodeCursor } from "../db/pagination";
 
 /** Largest page the data endpoint will return. */
 export const MAX_PAGE_SIZE = 100;
@@ -13,33 +13,22 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 const MAX_TIMESTAMP = 8.64e15;
 
 /**
- * Query-string values arrive as strings, so these schemas accept strings and
- * produce typed values. Callers other than the route handlers (for example
- * server actions) can reuse them.
+ * Inputs of the server actions in `actions.ts`. Server actions are public
+ * endpoints, so everything that arrives is validated here before it gets near
+ * the database.
  */
 
 const timestamp = z
-  .string()
-  .regex(/^-?\d+$/, "Must be a whole number of milliseconds.")
-  .transform(Number)
-  .pipe(
-    z
-      .number()
-      .min(-MAX_TIMESTAMP, "Not a valid date.")
-      .max(MAX_TIMESTAMP, "Not a valid date."),
-  );
+  .number()
+  .int("Must be a whole number of milliseconds.")
+  .min(-MAX_TIMESTAMP, "Not a valid date.")
+  .max(MAX_TIMESTAMP, "Not a valid date.");
 
 const limit = z
-  .string()
-  .regex(/^\d+$/, "Must be a whole number.")
-  .transform(Number)
-  .pipe(
-    z
-      .number()
-      .int()
-      .min(1)
-      .max(MAX_PAGE_SIZE, `Must be ${MAX_PAGE_SIZE} or fewer.`),
-  );
+  .number()
+  .int()
+  .min(1)
+  .max(MAX_PAGE_SIZE, `Must be ${MAX_PAGE_SIZE} or fewer.`);
 
 const cursor = z
   .string()
@@ -57,20 +46,9 @@ const cursor = z
     }
   }, "Not a valid cursor.");
 
-/** A comma-separated list of city names, e.g. "Oakville,Burlington". */
 const cities = z
-  .string()
-  .transform((value) =>
-    value
-      .split(",")
-      .map((city) => city.trim())
-      .filter(Boolean),
-  )
-  .pipe(
-    z
-      .array(z.string().max(MAX_CITY_LENGTH))
-      .max(MAX_CITIES, `At most ${MAX_CITIES} cities.`),
-  );
+  .array(z.string().trim().min(1).max(MAX_CITY_LENGTH))
+  .max(MAX_CITIES, `At most ${MAX_CITIES} cities.`);
 
 export const DataQuerySchema = z
   .object({
@@ -111,23 +89,3 @@ export const CaseQuerySchema = z.object({
     ),
 });
 export type CaseQuery = z.output<typeof CaseQuerySchema>;
-
-/** Reads the named query-string parameters into a plain object, skipping absent ones. */
-export const paramsToObject = (
-  searchParams: URLSearchParams,
-  keys: string[],
-): Record<string, string> => {
-  const entries: Record<string, string> = {};
-  for (const key of keys) {
-    const value = searchParams.get(key);
-    if (value !== null) entries[key] = value;
-  }
-  return entries;
-};
-
-/** A 400 response listing what was wrong with the input. */
-export const invalidRequest = (error: z.ZodError) =>
-  Response.json(
-    { error: "Invalid request.", issues: z.flattenError(error) },
-    { status: 400 },
-  );

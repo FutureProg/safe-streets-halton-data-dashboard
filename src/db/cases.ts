@@ -17,7 +17,7 @@ const MAX_RESULTS = 50;
  *
  * Falls back one step at a time when the open-data-sync relations are missing
  * (local and test databases): view, then raw rows with intersections, then
- * bare raw rows. Same order as `/api/data`.
+ * bare raw rows. Same order as `searchIncidents`.
  */
 export const findByCaseNo = async (caseNo: string): Promise<DataRecord[]> => {
   const fromView = () =>

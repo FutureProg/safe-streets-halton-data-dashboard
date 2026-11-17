@@ -1,9 +1,5 @@
-export const dynamic = "force-dynamic";
-
 import { db } from "@/db/db";
-import { NextRequest } from "next/server";
-import { decodeCursor, encodeCursor } from "../pagination";
-import { DataQuerySchema, invalidRequest, paramsToObject } from "../schemas";
+import { decodeCursor, encodeCursor } from "./pagination";
 import { hrpsData } from "@/db/schema";
 import { isMissingRelation } from "@/db/common";
 import { intersections } from "@/db/geo";
@@ -23,7 +19,7 @@ import { DataRecord, PaginationParams } from "@/app/common";
 
 let warnedMissingCuratedData = false;
 
-const findData = async (
+export const findIncidents = async (
   startDate: Date,
   endDate: Date,
   options?: {
@@ -168,25 +164,4 @@ const findData = async (
     nextCursor,
     hasMore,
   };
-};
-
-export const GET = async (request: NextRequest) => {
-  const parsed = DataQuerySchema.safeParse(
-    paramsToObject(request.nextUrl.searchParams, [
-      "limit",
-      "cursor",
-      "endDate",
-      "startDate",
-      "city",
-    ]),
-  );
-  if (!parsed.success) return invalidRequest(parsed.error);
-
-  const { startDate, endDate, cities, limit, cursor } = parsed.data;
-  const body = await findData(startDate, endDate, {
-    includedCities: cities,
-    limit,
-    cursor,
-  });
-  return Response.json(body);
 };

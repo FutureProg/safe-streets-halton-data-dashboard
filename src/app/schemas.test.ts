@@ -1,14 +1,14 @@
 import { describe, expect, test } from "vite-plus/test";
 
-import { encodeCursor } from "./pagination";
+import { encodeCursor } from "../db/pagination";
 import { CaseQuerySchema, DataQuerySchema, MAX_PAGE_SIZE } from "./schemas";
 
-const parse = (input: Record<string, string>) =>
+const parse = (input: Record<string, unknown>) =>
   DataQuerySchema.safeParse(input);
 
 describe("DataQuerySchema", () => {
   test("defaults to the last 30 days, a full page, and no cities", () => {
-    const result = parse({ endDate: "1700000000000" });
+    const result = parse({ endDate: 1700000000000 });
     expect(result.success).toBe(true);
     if (!result.success) return;
     expect(result.data.limit).toBe(MAX_PAGE_SIZE);
@@ -20,7 +20,7 @@ describe("DataQuerySchema", () => {
   });
 
   test("splits and trims the city list", () => {
-    const result = parse({ city: "Oakville, Burlington,,Milton " });
+    const result = parse({ city: ["Oakville", " Burlington ", "Milton"] });
     expect(result.success && result.data.cities).toEqual([
       "Oakville",
       "Burlington",
@@ -35,22 +35,23 @@ describe("DataQuerySchema", () => {
 
   test.each([
     ["non-numeric date", { startDate: "yesterday" }],
-    ["fractional date", { startDate: "1.5" }],
-    ["empty date", { endDate: "" }],
-    ["date out of range", { endDate: "99999999999999999" }],
-    ["limit above the maximum", { limit: "101" }],
-    ["zero limit", { limit: "0" }],
+    ["fractional date", { startDate: 1.5 }],
+    ["date out of range", { endDate: 1e17 }],
+    ["limit above the maximum", { limit: 101 }],
+    ["zero limit", { limit: 0 }],
     ["non-numeric limit", { limit: "ten" }],
     ["garbage cursor", { cursor: "not-a-cursor" }],
-    ["too many cities", { city: Array(51).fill("x").join(",") }],
-    ["start after end", { startDate: "2000", endDate: "1000" }],
+    ["cities as a string", { city: "Oakville,Milton" }],
+    ["blank city", { city: ["Oakville", " "] }],
+    ["too many cities", { city: Array(51).fill("x") }],
+    ["start after end", { startDate: 2000, endDate: 1000 }],
   ])("rejects %s", (_name, input) => {
     expect(parse(input).success).toBe(false);
   });
 });
 
 describe("CaseQuerySchema", () => {
-  const parseCase = (input: Record<string, string>) =>
+  const parseCase = (input: Record<string, unknown>) =>
     CaseQuerySchema.safeParse(input);
 
   test("trims the case number", () => {

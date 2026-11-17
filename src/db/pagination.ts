@@ -11,12 +11,3 @@ export function decodeCursor(cursorStr: string): Cursor {
   const decodedStr = Buffer.from(cursorStr, "base64").toString("utf-8");
   return JSON.parse(decodedStr) as Cursor;
 }
-
-export const getPagingParams = (searchParams: URLSearchParams) => {
-  const limit = parseInt(searchParams.get("limit") ?? "100");
-  const cursor = searchParams.get("cursor");
-  return {
-    limit,
-    cursor,
-  };
-};

@@ -1,5 +1,10 @@
 import { test, expect } from "@playwright/test";
-import { buildIncident, gotoDashboard } from "./support/mockIncidents";
+import {
+  buildIncident,
+  fulfillAction,
+  gotoDashboard,
+  routeSearch,
+} from "./support/mockIncidents";
 import { assertNoA11yViolations } from "./support/a11y";
 
 // Feature: Dashboard shell
@@ -153,12 +158,8 @@ test.describe("Given the mobile filter sheet", () => {
   test("When the user searches from the sheet, then the sheet closes", async ({
     page,
   }) => {
-    await page.route("**/api/data?**", (route) =>
-      route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({ data: [], nextCursor: null, hasMore: false }),
-      }),
+    await routeSearch(page, (route) =>
+      fulfillAction(route, { data: [], nextCursor: null, hasMore: false }),
     );
     await page.getByRole("button", { name: "Filters" }).click();
     await page

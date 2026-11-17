@@ -1,5 +1,8 @@
-import { describe, expect, test } from "vite-plus/test";
+import { describe, expect, test, vi } from "vite-plus/test";
 import { createActor, fromPromise, waitFor } from "xstate";
+
+// The machine imports the server action; these tests provide their own actor.
+vi.mock("../actions", () => ({ lookupCase: vi.fn() }));
 
 import { caseLookupMachine } from "./CaseLookupState";
 
