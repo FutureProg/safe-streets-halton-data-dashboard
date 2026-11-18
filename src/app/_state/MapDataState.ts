@@ -3,6 +3,7 @@
 import { assign, fromPromise, setup } from "xstate";
 import { createActorContext } from "@xstate/react";
 import { Location, groupLocations } from "./locations";
+import { searchIncidents } from "../actions";
 import { ClientSideFilters, DataResponseBody } from "../common";
 
 export type FetchDataParams = {
@@ -12,47 +13,35 @@ export type FetchDataParams = {
   cursor?: string;
 };
 
-const fetchData = async (params: FetchDataParams) => {
-  params.startDate =
-    params.startDate instanceof Date
-      ? params.startDate.getTime()
-      : params.startDate;
-  params.endDate =
-    params.endDate instanceof Date ? params.endDate.getTime() : params.endDate;
+const toTimestamp = (value: string | number | Date) =>
+  value instanceof Date ? value.getTime() : Number(value);
 
-  const baseURL = "/api/data?";
+const fetchData = async (params: FetchDataParams) => {
+  const request = {
+    city: params.city,
+    startDate: toTimestamp(params.startDate),
+    endDate: toTimestamp(params.endDate),
+  };
   let result: DataResponseBody | null = null;
-  let nextCursor = params.cursor;
+  let cursor = params.cursor;
 
   // fetch all pages
   do {
-    if (nextCursor) {
-      params.cursor = nextCursor;
-    }
-    let urlParams = new URLSearchParams(
-      Object.entries(params).map(([k, v]) => [k, v as string]),
-    );
-    const tempResult: DataResponseBody = await fetch(baseURL + urlParams, {
-      cache: "no-cache",
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
-      }
-      return response.json();
+    const page: DataResponseBody = await searchIncidents({
+      ...request,
+      cursor,
     });
     if (!result) {
-      result = tempResult;
+      result = page;
     } else {
-      result.data = result.data.concat(tempResult.data);
-      result.nextCursor = tempResult.nextCursor;
-      result.hasMore = tempResult.hasMore;
+      result.data = result.data.concat(page.data);
+      result.nextCursor = page.nextCursor;
+      result.hasMore = page.hasMore;
     }
-    if (tempResult.hasMore) {
-      nextCursor = tempResult.nextCursor ?? undefined;
-    }
-  } while (result && result.hasMore);
+    cursor = page.nextCursor ?? undefined;
+  } while (result.hasMore);
 
-  return result!;
+  return result;
 };
 
 const mapDataMachine = setup({

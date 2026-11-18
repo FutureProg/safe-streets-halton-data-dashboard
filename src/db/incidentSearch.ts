@@ -1,8 +1,5 @@
-export const dynamic = "force-dynamic";
-
 import { db } from "@/db/db";
-import { NextRequest } from "next/server";
-import { decodeCursor, encodeCursor } from "../pagination";
+import { decodeCursor, encodeCursor } from "./pagination";
 import { hrpsData } from "@/db/schema";
 import { isMissingRelation } from "@/db/common";
 import { intersections } from "@/db/geo";
@@ -22,7 +19,7 @@ import { DataRecord, PaginationParams } from "@/app/common";
 
 let warnedMissingCuratedData = false;
 
-const findData = async (
+export const findIncidents = async (
   startDate: Date,
   endDate: Date,
   options?: {
@@ -167,27 +164,4 @@ const findData = async (
     nextCursor,
     hasMore,
   };
-};
-
-export const GET = async (request: NextRequest) => {
-  const searchParams = request.nextUrl.searchParams;
-  const limit = parseInt(searchParams.get("limit") ?? "100");
-  const cursor = searchParams.get("cursor") ?? undefined;
-  const endDate = new Date(
-    Number.parseInt(searchParams.get("endDate") ?? Date.now().toString()),
-  );
-  const defaultStartDate = new Date(endDate);
-  defaultStartDate.setDate(endDate.getDate() - 30);
-  const startDate = new Date(
-    Number.parseInt(
-      searchParams.get("startDate") ?? defaultStartDate.getTime().toString(),
-    ),
-  );
-  const cities = searchParams.get("city")?.split(",");
-  const body = await findData(startDate, endDate, {
-    includedCities: cities,
-    limit,
-    cursor,
-  });
-  return Response.json(body);
 };

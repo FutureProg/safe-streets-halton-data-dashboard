@@ -3,19 +3,12 @@
 import { assign, fromPromise, setup } from "xstate";
 import { createActorContext } from "@xstate/react";
 
+import { lookupCase } from "../actions";
 import type { CaseResponseBody } from "../common";
 import { Location, groupLocations } from "./locations";
 
-export const fetchCase = async (caseNo: string): Promise<CaseResponseBody> => {
-  const params = new URLSearchParams({ caseNo });
-  const response = await fetch(`/api/data/case?${params}`, {
-    cache: "no-cache",
-  });
-  if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}`);
-  }
-  return response.json();
-};
+export const fetchCase = (caseNo: string): Promise<CaseResponseBody> =>
+  lookupCase({ caseNo });
 
 /**
  * Looks up incidents by case number. Kept apart from the map's machine so the

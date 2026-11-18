@@ -1,15 +1,3 @@
-export function convertDateObjectsToISO(obj: object) {
-  let re: Record<string, any> = {};
-  for (const [key, value] of Object.entries(obj)) {
-    if (value && value instanceof Date) {
-      re[key] = (value as Date).toISOString();
-    } else {
-      re[key] = value;
-    }
-  }
-  return re;
-}
-
 export const formatDateHtmlInput = (date: Date) => {
   const yearStr = date.getFullYear().toString().padStart(4, "0");
   const monthStr = (date.getMonth() + 1).toString().padStart(2, "0");
