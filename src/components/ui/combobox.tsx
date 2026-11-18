@@ -329,6 +329,14 @@ function ComboboxChipsInput({ className, ...props }: InputProps) {
     <InputPrimitive
       data-slot="combobox-chip-input"
       className={cn("min-w-16 flex-1 outline-none", className)}
+      // React Aria's collection keyboard handling treats Ctrl/Cmd+A as "select
+      // every option" and cancels the default, so the text can't be selected.
+      // Stopping it in the capture phase leaves the native select-all alone.
+      onKeyDownCapture={(e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "a") {
+          e.stopPropagation();
+        }
+      }}
       onKeyDown={(e) => {
         if (
           e.key === "Backspace" &&
