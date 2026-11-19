@@ -25,7 +25,7 @@ export default defineConfig({
         find: /^@\/lib\/flags\/flags-binding$/,
         replacement: path.resolve(
           import.meta.dirname,
-          "src/lib/flags-binding.cloudflare.ts",
+          "src/lib/flags/flags-binding.cloudflare.ts",
         ),
       },
     ],
