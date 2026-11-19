@@ -21,9 +21,7 @@ jobs:
         run: |
           set -euo pipefail
           label() { gh label create "$1" --color "$2" --description "$3" --force; }
-          # Category
-          label "bug"             "d73a4a" "Something is broken or wrong"
-          label "enhancement"     "a2eeef" "New feature or change"
+          # Bug vs feature uses GitHub's built-in issue types, not labels.
           # Triage state (used by the triage skill)
           label "needs-triage"    "ededed" "Not looked at yet"
           label "needs-info"      "fbca04" "Waiting on more detail from the reporter"

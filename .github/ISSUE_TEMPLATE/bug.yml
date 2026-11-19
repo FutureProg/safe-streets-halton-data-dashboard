@@ -1,6 +1,7 @@
 name: Bug
 description: Something on the dashboard is broken or wrong.
-labels: [bug, needs-triage]
+type: Bug
+labels: [needs-triage]
 body:
   - type: textarea
     id: what

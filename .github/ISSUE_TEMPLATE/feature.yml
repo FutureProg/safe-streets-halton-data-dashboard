@@ -1,6 +1,7 @@
 name: Feature or change
 description: Something new or different for the dashboard.
-labels: [enhancement, needs-triage]
+type: Feature
+labels: [needs-triage]
 body:
   - type: input
     id: story
