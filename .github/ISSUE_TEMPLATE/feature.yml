@@ -6,7 +6,7 @@ body:
     id: story
     attributes:
       label: User story
-      description: The SSHD story this belongs to, if there is one.
+      description: The SSHD story this belongs to, if there is one. The planning session copies the story's details into the spec, so agents don't need the story doc.
       placeholder: SSHD-12
   - type: textarea
     id: what

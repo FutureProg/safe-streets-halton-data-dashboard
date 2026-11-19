@@ -30,4 +30,5 @@ body:
     id: story
     attributes:
       label: Related user story
+      description: For reference only. Agents can't open the story doc, so describe the bug fully above.
       placeholder: SSHD-12
