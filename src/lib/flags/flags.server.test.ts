@@ -45,7 +45,7 @@ vi.mock("@cloudflare/flagship/server", () => ({
   LoggingHook: class {},
 }));
 
-vi.mock("@/lib/flags-binding", () => ({
+vi.mock("@/lib/flags/flags-binding", () => ({
   getFlagshipBinding: mocks.getBinding,
 }));
 
