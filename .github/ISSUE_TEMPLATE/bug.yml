@@ -1,0 +1,35 @@
+name: Bug
+description: Something on the dashboard is broken or wrong.
+type: Bug
+labels: [needs-triage]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to see it
+      placeholder: |
+        1. Open the map page
+        2. Search for ...
+  - type: input
+    id: where
+    attributes:
+      label: Page or link
+      description: Production, or a preview link.
+  - type: input
+    id: story
+    attributes:
+      label: Related user story
+      description: For reference only. Agents can't open the story doc, so describe the bug fully above.
+      placeholder: SSHD-12
