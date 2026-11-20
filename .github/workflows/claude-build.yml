@@ -37,22 +37,35 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       # Haiku sums the issue up in a few words for the branch name, for example
-      # feature/52-ward-boundary-map-layer. Falls back to the issue title.
+      # feature/52-ward-boundary-map-layer. If it fails, the next step falls back
+      # to the issue title.
+      - name: Summarise the issue
+        id: summary
+        continue-on-error: true
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Summarise this GitHub issue in 3 to 5 plain words for a git branch name.
+            Return only those words in the "words" field.
+
+            Issue title: ${{ github.event.issue.title }}
+          claude_args: |
+            --model haiku
+            --max-turns 3
+            --json-schema '{"type":"object","properties":{"words":{"type":"string"}},"required":["words"]}'
+
       - name: Name the branch
         id: branch
         env:
-          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          SUMMARY_JSON: ${{ steps.summary.outputs.structured_output }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
-          ISSUE_BODY: ${{ github.event.issue.body }}
         run: |
           slugify() {
             tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9' '-' | sed 's/^-*//' | cut -c1-40 | sed 's/-*$//'
           }
-          summary=$(printf 'Title: %s\n\n%s\n' "$ISSUE_TITLE" "${ISSUE_BODY:0:2000}" |
-            timeout 120 npx -y @anthropic-ai/claude-code@latest -p --model haiku --max-turns 1 \
-              "Summarise this GitHub issue in 3 to 5 words for a git branch name. Reply with only the words." \
-            2>/dev/null || true)
-          name=$(printf '%s' "$summary" | head -n 1 | slugify)
+          words=$(printf '%s' "$SUMMARY_JSON" | jq -r '.words // empty' 2>/dev/null || true)
+          name=$(printf '%s' "$words" | head -n 1 | slugify)
           if [ -z "$name" ]; then name=$(printf '%s' "$ISSUE_TITLE" | slugify); fi
           echo "name=${name:-work}" >> "$GITHUB_OUTPUT"
 
