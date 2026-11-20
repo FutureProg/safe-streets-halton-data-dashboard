@@ -36,13 +36,33 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # Haiku sums the issue up in a few words for the branch name, for example
+      # feature/52-ward-boundary-map-layer. Falls back to the issue title.
+      - name: Name the branch
+        id: branch
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          slugify() {
+            tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9' '-' | sed 's/^-*//' | cut -c1-40 | sed 's/-*$//'
+          }
+          summary=$(printf 'Title: %s\n\n%s\n' "$ISSUE_TITLE" "${ISSUE_BODY:0:2000}" |
+            timeout 120 npx -y @anthropic-ai/claude-code@latest -p --model haiku --max-turns 1 \
+              "Summarise this GitHub issue in 3 to 5 words for a git branch name. Reply with only the words." \
+            2>/dev/null || true)
+          name=$(printf '%s' "$summary" | head -n 1 | slugify)
+          if [ -z "$name" ]; then name=$(printf '%s' "$ISSUE_TITLE" | slugify); fi
+          echo "name=${name:-work}" >> "$GITHUB_OUTPUT"
+
       - uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           label_trigger: ready-for-agent
           track_progress: true
           branch_prefix: ${{ github.event.issue.type.name == 'Bug' && 'fix/' || github.event.issue.type.name == 'Task' && 'chore/' || 'feature/' }}
-          branch_name_template: "{{prefix}}{{entityNumber}}-{{description}}"
+          branch_name_template: "{{prefix}}{{entityNumber}}-${{ steps.branch.outputs.name }}"
           plugin_marketplaces: https://github.com/mattpocock/skills.git
           plugins: mattpocock-skills@mattpocock
           claude_args: |
