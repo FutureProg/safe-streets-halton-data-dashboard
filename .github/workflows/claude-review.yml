@@ -172,7 +172,8 @@ jobs:
         id: claude
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          track_progress: true
+          # No track_progress: its built-in instructions put the whole review in
+          # one progress comment and skip the inline comments this prompt asks for.
           # Let the review run on PRs that the Claude build workflow opens.
           allowed_bots: claude
           claude_args: |
@@ -211,9 +212,15 @@ jobs:
                  PR number, the linked issue number (if any) and its axis. Each
                  reports findings back as file, line, severity (Blocking, Should
                  fix or Nit) and a one-line explanation, and posts nothing.
-            4. Combine the findings, drop duplicates and anything you can't
-               confirm in the code, then post an inline comment on the exact line
-               for each remaining problem.
+            4. Combine the findings, and drop duplicates and anything you can't
+               confirm in the code. Then, for each remaining finding that points
+               at a line in the diff, call
+               mcp__github_inline_comment__create_inline_comment on that file
+               and line, with confirmed set to true. Start the comment with its
+               severity (**Blocking**, **Should fix** or **Nit**), then say what's
+               wrong and how to fix it. Use a suggestion block when the fix is a
+               few lines. Do this before step 5: the inline comments are the
+               main review, and the summary only points at them.
             5. Post one summary comment with `gh pr comment`, in this shape:
 
                ## Claude review
@@ -221,8 +228,10 @@ jobs:
                **Verdict:** Looks good / Needs changes / Needs a closer human look
                **Spec:** matches the issue: yes, partly or no, with one line why
                (or "No linked issue").
-               **Standards:** a short list of findings, most important first, each
-               marked Blocking, Should fix or Nit. Write "None" if there are none.
+               **Standards:** one line per finding, most important first: its
+               severity, the file and line, and a few words. Leave the detail to
+               the inline comment. Findings with no line in the diff go here in
+               full. Write "None" if there are none.
                **Check on the preview:** what to click through on the Cloudflare
                preview, or "Nothing visible" for non-UI changes.
             6. Return the same verdict: "looks-good" only if you found nothing
