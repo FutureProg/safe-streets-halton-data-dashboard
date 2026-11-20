@@ -90,6 +90,10 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           label_trigger: ready-for-agent
           track_progress: true
+          # Show what Claude did (tools, skills, results) in the run summary.
+          # Safe here because only Nick's or AI triage's spec drives a build,
+          # and the build can't read secrets or environment variables.
+          display_report: true
           branch_prefix: ${{ steps.prefix.outputs.prefix }}
           branch_name_template: "{{prefix}}{{entityNumber}}-${{ steps.branch.outputs.name }}"
           plugin_marketplaces: https://github.com/mattpocock/skills.git
