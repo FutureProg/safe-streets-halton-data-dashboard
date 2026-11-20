@@ -2,6 +2,38 @@
 
 How an idea or bug becomes a merged PR in this repo. Nick keeps three gates: the spec, the code review he chooses to do, and the product check on the preview.
 
+## The loop
+
+Yellow is where Nick is needed, blue runs by itself, and green is the finish. The table below has the detail.
+
+```mermaid
+flowchart TD
+  classDef nick fill:#fff3cd,stroke:#b58900,color:#1f2328
+  classDef bot fill:#e7f1ff,stroke:#2f6feb,color:#1f2328
+  classDef done fill:#e6f4ea,stroke:#2da44e,color:#1f2328
+
+  A["Issue filed"]:::bot
+  T["Nick triages it and approves the spec"]:::nick
+  B["Claude builds it and opens a PR"]:::bot
+  V{"CI, preview and Claude review"}:::bot
+  F["Claude fixes the findings<br/>(up to 2 rounds)"]:::bot
+  H["Nick steps in"]:::nick
+  AM["Merged automatically<br/>(low-risk changes)"]:::done
+  N["Nick checks the preview and merges"]:::nick
+  D["Deployed to production"]:::done
+
+  A --> T --> B --> V
+  V -->|"needs changes"| F
+  F -->|"review again"| V
+  F -->|"still stuck"| H
+  H --> V
+  V -->|"looks good, low risk"| AM
+  V -->|"looks good, everything else"| N
+  AM --> D
+  N --> D
+  D -.->|"production errors become new issues"| A
+```
+
 ## The flow
 
 | Step            | Where it runs                       | What happens                                                                                                                                                            | Who's needed       |
