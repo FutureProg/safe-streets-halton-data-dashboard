@@ -73,7 +73,9 @@ jobs:
                names any. Follow the repo's existing patterns.
             4. Run `pnpm exec vp check` and the relevant test files as you go. At
                the end, `pnpm exec vp check` and `pnpm run test:unit` must both
-               pass. Never skip, disable or delete a test to get them green. If
+               pass. If the spec changes behaviour that an existing test checks,
+               update that test to match the spec and say why in the PR. Never
+               skip, disable or delete a test solely to get them green. If
                they still fail after three honest attempts, push what you have,
                comment on the issue with what is failing, swap
                `ready-for-agent` for `ready-for-human`, and stop.
