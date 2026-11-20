@@ -52,7 +52,8 @@ jobs:
             Steps:
             1. Read the PR with `gh pr view` and the diff with `gh pr diff`.
             2. If the PR body says "Closes #N" (or Fixes/Resolves), read that issue
-               with `gh issue view N --comments`. Its spec is what the PR should do.
+               with `gh issue view N` (the body, which holds the spec), then
+               `gh issue view N --comments`. The spec is what the PR should do.
             3. Review the change on two axes:
                - Spec: does the PR do what the linked issue asked, all of it, and
                  nothing it shouldn't? If there's no linked issue, judge it
