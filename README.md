@@ -16,7 +16,26 @@ By keeping records locally, we are able to perform long-term time-series analysi
 
 ## Software factory
 
-Issues here are planned with Nick, built by Claude in GitHub Actions, reviewed by Claude, and merged by Nick (or automatically, for low-risk changes). Production errors and Dependabot updates feed the same loop. See [`docs/agents/software-factory.md`](docs/agents/software-factory.md) for the diagram, the review lanes and the setup.
+Issues here are planned with Nick, built by Claude in GitHub Actions, reviewed by Claude, and merged by Nick (or automatically, for low-risk changes). Production errors and Dependabot updates feed the same loop. Yellow is where Nick is needed.
+
+```mermaid
+flowchart LR
+  classDef nick fill:#fff3cd,stroke:#b58900,color:#1f2328
+  classDef bot fill:#e7f1ff,stroke:#2f6feb,color:#1f2328
+  classDef done fill:#e6f4ea,stroke:#2da44e,color:#1f2328
+
+  P["Plan<br/>an issue is filed, then<br/>triaged and specced with Nick"]:::nick
+  B["Build<br/>Claude builds it test-first<br/>and opens a PR"]:::bot
+  V["Verify<br/>CI, preview and a<br/>Claude review"]:::bot
+  S["Ship<br/>auto-merge for low-risk changes,<br/>otherwise Nick merges"]:::done
+  W["Watch<br/>production errors and<br/>the weekly retro"]:::bot
+
+  P --> B --> V --> S --> W
+  W -->|"new issues and ideas"| P
+  V -.->|"fixes"| B
+```
+
+See [`docs/agents/software-factory.md`](docs/agents/software-factory.md) for the full diagram, the review lanes and the setup.
 
 ## Offline development (local database)
 
