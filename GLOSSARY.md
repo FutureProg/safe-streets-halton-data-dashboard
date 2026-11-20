@@ -36,11 +36,8 @@ A place where two or more streets meet. Incidents are matched to the nearest int
 _Avoid_: Junction, corner
 
 **Location**:
-A place on the map that holds all the incidents matched to one intersection. Locations are listed busiest first. An incident that can't be matched to an intersection shows as "Unknown location".
+A place on the map that holds all the incidents matched to one intersection. Every location is approximate, because police report incidents near an intersection, not exactly at it. Locations are listed busiest first. An incident that can't be matched to an intersection shows as "Unknown location".
 _Avoid_: Site, spot
-
-**Approximate location**:
-The idea that police report incidents near an intersection, not exactly at it, so every location is approximate.
 
 ### Map
 
