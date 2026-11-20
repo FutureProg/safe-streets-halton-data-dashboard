@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { decodeCursor } from "../db/pagination";
 
-/** Largest page the data endpoint will return. */
+/** Largest page the incident search server action will return. */
 export const MAX_PAGE_SIZE = 100;
 export const MAX_CASE_NO_LENGTH = 64;
 const MAX_CITIES = 50;
