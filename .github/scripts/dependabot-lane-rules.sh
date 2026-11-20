@@ -19,6 +19,12 @@ if [ "$count" -eq 0 ]; then
   exit 0
 fi
 
+if [ -z "$(printf '%s' "${CHANGED_FILES:-}" | tr -d '[:space:]')" ]; then
+  echo "lane=deep-review"
+  echo "reason=Couldn't read which files this PR changes."
+  exit 0
+fi
+
 outside=$(printf '%s\n' "${CHANGED_FILES:-}" | grep -v -E '^(package\.json|pnpm-lock\.yaml|package-lock\.json)?$' | head -n 1 || true)
 if [ -n "$outside" ]; then
   echo "lane=deep-review"

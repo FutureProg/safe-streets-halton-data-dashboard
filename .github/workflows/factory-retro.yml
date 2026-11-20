@@ -24,15 +24,18 @@ jobs:
   retro:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    env:
-      GH_TOKEN: ${{ github.token }}
     steps:
+      # No saved credentials, and GH_TOKEN only on the steps that call gh: the
+      # Claude step reads untrusted titles, so it gets nothing it could leak.
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
+          persist-credentials: false
 
       - name: Collect the week's activity
         id: week
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           .github/scripts/factory-week.sh > factory-week.md
           if [ -s factory-week.md ]; then
@@ -106,19 +109,25 @@ jobs:
       - name: Open the retro issue
         if: steps.week.outputs.quiet == 'false'
         env:
+          GH_TOKEN: ${{ github.token }}
           RESULT: ${{ steps.claude.outputs.structured_output }}
         run: |
-          headline=$(printf '%s' "$RESULT" | jq -r '.headline // empty')
-          body=$(printf '%s' "$RESULT" | jq -r '.body // empty')
-          if [ -z "$body" ]; then
+          if [ -z "$(printf '%s' "$RESULT" | jq -r '.body // empty' 2>/dev/null)" ]; then
             echo "::error::The retro run didn't return a body."
             exit 1
           fi
+          # Defuse @mentions and keep the whole issue under GitHub's 65,536
+          # character limit. jq counts characters, so nothing is cut mid-character.
+          printf '%s' "$RESULT" | jq -r --rawfile data factory-week.md '
+            def quiet: gsub("@"; "@\u200b");
+            def cap($n): if length > $n then .[:$n] + "\n\n…(cut to fit)" else . end;
+            "**\(.headline // "" | quiet | cap(300))**\n\n\(.body | quiet | cap(20000))\n\n" +
+            "<details><summary>The data this is based on</summary>\n\n\($data | cap(40000))\n</details>\n\n" +
+            "_Written by the weekly Factory retro workflow. It only suggests: nothing changes until Nick decides._\n"
+          ' > retro-body.md
           week=$(date -u -d "7 days ago" +%Y-%m-%d)
           url=$(gh issue create --repo "$GITHUB_REPOSITORY" \
-            --title "Factory retro: week of $week" --label factory-retro \
-            --body "$(printf '**%s**\n\n%s\n\n<details><summary>The data this is based on</summary>\n\n%s\n</details>\n\n_Written by the weekly Factory retro workflow. It only suggests: nothing changes until Nick decides._\n' \
-              "$headline" "$body" "$(head -c 40000 factory-week.md)")")
+            --title "Factory retro: week of $week" --label factory-retro --body-file retro-body.md)
           gh api --method PATCH "${url/https:\/\/github.com\//repos/}" -f type=Task > /dev/null \
             || echo "Couldn't set the Task type on $url"
           echo "Opened $url"

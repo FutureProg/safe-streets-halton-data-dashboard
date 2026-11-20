@@ -40,7 +40,7 @@ while read -r p; do
   reason=$(jq -r '[.[] | select(.body | startswith("<!-- pr-lane -->")) | .body
       | split("\n")[2] // ""] | last // ""' <<<"$comments")
   jq -r --arg v "$verdict" --arg r "$reason" '
-    def cell: tostring | gsub("\\|"; "/") | gsub("\\s+"; " ") | gsub("@"; "@\u200b");
+    def cell: tostring | gsub("\\|"; "/") | gsub("\\s+"; " ") | gsub("@"; "@\u200b") | gsub("<"; "&lt;");
     def hours($c): if . == null then "" else ((fromdateiso8601 - ($c | fromdateiso8601)) / 3600 | floor | tostring) end;
     .created_at as $c
     | (if .merged_at then "merged" elif .state == "closed" then "closed unmerged"
@@ -54,7 +54,7 @@ echo "## Issues updated ($issue_count)"
 echo
 echo "| Issue | Title | Author | Type | State | Labels | Comments |"
 echo "| --- | --- | --- | --- | --- | --- | --- |"
-jq -r '.[] | def cell: tostring | gsub("\\|"; "/") | gsub("\\s+"; " ") | gsub("@"; "@\u200b");
+jq -r '.[] | def cell: tostring | gsub("\\|"; "/") | gsub("\\s+"; " ") | gsub("@"; "@\u200b") | gsub("<"; "&lt;");
   "| #\(.number) | \(.title | cell) | \(.author) | \(.type // "none") | \(.state)\(if .state_reason then " (\(.state_reason))" else "" end) | \(.labels | join(", ")) | \(.comments) |"' <<<"$issues"
 
 echo

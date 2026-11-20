@@ -43,10 +43,19 @@ since_ms=$(( ($(date +%s) - LOOKBACK_HOURS * 3600) * 1000 ))
 # an "exception" and a "log"; the exception wins), newest first.
 errors=$(printf '%s' "$cf" | jq --argjson since "$since_ms" '
   def clean:
-    gsub("https?://[^\\s)`]+"; "<url>")
+    # Anything with a scheme (https://, postgres://user:pass@host, ...).
+    gsub("[A-Za-z][A-Za-z0-9+.-]*://[^\\s)`]+"; "<url>")
     | gsub("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"; "<email>")
     | gsub("\\b(?:\\d{1,3}\\.){3}\\d{1,3}(?::\\d+)?\\b"; "<ip>")
+    # IPv6: four or more hex groups, or any address shortened with "::".
+    # (Times like 12:30:45 have only three groups, so they stay.)
+    | gsub("(?<![A-Za-z0-9_:])(?=[0-9A-Fa-f:]*::)[0-9A-Fa-f:]{3,}(?![A-Za-z0-9_:])"; "<ip>")
+    | gsub("\\b(?:[0-9A-Fa-f]{1,4}:){3,7}[0-9A-Fa-f]{1,4}\\b"; "<ip>")
+    # Host names: any name with three or more parts, or a known ending.
+    | gsub("\\b[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+){2,}\\b(?::\\d+)?"; "<host>")
     | gsub("\\b(?:[A-Za-z0-9-]+\\.)+(?:com|net|org|io|ca|dev|me|app|cloud|internal|local|db)\\b(?::\\d+)?"; "<host>")
+    # Absolute file paths (relative bundle paths like _next/static/x.js stay).
+    | gsub("(?<![A-Za-z0-9_.-])/(?:[^\\s/]+/)+[^\\s/]*"; "<path>")
     | gsub("[A-Za-z0-9_+/=-]{32,}"; "<token>")
     # Shorter IDs and keys: 12+ characters mixing letters and digits.
     | gsub("\\b(?=[A-Za-z_-]*[0-9])(?=[0-9_-]*[A-Za-z])[A-Za-z0-9_-]{12,}\\b"; "<id>")
@@ -54,14 +63,17 @@ errors=$(printf '%s' "$cf" | jq --argjson since "$since_ms" '
     | gsub("`"; "'\''")
     | gsub("\\|"; "/")
     # Stop @names from pinging anyone (zero-width space after the @).
-    | gsub("@"; "@\u200b");
+    | gsub("@"; "@\u200b")
+    # Keep it short: the title is a pointer, not the full error.
+    | if length > 160 then .[:159] + "…" else . end;
   [ .result[]
     | select(.type == "exception" or .type == "log")
     | select(.lastObserved >= $since) ]
+  | map(.title |= clean)
   | group_by(.title)
   | map(sort_by(if .type == "exception" then 0 else 1 end) | .[0])
   | sort_by(-.lastObserved)
-  | map({id, type, count, title: (.title | clean),
+  | map({id, type, count, title,
          first: (.firstObserved / 1000 | floor | strftime("%Y-%m-%d %H:%M UTC")),
          last:  (.lastObserved / 1000 | floor | strftime("%Y-%m-%d %H:%M UTC")),
          lastMs: .lastObserved})')
@@ -92,7 +104,7 @@ while read -r e; do
       continue
     fi
     short=$(jq -r '.title | if length > 80 then .[:79] + "…" else . end' <<<"$e")
-    body=$(jq -r '"<!-- cloudflare-issue: \(.id) -->
+    body=$(jq -r --arg service "$SERVICE" '"<!-- cloudflare-issue: \(.id) -->
 Cloudflare spotted this error on the live dashboard.
 
 | | |
@@ -103,7 +115,7 @@ Cloudflare spotted this error on the live dashboard.
 | First seen | \(.first) |
 | Last seen | \(.last) |
 
-**Where to look:** in Cloudflare, open Workers & Pages, then the `'"$SERVICE"'` Worker, then Observability, then Issues, and search for a few words of the error above.
+**Where to look:** in Cloudflare, open Workers & Pages, then the `\($service)` Worker, then Observability, then Issues, and search for a few words of the error above.
 
 The error text had URLs, hosts, IPs, IDs and tokens taken out before posting, because this repo is public.
 

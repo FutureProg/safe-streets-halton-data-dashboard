@@ -17,6 +17,7 @@ on:
         default: "26"
 
 permissions:
+  contents: read
   issues: write
 
 concurrency:
