@@ -30,7 +30,7 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           # Paths that can change what the UI tests see. Keep in sync with the app layout.
-          UI_PATHS='^(src/|e2e/|public/|\.storybook/|\.github/workflows/ui-tests\.yml$|(playwright|vitest|vite|vite\.cloudflare|drizzle)\.config\.ts$|next\.config\.mjs$|postcss\.config\.cjs$|components\.json$|envConfig\.ts$|tsconfig\.json$|package\.json$|pnpm-lock\.yaml$|pnpm-workspace\.yaml$)'
+          UI_PATHS='^(src/|e2e/|public/|\.storybook/|\.github/workflows/ui-tests\.yml$|(playwright|vitest|vite|vite\.cloudflare|drizzle|cloudflare)\.config\.ts$|next\.config\.mjs$|postcss\.config\.cjs$|components\.json$|envConfig\.ts$|tsconfig\.json$|package\.json$|package-lock\.json$|\.env\.schema$|pnpm-lock\.yaml$|pnpm-workspace\.yaml$)'
           if [ -n "$PR_NUMBER" ]; then
             files=$(gh api --paginate "repos/${{ github.repository }}/pulls/${PR_NUMBER}/files" --jq '.[] | .filename, (.previous_filename // empty)') || files=""
           else
