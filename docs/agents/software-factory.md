@@ -4,54 +4,34 @@ How an idea or bug becomes a merged PR in this repo. Nick keeps three gates: the
 
 ## The loop
 
-Yellow boxes are where Nick is needed, blue boxes run by themselves, and green boxes are the finish. The happy path is the boxes marked Step 1 to Step 8: issue, triage, spec gate, build, verify, lane, merge, deploy.
+Yellow is where Nick is needed, blue runs by itself, and green is the finish. The table below has the detail.
 
 ```mermaid
 flowchart TD
   classDef nick fill:#fff3cd,stroke:#b58900,color:#1f2328
   classDef bot fill:#e7f1ff,stroke:#2f6feb,color:#1f2328
   classDef done fill:#e6f4ea,stroke:#2da44e,color:#1f2328
-  classDef side fill:#f6f8fa,stroke:#8c959f,color:#1f2328
 
-  A["Step 1: Issue filed<br/>issue form, or the production errors task<br/>label: needs-triage"]:::bot
-  T["Step 2: /triage on Nick's Mac"]:::nick
-  G{"Step 3: Spec gate:<br/>Nick adds ready-for-agent"}:::nick
-  B["Step 4: Build<br/>Claude builds test-first and opens a PR"]:::bot
-  V["Step 5: Verify<br/>CI, preview, lane label, Claude review"]:::bot
-  L{"Step 6: Which lane?"}:::bot
-  AM["Auto-merge lane<br/>docs, tests, copy, dev or<br/>security patch bumps<br/>GitHub merges it itself"]:::bot
-  N["Quick look or Deep review lane<br/>Nick checks the preview and merges"]:::nick
-  M["Step 7: Merged to main<br/>the issue closes"]:::done
-  D["Step 8: Cloudflare Workers Builds<br/>deploys production"]:::done
-  LIVE["Live on the dashboard"]:::done
+  A["Issue filed"]:::bot
+  T["Nick triages it and approves the spec"]:::nick
+  B["Claude builds it and opens a PR"]:::bot
+  V{"CI, preview and Claude review"}:::bot
+  F["Claude fixes the findings<br/>(up to 2 rounds)"]:::bot
+  H["Nick steps in"]:::nick
+  AM["Merged automatically<br/>(low-risk changes)"]:::done
+  N["Nick checks the preview and merges"]:::nick
+  D["Deployed to production"]:::done
 
-  X["Auto-fix<br/>Claude's own PRs, max 2 rounds"]:::bot
-  H["ready-for-human<br/>Nick fixes it, or comments @claude"]:::nick
-  I["needs-info or wontfix<br/>(issue is closed or parked)"]:::side
-  E["Workers Issues sends errors to a<br/>Claude task, which files an issue"]:::bot
-  R["Monday retro issue<br/>(suggestions only)"]:::bot
-
-  A --> T
-  T -->|"clear enough"| G
-  T -->|"unclear, or won't do"| I
-  T -->|"needs a person"| H
-  G -->|"Nick says yes"| B
-  B -->|"PR opened"| V
-  B -->|"stuck"| H
-  V -->|"Looks good"| L
-  V -->|"Needs changes"| X
-  X -->|"pushed: review again"| V
-  X -->|"still failing"| H
-  L -->|"Auto-merge"| AM
-  L -->|"Quick look or Deep review"| N
-  AM -->|"required checks pass"| M
-  N --> M
-  H -->|"pushed: review again"| V
-  M --> D
-  D --> LIVE
-  LIVE -.->|"production errors"| E
-  E -.->|"files a new issue"| A
-  M -.->|"Mondays"| R
+  A --> T --> B --> V
+  V -->|"needs changes"| F
+  F -->|"review again"| V
+  F -->|"still stuck"| H
+  H --> V
+  V -->|"looks good, low risk"| AM
+  V -->|"looks good, everything else"| N
+  AM --> D
+  N --> D
+  D -.->|"production errors become new issues"| A
 ```
 
 ## The flow
