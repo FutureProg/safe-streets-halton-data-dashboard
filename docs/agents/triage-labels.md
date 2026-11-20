@@ -22,3 +22,4 @@ These are managed by `.github/workflows/labels.yml` and aren't triage roles:
 
 - `ai-review`: add to a PR to ask for another Claude review.
 - `lane: auto-merge`, `lane: quick-look`, `lane: deep-review`: the review lane a PR is in.
+- `ready-for-human` on a PR: Claude's fix rounds didn't settle the review, so the PR waits for Nick.
