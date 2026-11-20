@@ -14,6 +14,10 @@ By keeping records locally, we are able to perform long-term time-series analysi
 2. This NextJS app has no separate backend server - its own `src/app/api/*` route handlers query the database directly using [Drizzle ORM](https://orm.drizzle.team/). The database is Postgres.
 3. The NextJS React web application fetches from its own API routes (via SWR, coordinated by an XState state machine and Redux Toolkit) and displays the results on a map using [Plotly](https://plotly.com/javascript/react/) and [Leaflet](https://leafletjs.com/).
 
+## Software factory
+
+Issues here are planned with Nick, built by Claude in GitHub Actions, reviewed by Claude, and merged by Nick (or automatically, for low-risk changes). Production errors and Dependabot updates feed the same loop. See [`docs/agents/software-factory.md`](docs/agents/software-factory.md) for the diagram, the review lanes and the setup.
+
 ## Offline development (local database)
 
 Requires Docker.

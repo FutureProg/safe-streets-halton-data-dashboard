@@ -2,6 +2,54 @@
 
 How an idea or bug becomes a merged PR in this repo. Nick keeps three gates: the spec, the code review he chooses to do, and the product check on the preview.
 
+## The loop
+
+Yellow boxes are where Nick is needed, blue boxes run by themselves.
+
+```mermaid
+flowchart TD
+  classDef nick fill:#fff3cd,stroke:#b58900,color:#1f2328
+  classDef bot fill:#e7f1ff,stroke:#2f6feb,color:#1f2328
+  classDef end_ fill:#e6f4ea,stroke:#2da44e,color:#1f2328
+  classDef side fill:#f6f8fa,stroke:#8c959f,color:#1f2328
+
+  A["Issue filed<br/>(issue form, or the production errors task)<br/>label: needs-triage"]:::bot
+  T["/triage on Nick's Mac"]:::nick
+  G{"Spec gate:<br/>Nick says yes"}:::nick
+  B["Build (claude-build.yml)<br/>test-first, opens a PR"]:::bot
+  V["Verify<br/>CI, preview, lane label, Claude review"]:::bot
+  X["Auto-fix<br/>(Claude's own PRs, max 2 rounds)"]:::bot
+  L{"Lane?"}:::bot
+  N["Nick checks the preview<br/>and merges"]:::nick
+  M["Merged to main"]:::end_
+  D["Cloudflare Workers Builds<br/>deploys production"]:::bot
+  E["Workers Issues sends errors to a<br/>Claude task, which files an issue"]:::bot
+  R["Monday retro issue<br/>(suggestions only)"]:::bot
+  H["ready-for-human:<br/>waits for Nick"]:::nick
+  I["needs-info or wontfix"]:::side
+  DB["Dependabot PRs"]:::side
+
+  A --> T
+  T -->|"unclear, or won't do"| I
+  T -->|"needs a person"| H
+  T -->|"clear enough"| G
+  G -->|"ready-for-agent label"| B
+  B -->|"stuck"| H
+  B --> V
+  V -->|"Needs changes"| X
+  X -->|"pushed, review again"| V
+  X -->|"still failing"| H
+  V --> L
+  DB --> L
+  L -->|"Auto-merge: docs, tests, copy,<br/>dev or security patch bumps"| M
+  L -->|"Quick look or Deep review"| N
+  N --> M
+  M --> D
+  D -.->|"errors in production"| E
+  E -.-> A
+  M -.-> R
+```
+
 ## The flow
 
 | Step            | Where it runs                       | What happens                                                                                                                                                            | Who's needed       |
