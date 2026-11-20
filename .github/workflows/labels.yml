@@ -28,6 +28,8 @@ jobs:
           label "ready-for-agent" "0e8a16" "Spec approved; an AI agent can build it"
           label "ready-for-human" "5319e7" "Spec approved; needs a person to build it"
           label "wontfix"         "ffffff" "Not going to be done"
+          # Ask the AI reviewer to review a PR again
+          label "ai-review" "1d76db" "Ask Claude to review this PR again"
           # Review lanes (set on PRs by the classifier)
           label "lane: auto-merge"  "c2e0c6" "Low risk; AI checks it, then it merges itself"
           label "lane: quick-look"  "bfd4f2" "AI reviewed; Nick merges"

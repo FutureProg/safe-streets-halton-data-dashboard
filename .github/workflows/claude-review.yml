@@ -1,0 +1,88 @@
+# AI code review on pull requests (software factory, Phase 1).
+# Runs on Nick's Claude subscription through the CLAUDE_CODE_OAUTH_TOKEN secret.
+# To save usage it reviews when a PR opens or leaves draft, not on every push.
+# Add the "ai-review" label to a PR to ask for another review after changes.
+name: Claude code review
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review, labeled]
+
+concurrency:
+  group: claude-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    if: >-
+      github.event.pull_request.draft == false &&
+      github.actor != 'dependabot[bot]' &&
+      (github.event.action != 'labeled' || github.event.label.name == 'ai-review')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          track_progress: true
+          claude_args: |
+            --model sonnet
+            --max-turns 40
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh issue view:*),Read,Grep,Glob,Task,Agent"
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
+            You are reviewing a pull request for the Safe Streets Halton dashboard,
+            a Next.js app (run through vinext on Cloudflare Workers) that maps
+            Halton police incident data. Read CLAUDE.md and AGENTS.md for the
+            project's conventions before reviewing.
+
+            Steps:
+            1. Read the PR with `gh pr view` and the diff with `gh pr diff`.
+            2. If the PR body says "Closes #N" (or Fixes/Resolves), read that issue
+               with `gh issue view N --comments`. Its spec is what the PR should do.
+            3. Review the change on two axes:
+               - Spec: does the PR do what the linked issue asked, all of it, and
+                 nothing it shouldn't? If there's no linked issue, judge it
+                 against the PR description.
+               - Standards: correctness bugs, security (especially database
+                 queries and server actions), accessibility, missing tests, and
+                 the conventions in CLAUDE.md and AGENTS.md. Skip style nits a
+                 linter would catch.
+               Size the review to the change:
+               - Small and simple (roughly under 150 changed lines, a few files,
+                 and nothing touching the database, server actions, auth,
+                 config or workflows): review both axes yourself in one pass.
+               - Anything bigger or riskier: start two sub-agents in parallel, a
+                 Spec reviewer and a Standards reviewer. Give each the repo, the
+                 PR number, the linked issue number (if any) and its axis. Each
+                 reports findings back as file, line, severity (Blocking, Should
+                 fix or Nit) and a one-line explanation, and posts nothing.
+            4. Combine the findings, drop duplicates and anything you can't
+               confirm in the code, then post an inline comment on the exact line
+               for each remaining problem.
+            5. Post one summary comment with `gh pr comment`, in this shape:
+
+               ## Claude review
+               **What this PR does:** two or three plain sentences.
+               **Verdict:** Looks good / Needs changes / Needs a closer human look
+               **Spec:** matches the issue: yes, partly or no, with one line why
+               (or "No linked issue").
+               **Standards:** a short list of findings, most important first, each
+               marked Blocking, Should fix or Nit. Write "None" if there are none.
+               **Check on the preview:** what to click through on the Cloudflare
+               preview, or "Nothing visible" for non-UI changes.
+
+            Write in plain, friendly Canadian English. Keep the summary short:
+            the reader skims it. Do not approve or merge the PR, and do not push
+            commits.
