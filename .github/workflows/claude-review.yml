@@ -36,8 +36,8 @@ jobs:
           track_progress: true
           claude_args: |
             --model sonnet
-            --max-turns 30
-            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh issue view:*),Read,Grep,Glob"
+            --max-turns 40
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh issue view:*),Read,Grep,Glob,Task,Agent"
           prompt: |
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
@@ -51,22 +51,31 @@ jobs:
             1. Read the PR with `gh pr view` and the diff with `gh pr diff`.
             2. If the PR body says "Closes #N" (or Fixes/Resolves), read that issue
                with `gh issue view N --comments`. Its spec is what the PR should do.
-            3. Review the change on two axes:
-               - Spec: does it do what the issue asked, and nothing it shouldn't?
-               - Standards: correctness bugs, security (especially database queries
-                 and server actions), accessibility, missing tests, and the
-                 conventions in CLAUDE.md and AGENTS.md.
-            4. Post an inline comment on the exact line for each specific problem.
-               Only comment on real problems, not style nits a linter would catch.
+            3. Start two sub-agents in parallel, one per review axis. Give each
+               the repo, the PR number, the linked issue number (if any), and its
+               brief below. Each one reads the diff and the code it needs, then
+               reports findings back to you as a list of file, line, severity
+               (Blocking, Should fix or Nit) and a one-line explanation. The
+               sub-agents only report; they do not post anything.
+               - Spec reviewer: does the PR do what the linked issue asked, all of
+                 it, and nothing it shouldn't? If there's no linked issue, judge it
+                 against the PR description.
+               - Standards reviewer: correctness bugs, security (especially
+                 database queries and server actions), accessibility, missing
+                 tests, and the conventions in CLAUDE.md and AGENTS.md. Skip style
+                 nits a linter would catch.
+            4. Combine the two reports, drop duplicates and anything you can't
+               confirm in the code, then post an inline comment on the exact line
+               for each remaining problem.
             5. Post one summary comment with `gh pr comment`, in this shape:
 
                ## Claude review
                **What this PR does:** two or three plain sentences.
                **Verdict:** Looks good / Needs changes / Needs a closer human look
-               **Matches the issue:** yes, partly or no, with one line why (or
-               "No linked issue").
-               **Findings:** a short list, most important first, each marked
-               Blocking, Should fix or Nit. Write "None" if there are none.
+               **Spec:** matches the issue: yes, partly or no, with one line why
+               (or "No linked issue").
+               **Standards:** a short list of findings, most important first, each
+               marked Blocking, Should fix or Nit. Write "None" if there are none.
                **Check on the preview:** what to click through on the Cloudflare
                preview, or "Nothing visible" for non-UI changes.
 
