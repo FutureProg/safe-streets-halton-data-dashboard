@@ -18,6 +18,14 @@ updates:
     open-pull-requests-limit: 5
     commit-message:
       prefix: chore(deps)
+    # Vite+ owns these. The `vite` alias (vite-plus-core) and the vitest pins in
+    # pnpm-workspace.yaml must move in lockstep with vite-plus, which Dependabot
+    # can't do. Upgrade them together with `vp upgrade` / `vp migrate` instead.
+    ignore:
+      - dependency-name: vite-plus
+      - dependency-name: vitest
+      - dependency-name: "@vitest/*"
+      - dependency-name: "@voidzero-dev/*"
     groups:
       dev-patches:
         dependency-type: development
