@@ -26,10 +26,8 @@ flowchart TD
   LIVE["Live on the dashboard"]:::done
 
   X["Auto-fix<br/>Claude's own PRs, max 2 rounds"]:::bot
-  H["ready-for-human<br/>waits for Nick"]:::nick
-  NH["Nick fixes it, or comments @claude"]:::nick
+  H["ready-for-human<br/>Nick fixes it, or comments @claude"]:::nick
   I["needs-info or wontfix<br/>(issue is closed or parked)"]:::side
-  DB["Dependabot PRs"]:::side
   E["Workers Issues sends errors to a<br/>Claude task, which files an issue"]:::bot
   R["Monday retro issue<br/>(suggestions only)"]:::bot
 
@@ -44,13 +42,11 @@ flowchart TD
   V -->|"Needs changes"| X
   X -->|"pushed: review again"| V
   X -->|"still failing"| H
-  DB --> L
   L -->|"Auto-merge"| AM
   L -->|"Quick look or Deep review"| N
   AM -->|"required checks pass"| M
   N --> M
-  H --> NH
-  NH -->|"pushed: review again"| V
+  H -->|"pushed: review again"| V
   M --> D
   D --> LIVE
   LIVE -.->|"production errors"| E
