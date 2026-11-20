@@ -68,6 +68,11 @@ The error issues have URLs (including database connection strings), hosts, IPs, 
 
 The retro only suggests. Nick decides what to change, including whether the Auto-merge lane gets wider.
 
+## Fixing review findings
+
+- **Claude's own PRs fix themselves, up to 2 rounds.** When the review says "Needs changes" on a PR the build opened, the `fix` job in `claude-review.yml` has Claude fix the findings, reply on each inline comment, and push. Claude's push gets a fresh review (other pushes don't). If the review still says "Needs changes" after 2 rounds, or a round pushes nothing or fails, the PR gets `ready-for-human` and waits for Nick.
+- **`@claude` on any PR.** Nick can write `@claude` in a PR comment, a review, or a reply on a review comment, for example "@claude fix the review comments" (`claude-mention.yml`). Claude answers there and pushes any code changes to the PR's branch. Only Nick's comments start a run, because this repo is public.
+
 ## Limits
 
-Everything runs on Nick's Claude Pro subscription. One build runs at a time and others queue. A build is capped at 80 turns and 60 minutes, a review at 40 turns, and the weekly retro at 30 turns. The Cloudflare errors workflow and the Dependabot lane use no AI.
+Everything runs on Nick's Claude Pro subscription. One build runs at a time and others queue. A build is capped at 80 turns and 60 minutes, a review at 40 turns, a fix round or an `@claude` request at 60 turns, and the weekly retro at 30 turns. The Cloudflare errors workflow and the Dependabot lane use no AI.
