@@ -6,8 +6,10 @@
 #   lane=<auto-merge|deep-review>
 #   reason=<one sentence>
 #
-# Only patch bumps of direct dev dependencies, touching nothing but
-# package.json and the lockfiles, may auto-merge. Everything else is Deep review.
+# Only patch bumps, touching nothing but package.json and the lockfiles, may
+# auto-merge, and each one must be a direct dev dependency or fix a security
+# advisory ("fixesAdvisory": true, from dependabot-advisories.sh). Everything
+# else is Deep review.
 set -euo pipefail
 
 deps=$(cat)
@@ -33,7 +35,8 @@ if [ -n "$outside" ]; then
 fi
 
 risky=$(printf '%s' "$deps" | jq -r '
-  map(select(.dependencyType != "direct:development" or .updateType != "version-update:semver-patch"))
+  map(select(.updateType != "version-update:semver-patch"
+    or (.dependencyType != "direct:development" and .fixesAdvisory != true)))
   | .[0] // empty
   | (.dependencyType | if . == "direct:production" then "an app dependency"
       elif . == "direct:development" then "a dev dependency"
@@ -44,10 +47,15 @@ risky=$(printf '%s' "$deps" | jq -r '
 
 if [ -n "$risky" ]; then
   echo "lane=deep-review"
-  echo "reason=It updates $risky. Only dev-dependency patch bumps auto-merge."
+  echo "reason=It updates $risky. Only patch bumps of dev dependencies, or patch bumps that fix a security advisory, auto-merge."
   exit 0
 fi
 
+security=$(printf '%s' "$deps" | jq '[.[] | select(.fixesAdvisory == true)] | length')
 if [ "$count" -eq 1 ]; then word="dependency"; else word="dependencies"; fi
 echo "lane=auto-merge"
-echo "reason=Only patch updates to $count dev $word."
+if [ "$security" -gt 0 ]; then
+  echo "reason=Only patch updates to $count $word, and $security of them fix a security advisory."
+else
+  echo "reason=Only patch updates to $count dev $word."
+fi

@@ -45,8 +45,8 @@ Plain rules (`.github/scripts/pr-lane-rules.sh`, always read from `main`) set th
 
 Dependabot opens security fixes as they come out and one round of version updates each Monday (`.github/dependabot.yml`). It waits 7 days after a release before suggesting it, except for security fixes. Dependabot runs can't use the Claude token, so `dependabot-lane.yml` sorts its PRs with plain rules only (`.github/scripts/dependabot-lane-rules.sh`):
 
-- Auto-merge: only patch bumps of dev dependencies, changing only `package.json` and the lockfiles. GitHub merges them once the required checks pass.
-- Deep review: everything else, including app dependencies, sub-dependencies, minor and major bumps, and GitHub Actions updates.
+- Auto-merge: patch bumps that change only `package.json` and the lockfiles, where each dependency is either a dev dependency or a fix for a published security advisory. GitHub merges them once the required checks pass. A bump counts as a security fix when the GitHub Advisory Database lists an advisory for the old version that doesn't apply to the new one (`.github/scripts/dependabot-advisories.sh`).
+- Deep review: everything else, including other app and sub-dependency bumps, minor and major bumps (even security ones), and GitHub Actions updates.
 
 If someone pushes to a Dependabot PR, it goes through the normal lanes and the Claude review instead.
 

@@ -54,6 +54,38 @@ check "workflow change is deep review" "lane=deep-review" \
 check "empty dependency list is deep review" "lane=deep-review" "$(lane '[]' "$lock")"
 check "empty file list is deep review" "lane=deep-review" \
   "$(lane "[$(dep a direct:development patch)]" '')"
+sdep() { printf '{"dependencyName":"%s","dependencyType":"%s","updateType":"version-update:semver-%s","fixesAdvisory":true}' "$1" "$2" "$3"; }
+check "security patch to an app dependency auto-merges" "lane=auto-merge" \
+  "$(lane "[$(sdep next direct:production patch)]" "$lock")"
+check "security patch to a sub-dependency auto-merges" "lane=auto-merge" \
+  "$(lane "[$(sdep hono indirect patch)]" 'pnpm-lock.yaml')"
+check "security patch says so" "1 of them fix a security advisory" \
+  "$(lane "[$(sdep next direct:production patch)]" "$lock")"
+check "security minor is deep review" "lane=deep-review" \
+  "$(lane "[$(sdep next direct:production minor)]" "$lock")"
+check "security patch grouped with a plain app patch is deep review" "lane=deep-review" \
+  "$(lane "[$(sdep next direct:production patch),$(dep hono direct:production patch)]" "$lock")"
+check "security patch with an extra file is deep review" "lane=deep-review" \
+  "$(lane "[$(sdep next direct:production patch)]" $'package.json\npnpm-workspace.yaml')"
+
+# --- dependabot-advisories.sh ---------------------------------------------
+advfix=$(mktemp)
+echo '{"next@16.4.1":["GHSA-a","GHSA-b"],"next@16.4.5":[],"hono@4.1.0":["GHSA-c"],"hono@4.1.1":["GHSA-c"]}' > "$advfix"
+adv() { printf '%s' "$1" | ADVISORIES_FIXTURE="$advfix" ./dependabot-advisories.sh; }
+vdep() { printf '{"dependencyName":"%s","prevVersion":"%s","newVersion":"%s"}' "$1" "$2" "$3"; }
+check "an update that clears advisories is marked" '"fixesAdvisory":true' \
+  "$(adv "[$(vdep next 16.4.1 16.4.5)]")"
+check "an update that leaves the advisory open is not marked" '"fixesAdvisory":false' \
+  "$(adv "[$(vdep hono 4.1.0 4.1.1)]")"
+check "a package with no advisories is not marked" '"fixesAdvisory":false' \
+  "$(adv "[$(vdep vitest 1.0.0 1.0.1)]")"
+check "a missing old version is not marked" '"fixesAdvisory":false' \
+  "$(adv '[{"dependencyName":"next","newVersion":"16.4.5"}]')"
+check "each dependency is checked on its own" '"dependencyName":"hono","prevVersion":"4.1.0","newVersion":"4.1.1","fixesAdvisory":false' \
+  "$(adv "[$(vdep next 16.4.1 16.4.5),$(vdep hono 4.1.0 4.1.1)]")"
+check "a failed lookup is not marked" '"fixesAdvisory":false' \
+  "$(printf '%s' "[$(vdep next 16.4.1 16.4.5)]" | ADVISORIES_FIXTURE=/nonexistent ./dependabot-advisories.sh 2>/dev/null)"
+rm -f "$advfix"
 
 echo
 if [ "$fails" -gt 0 ]; then

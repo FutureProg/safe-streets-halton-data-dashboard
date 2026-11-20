@@ -2,8 +2,9 @@
 #
 # Dependabot runs get no Actions secrets, so there is no Claude review here.
 # Plain rules decide instead (.github/scripts/dependabot-lane-rules.sh, read
-# from main): patch bumps of dev dependencies auto-merge once the required
-# checks pass, and everything else goes to Deep review for Nick.
+# from main): patch bumps of dev dependencies, and patch bumps that fix a
+# security advisory, auto-merge once the required checks pass. Everything else
+# goes to Deep review for Nick.
 # If a person pushes to a Dependabot PR, claude-review.yml takes over.
 name: Dependabot lane
 on:
@@ -51,10 +52,16 @@ jobs:
         id: rules
         env:
           DEPS: ${{ steps.meta.outputs.updated-dependencies-json }}
+          ECOSYSTEM: ${{ steps.meta.outputs.package-ecosystem }}
         run: |
           CHANGED_FILES=$(gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --jq '.[].filename')
           export CHANGED_FILES
-          printf '%s' "${DEPS:-[]}" | .github/scripts/dependabot-lane-rules.sh | tee -a "$GITHUB_OUTPUT"
+          deps="${DEPS:-[]}"
+          # Mark the updates that fix a published security advisory (npm only).
+          if [ "$ECOSYSTEM" = "npm_and_yarn" ]; then
+            deps=$(printf '%s' "$deps" | .github/scripts/dependabot-advisories.sh) || deps="${DEPS:-[]}"
+          fi
+          printf '%s' "$deps" | .github/scripts/dependabot-lane-rules.sh | tee -a "$GITHUB_OUTPUT"
 
       - name: Label the PR and explain the lane
         env:
