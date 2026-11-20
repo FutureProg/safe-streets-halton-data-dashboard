@@ -45,7 +45,7 @@ jobs:
       PR: ${{ github.event.pull_request.number }}
     steps:
       # The rules come from main, so a PR can't change the rules it's judged by.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.base.sha }}
           fetch-depth: 1
@@ -170,7 +170,7 @@ jobs:
     outputs:
       verdict: ${{ steps.verdict.outputs.verdict }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
@@ -366,14 +366,14 @@ jobs:
           gh pr edit "$PR" --repo "$GITHUB_REPOSITORY" --add-label ready-for-human
           gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body "Claude has had $MAX_ROUNDS rounds at the review findings and the review still says \"Needs changes\", so this one is over to Nick. Ask \`@claude\` here to try something specific."
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         if: steps.rounds.outputs.more == 'true'
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 1
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         if: steps.rounds.outputs.more == 'true'
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         if: steps.rounds.outputs.more == 'true'
         with:
           node-version: lts/*
