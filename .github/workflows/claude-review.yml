@@ -21,7 +21,7 @@ concurrency:
 
 jobs:
   lane:
-    # Dependabot runs get no secrets, so dependabot-lane.yml sorts its PRs instead.
+    # Dependabot runs get no secrets and a read-only token, so its PRs keep no lane for now.
     if: >-
       github.event.pull_request.draft == false &&
       github.actor != 'dependabot[bot]' &&
