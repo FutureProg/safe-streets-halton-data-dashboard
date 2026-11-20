@@ -168,6 +168,19 @@ jobs:
         with:
           fetch-depth: 1
 
+      # Shows the review is under way. Removed again once the review is posted.
+      - name: Say the review has started
+        id: started
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          id=$(gh api --method POST "repos/$GITHUB_REPOSITORY/issues/$PR/comments" \
+            -f body="$(printf '<!-- claude-review-started -->\n🔍 Claude is reviewing this PR. Follow along in the [workflow run](%s).' "$RUN_URL")" \
+            --jq .id) || true
+          echo "id=$id" >> "$GITHUB_OUTPUT"
+
       - uses: anthropics/claude-code-action@v1
         id: claude
         with:
@@ -250,6 +263,25 @@ jobs:
         run: |
           verdict=$(printf '%s' "$RESULT" | jq -r '.verdict // empty' 2>/dev/null || true)
           echo "verdict=${verdict:-unknown}" >> "$GITHUB_OUTPUT"
+
+      # Remove the "reviewing" note once the review is up. If the review failed,
+      # turn the note into a pointer to the run instead.
+      - name: Tidy up the started note
+        if: always() && steps.started.outputs.id != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COMMENT_ID: ${{ steps.started.outputs.id }}
+          OUTCOME: ${{ steps.claude.outcome }}
+          VERDICT: ${{ steps.verdict.outputs.verdict }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          # "unknown" means the run ended without returning a review.
+          if [ "$OUTCOME" = "failure" ] || [ "$VERDICT" = "unknown" ]; then
+            gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$COMMENT_ID" \
+              -f body="$(printf '<!-- claude-review-started -->\n⚠️ The Claude review didn'"'"'t finish. See the [workflow run](%s), or add the `ai-review` label to try again.' "$RUN_URL")" > /dev/null
+          else
+            gh api --method DELETE "repos/$GITHUB_REPOSITORY/issues/comments/$COMMENT_ID" || true
+          fi
 
   merge:
     needs: [lane, review]
