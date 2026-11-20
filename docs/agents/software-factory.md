@@ -80,6 +80,8 @@ Dependabot opens security fixes as they come out and one round of version update
 - Auto-merge: patch bumps that change only `package.json` and the lockfiles, where each dependency is either a dev dependency or a fix for a published security advisory. GitHub merges them once the required checks pass. A bump counts as a security fix when the GitHub Advisory Database lists an advisory for the old version that doesn't apply to the new one (`.github/scripts/dependabot-advisories.sh`).
 - Deep review: everything else, including other app and sub-dependency bumps, minor and major bumps (even security ones), and GitHub Actions updates.
 
+Every Dependabot PR is opened with `lane: deep-review` (set in `.github/dependabot.yml`), so it's never left without a lane if the workflow doesn't run. The workflow swaps it for `lane: auto-merge` when the rules allow. If a PR shows Deep review but no lane comment, the workflow didn't run: comment `@dependabot recreate` to rebuild it and run the workflows again.
+
 If someone pushes to a Dependabot PR, it goes through the normal lanes and the Claude review instead.
 
 ## Monitoring and the weekly retro

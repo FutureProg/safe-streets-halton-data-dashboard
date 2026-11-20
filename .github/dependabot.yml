@@ -2,6 +2,9 @@
 # Security updates are on in the repo settings and skip the cooldown.
 # Version updates come once a week. Dev-dependency patch bumps get their own
 # group so they can take the Auto-merge lane (see dependabot-lane.yml).
+# Every PR starts with "lane: deep-review", so a PR is never left without a
+# lane if dependabot-lane.yml doesn't run. The workflow swaps it for
+# "lane: auto-merge" when the rules allow.
 version: 2
 updates:
   - package-ecosystem: npm
@@ -18,6 +21,7 @@ updates:
     open-pull-requests-limit: 5
     commit-message:
       prefix: chore(deps)
+    labels: [dependencies, javascript, "lane: deep-review"]
     groups:
       dev-patches:
         dependency-type: development
@@ -34,6 +38,7 @@ updates:
       default-days: 7
     commit-message:
       prefix: chore(actions)
+    labels: [dependencies, github_actions, "lane: deep-review"]
     groups:
       actions:
         patterns: ["*"]
