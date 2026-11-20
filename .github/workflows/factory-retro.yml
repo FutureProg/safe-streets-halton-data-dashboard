@@ -27,7 +27,7 @@ jobs:
     steps:
       # No saved credentials, and GH_TOKEN only on the steps that call gh: the
       # Claude step reads untrusted titles, so it gets nothing it could leak.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
           persist-credentials: false
