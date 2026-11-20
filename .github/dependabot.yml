@@ -1,0 +1,39 @@
+# Dependency updates (software factory, Phase 4).
+# Security updates are on in the repo settings and skip the cooldown.
+# Version updates come once a week. Dev-dependency patch bumps get their own
+# group so they can take the Auto-merge lane (see dependabot-lane.yml).
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: America/Toronto
+    # Wait a week after a release before suggesting it, so a bad or
+    # malicious publish has time to be caught.
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore(deps)
+    groups:
+      dev-patches:
+        dependency-type: development
+        update-types: [patch]
+      everything-else:
+        patterns: ["*"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+      timezone: America/Toronto
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: chore(actions)
+    groups:
+      actions:
+        patterns: ["*"]
