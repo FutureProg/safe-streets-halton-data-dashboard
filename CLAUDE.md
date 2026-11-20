@@ -1,5 +1,23 @@
 @AGENTS.md
 
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues in this repo, with built-in issue types (Bug, Feature, Task) instead of category labels. Specs copy their SSHD story details in. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five default triage labels (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). `ready-for-agent` starts a build run. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `GLOSSARY.md` and `docs/adr/` at the repo root, created when needed. See `docs/agents/domain.md`.
+
+### Software factory
+
+How issues become PRs here, and what runs where. See `docs/agents/software-factory.md`.
+
 <!--VITE PLUS START-->
 
 # Using Vite+, the Unified Toolchain for the Web

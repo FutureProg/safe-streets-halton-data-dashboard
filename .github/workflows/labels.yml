@@ -1,0 +1,36 @@
+# Creates or updates the labels the software factory uses.
+# Runs when this file changes on main, or by hand from the Actions tab.
+name: Sync labels
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [.github/workflows/labels.yml]
+
+permissions:
+  issues: write
+
+jobs:
+  labels:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - name: Create or update labels
+        run: |
+          set -euo pipefail
+          label() { gh label create "$1" --color "$2" --description "$3" --force; }
+          # Bug vs feature uses GitHub's built-in issue types, not labels.
+          # Triage state (used by the triage skill)
+          label "needs-triage"    "ededed" "Not looked at yet"
+          label "needs-info"      "fbca04" "Waiting on more detail from the reporter"
+          label "ready-for-agent" "0e8a16" "Spec approved; an AI agent can build it"
+          label "ready-for-human" "5319e7" "Spec approved; needs a person to build it"
+          label "wontfix"         "ffffff" "Not going to be done"
+          # Ask the AI reviewer to review a PR again
+          label "ai-review" "1d76db" "Ask Claude to review this PR again"
+          # Review lanes (set on PRs by the classifier)
+          label "lane: auto-merge"  "c2e0c6" "Low risk; AI checks it, then it merges itself"
+          label "lane: quick-look"  "bfd4f2" "AI reviewed; Nick merges"
+          label "lane: deep-review" "f9d0c4" "Risky area; Nick reviews closely"
