@@ -9,7 +9,7 @@ Errors on the live dashboard reach GitHub through Cloudflare Workers Issues and 
    - Repository: `FutureProg/safe-streets-halton-data-dashboard`.
    - Prompt: the block under [Prompt](#prompt) below.
    - Schedule: none. Remove any connectors it doesn't need.
-   - Trigger: add an **API** trigger and generate its token. Copy the routine ID and the token. The token is shown once, so paste it straight into Cloudflare and don't store it anywhere else.
+   - Trigger: add an **API** trigger and generate its token. Copy the token. The routine ID is the part of the trigger URL between `/routines/` and `/fire` (it starts with `trig_`). The token is shown once, so paste it straight into Cloudflare and don't store it anywhere else.
 2. **Point Cloudflare at it**: Workers & Pages, `safe-streets-halton-dashboard`, Observability, Issues, Automations, Add automation.
    - Destination: Coding agent, Claude Code, with the routine ID and token.
    - Automation 1: occurrence threshold `1` (new errors).
@@ -33,10 +33,11 @@ Your only job is to file or update one issue. Do not change code, push branches 
    - Closed: reopen it and add the same comment. Stop.
    - None: continue.
 3. Make the text safe for a public repo. Remove, or replace with a short placeholder:
+   - passwords, secrets, API keys, access tokens and credentials of any length, including any in a URL or connection string;
    - URLs, connection strings, host names, IP addresses, email addresses and absolute file paths;
-   - tokens, keys, hashes and IDs longer than 12 characters (except the Cloudflare issue ID in the HTML comment);
+   - any other ID or hash longer than 12 characters, except the Cloudflare issue ID, which goes only in the HTML comment;
    - names, addresses and other details about site visitors;
-   - account IDs, database names, and Worker or binding IDs.
+   - account IDs, database names and user names, and Worker or binding IDs.
    Put a zero-width space after every @ so nobody is mentioned. Keep repo-relative paths such as src/app/page.tsx:42.
 4. Create the issue:
    - Title: "Production error: " plus the cleaned message, at most 160 characters.
