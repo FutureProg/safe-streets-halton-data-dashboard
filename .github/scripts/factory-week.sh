@@ -32,7 +32,7 @@ echo "## Pull requests updated ($pr_count)"
 echo
 echo "| PR | Title | Author | State | Lane | Review verdict | Lane reason | Hours open |"
 echo "| --- | --- | --- | --- | --- | --- | --- | --- |"
-jq -c '.[]' <<<"$prs" | while read -r p; do
+while read -r p; do
   n=$(jq -r .number <<<"$p")
   comments=$(gh api --paginate "$R/issues/$n/comments?per_page=100" --jq '.[] | {user: .user.login, body}' | jq -s '.')
   verdict=$(jq -r '[.[] | select(.body | test("(^|\\n)## Claude review")) | .body
@@ -40,21 +40,21 @@ jq -c '.[]' <<<"$prs" | while read -r p; do
   reason=$(jq -r '[.[] | select(.body | startswith("<!-- pr-lane -->")) | .body
       | split("\n")[2] // ""] | last // ""' <<<"$comments")
   jq -r --arg v "$verdict" --arg r "$reason" '
-    def cell: tostring | gsub("\\|"; "/") | gsub("\n"; " ");
+    def cell: tostring | gsub("\\|"; "/") | gsub("\\s+"; " ") | gsub("@"; "@\u200b");
     def hours($c): if . == null then "" else ((fromdateiso8601 - ($c | fromdateiso8601)) / 3600 | floor | tostring) end;
     .created_at as $c
     | (if .merged_at then "merged" elif .state == "closed" then "closed unmerged"
        elif .draft then "draft" else "open" end) as $s
     | ([.labels[] | select(startswith("lane: ")) | sub("lane: "; "")] | join(", ")) as $lane
     | "| #\(.number) | \(.title | cell) | \(.author) | \($s) | \($lane) | \($v | cell) | \($r | cell) | \((.merged_at // .closed_at) | hours($c)) |"' <<<"$p"
-done
+done < <(jq -c '.[]' <<<"$prs")
 
 echo
 echo "## Issues updated ($issue_count)"
 echo
 echo "| Issue | Title | Author | Type | State | Labels | Comments |"
 echo "| --- | --- | --- | --- | --- | --- | --- |"
-jq -r '.[] | def cell: tostring | gsub("\\|"; "/") | gsub("\n"; " ");
+jq -r '.[] | def cell: tostring | gsub("\\|"; "/") | gsub("\\s+"; " ") | gsub("@"; "@\u200b");
   "| #\(.number) | \(.title | cell) | \(.author) | \(.type // "none") | \(.state)\(if .state_reason then " (\(.state_reason))" else "" end) | \(.labels | join(", ")) | \(.comments) |"' <<<"$issues"
 
 echo

@@ -52,7 +52,7 @@ Plain rules (`.github/scripts/pr-lane-rules.sh`, always read from `main`) set th
 
 Dependabot opens security fixes as they come out and one round of version updates each Monday (`.github/dependabot.yml`). It waits 7 days after a release before suggesting it, except for security fixes. Dependabot runs can't use the Claude token, so `dependabot-lane.yml` sorts its PRs with plain rules only (`.github/scripts/dependabot-lane-rules.sh`):
 
-- Auto-merge: only patch bumps of dev dependencies, changing only `package.json` and the lockfile. GitHub merges them once the required checks pass.
+- Auto-merge: only patch bumps of dev dependencies, changing only `package.json` and the lockfiles. GitHub merges them once the required checks pass.
 - Deep review: everything else, including app dependencies, sub-dependencies, minor and major bumps, and GitHub Actions updates.
 
 If someone pushes to a Dependabot PR, it goes through the normal lanes and the Claude review instead.
@@ -64,7 +64,7 @@ If someone pushes to a Dependabot PR, it goes through the normal lanes and the C
 | Cloudflare errors | Daily, 6 AM Toronto   | Reads the Worker's active errors from Cloudflare and opens a `production-error` Bug issue with `needs-triage` for each new one. Reopens a closed issue if its error comes back. Skips scanner noise. | No                                |
 | Factory retro     | Mondays, 8 AM Toronto | Collects the week's PRs, issues and runs, and Sonnet opens a `factory-retro` issue: what happened, what went wrong, up to three suggested tweaks, and docs drift.                                    | One Sonnet run (skipped if quiet) |
 
-The error issues have URLs, hosts, IPs and long tokens taken out, because this repo is public. To silence an error for good, mark it Ignored in Cloudflare (Workers & Pages, the Worker, Observability, Issues). Closing only the GitHub issue means it reopens if the error comes back.
+The error issues have URLs, hosts, IPs, IDs and tokens taken out, and @mentions defused, because this repo is public. To silence an error for good, mark it Ignored in Cloudflare (Workers & Pages, the Worker, Observability, Issues). Closing only the GitHub issue means it reopens if the error comes back.
 
 The retro only suggests. Nick decides what to change, including whether the Auto-merge lane gets wider.
 

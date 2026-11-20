@@ -7,7 +7,7 @@
 #   reason=<one sentence>
 #
 # Only patch bumps of direct dev dependencies, touching nothing but
-# package.json and the lockfile, may auto-merge. Everything else is Deep review.
+# package.json and the lockfiles, may auto-merge. Everything else is Deep review.
 set -euo pipefail
 
 deps=$(cat)
@@ -19,10 +19,10 @@ if [ "$count" -eq 0 ]; then
   exit 0
 fi
 
-outside=$(printf '%s\n' "${CHANGED_FILES:-}" | grep -v -E '^(package\.json|pnpm-lock\.yaml)?$' | head -n 1 || true)
+outside=$(printf '%s\n' "${CHANGED_FILES:-}" | grep -v -E '^(package\.json|pnpm-lock\.yaml|package-lock\.json)?$' | head -n 1 || true)
 if [ -n "$outside" ]; then
   echo "lane=deep-review"
-  echo "reason=It changes $outside, not just package.json and the lockfile."
+  echo "reason=It changes $outside, not just package.json and the lockfiles."
   exit 0
 fi
 

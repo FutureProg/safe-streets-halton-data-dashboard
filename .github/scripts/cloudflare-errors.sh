@@ -48,8 +48,13 @@ errors=$(printf '%s' "$cf" | jq --argjson since "$since_ms" '
     | gsub("\\b(?:\\d{1,3}\\.){3}\\d{1,3}(?::\\d+)?\\b"; "<ip>")
     | gsub("\\b(?:[A-Za-z0-9-]+\\.)+(?:com|net|org|io|ca|dev|me|app|cloud|internal|local|db)\\b(?::\\d+)?"; "<host>")
     | gsub("[A-Za-z0-9_+/=-]{32,}"; "<token>")
+    # Shorter IDs and keys: 12+ characters mixing letters and digits.
+    | gsub("\\b(?=[A-Za-z_-]*[0-9])(?=[0-9_-]*[A-Za-z])[A-Za-z0-9_-]{12,}\\b"; "<id>")
+    | gsub("\\s+"; " ")
     | gsub("`"; "'\''")
-    | gsub("\\|"; "/");
+    | gsub("\\|"; "/")
+    # Stop @names from pinging anyone (zero-width space after the @).
+    | gsub("@"; "@\u200b");
   [ .result[]
     | select(.type == "exception" or .type == "log")
     | select(.lastObserved >= $since) ]
@@ -75,7 +80,8 @@ else
 fi
 
 created=0
-printf '%s' "$errors" | jq -c '.[]' | while read -r e; do
+# Process substitution keeps the loop's input away from the gh calls inside it.
+while read -r e; do
   id=$(jq -r .id <<<"$e")
   title=$(jq -r .title <<<"$e")
   match=$(jq -c --arg id "$id" 'map(select(.cf == $id)) | .[0] // empty' <<<"$existing")
@@ -99,7 +105,7 @@ Cloudflare spotted this error on the live dashboard.
 
 **Where to look:** in Cloudflare, open Workers & Pages, then the `'"$SERVICE"'` Worker, then Observability, then Issues, and search for a few words of the error above.
 
-The error text had URLs, hosts, IPs and long tokens taken out before posting, because this repo is public.
+The error text had URLs, hosts, IPs, IDs and tokens taken out before posting, because this repo is public.
 
 _Opened by the Cloudflare errors workflow. Triage it on the Mac with `/triage`._"' <<<"$e")
     if [ -n "${DRY_RUN:-}" ]; then
@@ -133,4 +139,4 @@ _Opened by the Cloudflare errors workflow. Triage it on the Mac with `/triage`._
   else
     echo "#$number is already open for \"$title\"."
   fi
-done
+done < <(printf '%s' "$errors" | jq -c '.[]')
