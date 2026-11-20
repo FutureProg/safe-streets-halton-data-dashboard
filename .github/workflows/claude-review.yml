@@ -277,12 +277,19 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           COMMENT_ID: ${{ steps.started.outputs.id }}
+          PR: ${{ github.event.pull_request.number }}
           OUTCOME: ${{ steps.claude.outcome }}
           VERDICT: ${{ steps.verdict.outputs.verdict }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          # The action skips itself on a PR that changes this workflow, since
+          # it only runs the copy on main. Say so, instead of "didn't finish".
+          if [ "$VERDICT" = "unknown" ] && gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --jq '.[].filename' \
+              | grep -qx '.github/workflows/claude-review.yml'; then
+            gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$COMMENT_ID" \
+              -f body="$(printf '<!-- claude-review-started -->\nℹ️ Claude can'"'"'t review this PR because it changes the review workflow itself. It needs a person'"'"'s review.')" > /dev/null
           # "unknown" means the run ended without returning a review.
-          if [ "$OUTCOME" = "failure" ] || [ "$VERDICT" = "unknown" ]; then
+          elif [ "$OUTCOME" = "failure" ] || [ "$VERDICT" = "unknown" ]; then
             gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$COMMENT_ID" \
               -f body="$(printf '<!-- claude-review-started -->\n⚠️ The Claude review didn'"'"'t finish. See the [workflow run](%s), or add the `ai-review` label to try again.' "$RUN_URL")" > /dev/null
           else
