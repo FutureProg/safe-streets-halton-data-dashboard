@@ -29,3 +29,5 @@ jobs:
         run: pnpm exec vp check
       - name: Unit tests
         run: pnpm run test:unit
+      - name: Software factory script tests
+        run: .github/scripts/tests/run.sh

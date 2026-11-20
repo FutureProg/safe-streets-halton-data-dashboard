@@ -34,3 +34,6 @@ jobs:
           label "lane: auto-merge"  "c2e0c6" "Low risk; AI checks it, then it merges itself"
           label "lane: quick-look"  "bfd4f2" "AI reviewed; Nick merges"
           label "lane: deep-review" "f9d0c4" "Risky area; Nick reviews closely"
+          # Monitoring and the weekly retro (Phase 4)
+          label "production-error" "b60205" "Opened from an error on the live dashboard"
+          label "factory-retro"    "c5def5" "Weekly software factory retro"

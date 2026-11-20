@@ -1,0 +1,95 @@
+# Sorts Dependabot PRs into a review lane (software factory, Phase 4).
+#
+# Dependabot runs get no Actions secrets, so there is no Claude review here.
+# Plain rules decide instead (.github/scripts/dependabot-lane-rules.sh, read
+# from main): patch bumps of dev dependencies, and patch bumps that fix a
+# security advisory, auto-merge once the required checks pass. Everything else
+# goes to Deep review for Nick.
+# If a person pushes to a Dependabot PR, claude-review.yml takes over.
+name: Dependabot lane
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+concurrency:
+  group: dependabot-lane-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  lane:
+    if: >-
+      github.actor == 'dependabot[bot]' &&
+      github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Dependabot runs get a read-only token unless the workflow asks for more.
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR: ${{ github.event.pull_request.number }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+    steps:
+      # The rules come from main, so a PR can't change the rules it's judged by.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          fetch-depth: 1
+
+      - name: Turn off auto-merge until the PR is sorted again
+        if: github.event.action == 'synchronize'
+        run: gh pr merge "$PR" --repo "$GITHUB_REPOSITORY" --disable-auto || true
+
+      - name: Read what Dependabot updated
+        id: meta
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ github.token }}
+
+      - name: Apply the plain rules
+        id: rules
+        env:
+          DEPS: ${{ steps.meta.outputs.updated-dependencies-json }}
+          ECOSYSTEM: ${{ steps.meta.outputs.package-ecosystem }}
+        run: |
+          CHANGED_FILES=$(gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --jq '.[].filename')
+          export CHANGED_FILES
+          deps="${DEPS:-[]}"
+          # Mark the updates that fix a published security advisory (npm only).
+          if [ "$ECOSYSTEM" = "npm_and_yarn" ]; then
+            deps=$(printf '%s' "$deps" | .github/scripts/dependabot-advisories.sh) || deps="${DEPS:-[]}"
+          fi
+          printf '%s' "$deps" | .github/scripts/dependabot-lane-rules.sh | tee -a "$GITHUB_OUTPUT"
+
+      - name: Label the PR and explain the lane
+        env:
+          LANE: ${{ steps.rules.outputs.lane }}
+          REASON: ${{ steps.rules.outputs.reason }}
+        run: |
+          for l in auto-merge quick-look deep-review; do
+            if [ "$l" != "$LANE" ]; then
+              gh pr edit "$PR" --repo "$GITHUB_REPOSITORY" --remove-label "lane: $l" 2>/dev/null || true
+            fi
+          done
+          gh pr edit "$PR" --repo "$GITHUB_REPOSITORY" --add-label "lane: $LANE"
+          if [ "$LANE" = "auto-merge" ]; then
+            title="Auto-merge"
+            next="This merges itself once the required checks pass. Turn auto-merge off from the PR page to stop it."
+          else
+            title="Deep review"
+            next="Nick reviews this one before merging. Check the release notes above for breaking changes."
+          fi
+          body=$(printf '<!-- pr-lane -->\n## Lane: %s\n%s\n\n%s\n' "$title" "$REASON" "$next")
+          existing=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --paginate \
+            --jq '.[] | select(.body | startswith("<!-- pr-lane -->")) | .id' | head -n 1)
+          if [ -n "$existing" ]; then
+            gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$existing" -f body="$body" > /dev/null
+          else
+            gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body "$body"
+          fi
+
+      - name: Turn on auto-merge
+        if: steps.rules.outputs.lane == 'auto-merge'
+        run: gh pr merge "$PR" --repo "$GITHUB_REPOSITORY" --auto --squash --match-head-commit "$HEAD_SHA"
