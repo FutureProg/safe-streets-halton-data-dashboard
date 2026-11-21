@@ -43,18 +43,36 @@ jobs:
       id-token: write
       actions: read
     steps:
+      # This workflow is privileged (write token, Claude secret), so it must never
+      # check out code from a fork. Only Nick's comments start it, but a stranger's
+      # fork PR is still untrusted code if Nick comments on it.
+      - name: Refuse pull requests from forks
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.issue.number || github.event.pull_request.number }}
+        run: |
+          head_repo=$(gh pr view "$PR" --repo "$GITHUB_REPOSITORY" --json headRepository,headRepositoryOwner \
+            --jq '.headRepositoryOwner.login + "/" + .headRepository.name')
+          if [ "$head_repo" != "$GITHUB_REPOSITORY" ]; then
+            echo "::error::PR #$PR comes from $head_repo, not this repo. Claude will not check out fork code here."
+            exit 1
+          fi
+
       # Install the PR's own dependencies so checks and tests run against them.
+      # No saved git credentials and no install scripts, so PR code cannot reuse
+      # the write token or run during install.
       - uses: actions/checkout@v7
         with:
           ref: refs/pull/${{ github.event.issue.number || github.event.pull_request.number }}/head
           fetch-depth: 1
+          persist-credentials: false
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
           node-version: lts/*
           cache: pnpm
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - uses: anthropics/claude-code-action@v1
         with:
