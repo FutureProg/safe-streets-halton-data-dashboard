@@ -7,13 +7,8 @@ const hyperdriveId = process.env.HYPERDRIVE_ID;
 // Flagship feature-flag app ID, supplied the same way (build variable FLAGSHIP_APP_ID).
 const flagshipAppId = process.env.FLAGSHIP_APP_ID;
 
-// Preview builds (`cf previews deploy`) evaluate this config with isPreview = true.
-// Previews must not claim the production custom domain, so it is left out for them.
-// Instead they get a workers.dev address and preview URLs (otherwise the deploy
-// prints no URL at all). Production stays on its custom domain only.
-// Everything else, including the read-only Hyperdrive binding, stays the same.
 export default defineConfig({
-  worker: defineWorker(({ isPreview }) => ({
+  worker: defineWorker(() => ({
     name: "safe-streets-halton-dashboard",
     entrypoint: "vinext/server/fetch-handler",
     compatibilityDate: "2026-11-02",
