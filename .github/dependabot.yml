@@ -1,21 +1,25 @@
 # Dependency updates (software factory, Phase 4).
-# Security updates are on in the repo settings and skip the cooldown.
-# Version updates come once a week. Dev-dependency patch bumps get their own
-# group so they can take the Auto-merge lane (see dependabot-lane.yml).
+# Security updates are on in the repo settings. They are separate from the
+# version updates below: they ignore this schedule, groups and cooldown, so
+# they stay fast.
+# Version updates come once a month, in at most three PRs per ecosystem:
+# dev patches, other minor/patch bumps, and major bumps. The lane rules judge
+# each updated dependency, not the group, so dev patches still Auto-merge
+# (see dependabot-lane.yml).
 version: 2
 updates:
   - package-ecosystem: npm
     directory: /
     schedule:
-      interval: weekly
-      day: monday
+      interval: monthly
       time: "06:00"
       timezone: America/Toronto
     # Wait a week after a release before suggesting it, so a bad or
     # malicious publish has time to be caught.
     cooldown:
       default-days: 7
-    open-pull-requests-limit: 5
+    # Grouped PRs count as one each, so this is a ceiling, not a target.
+    open-pull-requests-limit: 3
     commit-message:
       prefix: chore(deps)
     # Vite+ owns these. The `vite` alias (vite-plus-core) and the vitest pins in
@@ -26,12 +30,20 @@ updates:
       - dependency-name: vitest
       - dependency-name: "@vitest/*"
       - dependency-name: "@voidzero-dev/*"
+      # Keep the Node types on the runtime's major version.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+    # Every dependency belongs to a group, so none gets a PR of its own.
     groups:
       dev-patches:
         dependency-type: development
         update-types: [patch]
-      everything-else:
+      minor-and-patch:
         patterns: ["*"]
+        update-types: [minor, patch]
+      major:
+        patterns: ["*"]
+        update-types: [major]
 
   - package-ecosystem: github-actions
     directory: /
