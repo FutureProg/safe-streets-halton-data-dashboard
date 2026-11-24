@@ -89,7 +89,10 @@ jobs:
       # something the agent can fetch itself, so download them before the build.
       # Only links in the issue body count, never in comments: anyone can comment
       # on a public repo. They land outside the repo, so they can't be committed
-      # or picked up by lint. If anything fails, the build carries on without them.
+      # or picked up by lint. Sizes are capped (25 MB per download, 100 MB and 500
+      # entries per zip) and symlinks inside zips are deleted, so the agent can't
+      # read outside the folder through one. If anything fails, the build carries
+      # on without the files.
       - name: Download files attached to the issue
         id: attachments
         continue-on-error: true
@@ -105,7 +108,9 @@ jobs:
           for url in "${urls[@]}"; do
             n=$((n + 1))
             tmp="$FILES_DIR/download-$n.tmp"
-            ctype=$(curl -fsSL --max-time 60 --max-filesize 26214400 -o "$tmp" -w '%{content_type}' "$url" || true)
+            # ulimit -f caps what the download can write (in 512-byte blocks, 25 MB),
+            # because --max-filesize is skipped when the server sends no length.
+            ctype=$( (ulimit -f 51200; curl -fsSL --max-time 60 --max-filesize 26214400 -o "$tmp" -w '%{content_type}' "$url") || true)
             if [ ! -s "$tmp" ]; then
               echo "Could not download $url"
               rm -f "$tmp"
@@ -131,7 +136,16 @@ jobs:
           done
           for z in "$FILES_DIR"/*.zip; do
             [ -e "$z" ] || continue
-            unzip -qo "$z" -d "${z%.zip}" && rm -f "$z"
+            entries=$(unzip -Z1 "$z" 2>/dev/null | wc -l)
+            total=$(unzip -l "$z" 2>/dev/null | awk 'END { print $1 + 0 }')
+            if [ "$entries" -gt 500 ] || [ "$total" -gt 104857600 ]; then
+              echo "Skipping $z: $entries entries, $total bytes unpacked"
+              rm -f "$z"
+              continue
+            fi
+            timeout 60 unzip -qn "$z" -d "${z%.zip}" || true
+            rm -f "$z"
+            find "${z%.zip}" -type l -delete
           done
           echo "Downloaded $(find "$FILES_DIR" -type f | wc -l) file(s):"
           find "$FILES_DIR" -type f
