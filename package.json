@@ -38,7 +38,7 @@
     "cn": "^0.5.2",
     "drizzle-kit": "^0.31.11",
     "drizzle-orm": "^0.45.4",
-    "i18next": "^27.1.1",
+    "i18next": "^27.2.9",
     "i18next-resources-to-backend": "^1.2.4",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.72.0",
